@@ -11,8 +11,7 @@ export default defineNuxtConfig({
     '@nuxtjs/color-mode',
     '@nuxtjs/eslint-module',
     '@nuxtjs/tailwindcss',
-    '@vueuse/nuxt',
-    'nuxt-icon'
+    '@vueuse/nuxt'
   ],
 
   typescript: {
