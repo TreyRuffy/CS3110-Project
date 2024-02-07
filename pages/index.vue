@@ -29,6 +29,13 @@ const cardItems: CardItem[] = [
     description: 'Description',
     newBadge: true,
   },
+  {
+    title: 'Title 4',
+    link: '/',
+    image: 'https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg',
+    description: 'Description',
+    newBadge: true,
+  },
 ]
 
 export default {

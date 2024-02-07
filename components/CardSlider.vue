@@ -21,7 +21,7 @@ const cardCount = useDevice().isMobile ? 2 : 3
   <div class="flex flex-col items-center justify-center">
     <Carousel
       v-if="items.length > 0"
-      :wrap-around="cardCount < items.length"
+      :wrap-around="true"
       :items-to-show="cardCount"
       class="btn-block m-auto max-w-[95vw] rounded-2xl drop-shadow-2xl sm:max-h-[60vh] sm:max-w-[85vw] lg:max-h-[70vh] lg:max-w-[80vw] xl:max-w-[70vw]"
     >

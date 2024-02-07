@@ -35,7 +35,18 @@ defineProps({
     <div class="card-body">
       <div class="card-title">
         {{ title }}
-        <div v-if="newBadge" class="badge badge-secondary badge-sm">NEW</div>
+        <div
+          v-if="newBadge"
+          class="badge badge-secondary badge-sm invisible absolute sm:visible sm:relative"
+        >
+          NEW
+        </div>
+      </div>
+      <div
+        v-if="newBadge"
+        class="badge badge-secondary badge-xs visible relative sm:invisible sm:absolute"
+      >
+        NEW
       </div>
       <p v-if="description" class="text-left">{{ description }}</p>
     </div>
