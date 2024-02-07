@@ -9,9 +9,11 @@ export default defineNuxtConfig({
   modules: [
     '@nuxt/image',
     '@nuxtjs/color-mode',
+    '@nuxtjs/device',
     '@nuxtjs/eslint-module',
     '@nuxtjs/tailwindcss',
-    '@vueuse/nuxt'
+    '@vueuse/nuxt',
+    'vue3-carousel-nuxt',
   ],
 
   typescript: {
