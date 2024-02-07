@@ -28,10 +28,10 @@ defineProps({
 </script>
 
 <template>
-  <NuxtLink class="card card-compact w-96 bg-base-100 shadow-xl" :href="link">
-    <figure>
-      <NuxtImg :src="image" :alt="title" />
-    </figure>
+  <div class="card card-compact w-96 rounded-2xl bg-base-100 shadow-xl">
+    <NuxtLink :href="link">
+      <NuxtImg :src="image" :alt="title" class="rounded-t-2xl" />
+    </NuxtLink>
     <div class="card-body">
       <div class="card-title">
         {{ title }}
@@ -39,7 +39,7 @@ defineProps({
           v-if="newBadge"
           class="badge badge-secondary badge-sm invisible absolute sm:visible sm:relative"
         >
-          NEW
+          NEW!
         </div>
       </div>
       <div
@@ -50,7 +50,7 @@ defineProps({
       </div>
       <p v-if="description" class="text-left">{{ description }}</p>
     </div>
-  </NuxtLink>
+  </div>
 </template>
 
 <style scoped></style>

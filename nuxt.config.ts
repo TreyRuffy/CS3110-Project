@@ -33,4 +33,8 @@ export default defineNuxtConfig({
   image: {
     quality: 90,
   },
+  colorMode: {
+    classSuffix: '',
+    preference: 'light',
+  },
 })
