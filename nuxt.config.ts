@@ -15,7 +15,9 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     'vue3-carousel-nuxt',
   ],
-
+  experimental: {
+    payloadExtraction: false,
+  },
   typescript: {
     strict: true,
     typeCheck: true,
