@@ -1,6 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 
-const routerBase = process.env.GH_PAGES ? '/CS3110-Project/' : '/'
+const routerBase = process.env.DEPLOY_ENV ? '/CS3110-Project/' : '/'
 
 export default defineNuxtConfig({
   app: {
