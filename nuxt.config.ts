@@ -15,10 +15,10 @@ export default defineNuxtConfig({
   },
   modules: [
     '@nuxt/image',
+    '@nuxtjs/tailwindcss',
     '@nuxtjs/color-mode',
     '@nuxtjs/device',
     '@nuxtjs/eslint-module',
-    '@nuxtjs/tailwindcss',
     '@vueuse/nuxt',
     'vue3-carousel-nuxt',
   ],
@@ -36,5 +36,6 @@ export default defineNuxtConfig({
   colorMode: {
     classSuffix: '',
     preference: 'light',
+    dataValue: 'theme',
   },
 })
