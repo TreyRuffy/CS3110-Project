@@ -17,7 +17,6 @@
   "devDependencies": {
     "@nuxt/eslint-config": "^0.2.0",
     "@nuxtjs/color-mode": "^3.3.2",
-    "@nuxtjs/device": "^3.1.1",
     "@nuxtjs/eslint-config-typescript": "^12.1.0",
     "@nuxtjs/eslint-module": "^4.1.0",
     "@nuxtjs/tailwindcss": "^6.11.2",
@@ -32,6 +31,7 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.1.3",
     "nuxt": "^3.10.1",
+    "nuxt-viewport": "^2.1.4",
     "prettier": "^3.2.4",
     "prettier-plugin-tailwindcss": "^0.5.11",
     "vite-plugin-eslint": "^1.8.1",
