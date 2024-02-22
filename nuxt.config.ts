@@ -21,6 +21,7 @@ export default defineNuxtConfig({
     '@nuxtjs/eslint-module',
     '@vueuse/nuxt',
     'vue3-carousel-nuxt',
+    'nuxt3-socket.io',
   ],
   experimental: {
     payloadExtraction: false,
@@ -37,5 +38,8 @@ export default defineNuxtConfig({
     classSuffix: '',
     preference: 'light',
     dataValue: 'theme',
+  },
+  socket: {
+    serverOptions: {},
   },
 })
