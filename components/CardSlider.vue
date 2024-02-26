@@ -14,7 +14,7 @@ defineProps({
   },
 })
 
-const cardCount = useDevice().isMobile ? 2 : 3
+const cardCount = useViewport().isLessThan('desktop') ? 2 : 3
 </script>
 
 <template>
