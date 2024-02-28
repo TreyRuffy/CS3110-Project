@@ -45,18 +45,16 @@ const response = ref([''])
 
 onMounted(() => {
   socket.on('connect', () => {
-    connected.value = true
-    /* eslint-disable-next-line no-console */
-    console.log(connected.value)
+    connected.value = socket.connected
   })
   socket.on('disconnect', () => {
-    connected.value = false
+    connected.value = socket.connected
   })
   socket.on('hello-response', (id: string, data: string, time: string) => {
     response.value.push(id + ' [' + time + ']: ' + data)
   })
-  socket.on('dark', (data) => {
-    useColorMode().preference = data === true ? 'dark' : 'light'
+  socket.on('dark', (data: boolean) => {
+    useColorMode().preference = data ? 'dark' : 'light'
   })
 })
 </script>
@@ -83,6 +81,9 @@ onMounted(() => {
       @click="socket.emit('all-dark', useColorMode().preference !== 'dark')"
     >
       All Dark
+    </button>
+    <button class="btn btn-primary m-2" @click="socket.emit('handshake', 'trey')">
+      Set username
     </button>
     <div>
       Response: <br />
