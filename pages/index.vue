@@ -57,6 +57,14 @@ onMounted(() => {
     useColorMode().preference = data ? 'dark' : 'light'
   })
 })
+
+const username = ref('')
+function setUsername() {
+  if (username) {
+    socket.emit('new-username', username.value)
+  }
+  username.value = ''
+}
 </script>
 
 <template>
@@ -80,11 +88,15 @@ onMounted(() => {
       class="btn btn-error m-2"
       @click="socket.emit('all-dark', useColorMode().preference !== 'dark')"
     >
-      All Dark
-    </button>
-    <button class="btn btn-primary m-2" @click="socket.emit('handshake', 'trey')">
-      Set username
-    </button>
+      All Dark</button
+    ><br />
+    <input
+      v-model="username"
+      type="text"
+      placeholder="Set new username"
+      class="input input-bordered w-full max-w-xs"
+    />
+    <button class="btn btn-primary m-2" @click="setUsername()">Set username</button>
     <div>
       Response: <br />
       <div v-for="resp in response" :key="resp">{{ resp }}</div>

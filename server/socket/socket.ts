@@ -1,48 +1,33 @@
 import { defineIOHandler } from 'nuxt3-socket.io/helpers'
+import { Client, type UUID } from '../util'
 
-const clients: Record<string, Client> = {}
+const clients: Record<UUID, Client> = {}
 
 export default defineIOHandler((io) => {
   io.on('connection', (socket) => {
-    let uuid = crypto.randomUUID()
-    const creationDate = Date.now()
-    clients[uuid] = {
-      uuid,
-      creationDate,
-      lastPacket: creationDate,
-    }
+    let client = new Client(socket.id)
+    clients[client.uuid] = client
 
     socket.on('hello', (arg) => {
-      io.emit(
-        'hello-response',
-        clients[uuid].username ? clients[uuid].username : socket.id,
-        arg,
-        Date(),
-      )
+      io.emit('hello-response', client.username, arg, Date())
     })
 
     socket.on('all-dark', (arg) => {
       io.emit('dark', arg === true)
     })
 
-    socket.on(
-      'handshake',
-      (username: string, newUuid: `${string}-${string}-${string}-${string}-${string}` | null) => {
-        if (newUuid) {
-          delete clients[uuid]
-          uuid = newUuid
-        }
-        const lastPacket = Date.now()
-        if (!clients[uuid]) {
-          clients[uuid] = {
-            uuid,
-            creationDate: lastPacket,
-            lastPacket,
-          }
-        }
-        clients[uuid].username = username
-        io.emit('handshake-response', uuid, lastPacket)
-      },
-    )
+    socket.on('reauth', (uuid: UUID, username: string) => {
+      // TODO - add more authentication logic before allowing re-authentication
+      // JWTs? OAuth? etc.
+      if (clients[uuid] && clients[uuid].username === username) {
+        clients[uuid].lastPacket = new Date()
+        delete clients[client.uuid]
+        client = clients[uuid]
+      }
+    })
+
+    socket.on('new-username', (username: string) => {
+      client.username = username
+    })
   })
 })
