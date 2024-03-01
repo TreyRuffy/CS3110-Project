@@ -14,14 +14,14 @@ defineProps({
   },
 })
 
-const cardCount = useDevice().isMobile ? 2 : 3
+const cardCount = useViewport().isLessThan('desktop') ? 2 : 3
 </script>
 
 <template>
   <div class="flex flex-col items-center justify-center">
     <Carousel
       v-if="items.length > 0"
-      :wrap-around="true"
+      :wrap-around="items.length > (useViewport().isLessThan('desktop') ? 2 : 3)"
       :items-to-show="cardCount"
       class="btn-block m-auto max-w-[95vw] rounded-2xl drop-shadow-2xl sm:max-h-[60vh] sm:max-w-[85vw] lg:max-h-[70vh] lg:max-w-[80vw] xl:max-w-[70vw]"
     >

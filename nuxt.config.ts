@@ -17,7 +17,7 @@ export default defineNuxtConfig({
     '@nuxt/image',
     '@nuxtjs/tailwindcss',
     '@nuxtjs/color-mode',
-    '@nuxtjs/device',
+    'nuxt-viewport',
     '@nuxtjs/eslint-module',
     '@vueuse/nuxt',
     'vue3-carousel-nuxt',
