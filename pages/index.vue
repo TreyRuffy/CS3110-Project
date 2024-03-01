@@ -100,7 +100,7 @@ onMounted(() => {
 
 const username = ref('')
 function setUsername() {
-  if (username) {
+  if (username && username.value !== '') {
     socket.emit('new-username', username.value)
   }
   username.value = ''
