@@ -1,4 +1,12 @@
 <script setup lang="ts">
+import { createQuestions } from '~/components/CountryQuestion.vue'
+
+interface Question {
+  question: string
+  answers: [correct: string, wrong: string[]]
+  image?: string
+}
+
 type CardItem = {
   title: string
   link: string
@@ -82,6 +90,8 @@ const socket = useSocket()
 
 const connected = ref(false)
 const response = ref([''])
+const svgImage = ref('')
+const disableButton = ref(false)
 
 onMounted(() => {
   socket.on('connect', () => {
@@ -96,6 +106,13 @@ onMounted(() => {
   socket.on('dark', (data: boolean) => {
     useColorMode().preference = data ? 'dark' : 'light'
   })
+  socket.on('question', (data: Question) => {
+    response.value.push(data.question + ' [' + data.answers + ']')
+    if (data.image) {
+      svgImage.value = data.image
+    }
+    disableButton.value = false
+  })
 })
 
 const username = ref('')
@@ -104,6 +121,22 @@ function setUsername() {
     socket.emit('new-username', username.value)
   }
   username.value = ''
+}
+
+function generateQuestion() {
+  disableButton.value = true
+  socket.emit('generate-question')
+}
+
+function generateClientQuestion() {
+  disableButton.value = true
+  createQuestions().then((q: Question) => {
+    response.value.push(q.question + ' [' + q.answers + ']')
+    if (q.image) {
+      svgImage.value = q.image
+    }
+    disableButton.value = false
+  })
 }
 </script>
 
@@ -130,15 +163,25 @@ function setUsername() {
       class="btn btn-error m-2"
       @click="socket.emit('all-dark', useColorMode().preference !== 'dark')"
     >
-      All Dark</button
-    ><br />
+      All Dark
+    </button>
+    <br />
     <input
       v-model="username"
       type="text"
       placeholder="Set new username"
       class="input input-bordered w-full max-w-xs"
     />
-    <button class="btn btn-primary m-2" @click="setUsername()">Set username</button>
+    <button class="btn btn-primary m-2" @click="setUsername()">Set username</button> <br />
+    <button class="btn btn-warning m-2" :disabled="disableButton" @click="generateQuestion()">
+      Generate Question
+    </button>
+    <button class="btn btn-warning m-2" :disabled="disableButton" @click="generateClientQuestion()">
+      Generate Client-Side Question
+    </button>
+    <div v-if="svgImage">
+      <img :src="svgImage" alt="SVG Image" width="100" />
+    </div>
     <div>
       Response: <br />
       <div v-for="resp in response" :key="resp">{{ resp }}</div>

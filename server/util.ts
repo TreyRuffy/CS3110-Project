@@ -89,28 +89,10 @@ export class GameClient {
   }
 }
 
-export class Question {
-  _question: string
-  _answers: [correct: string, wrong: string[]]
-  _image: string
-
-  constructor(question: string, answers: [correct: string, wrong: string[]], image: string) {
-    this._question = question
-    this._answers = answers
-    this._image = image
-  }
-
-  get question() {
-    return this._question
-  }
-
-  get answers() {
-    return this._answers
-  }
-
-  get image() {
-    return this._image
-  }
+export interface Question {
+  question: string
+  answers: [correct: string, wrong: string[]]
+  image?: string
 }
 
 export class Game {

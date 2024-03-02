@@ -1,5 +1,6 @@
 import { defineIOHandler } from 'nuxt3-socket.io/helpers'
 import { Client, type UUID } from '../util'
+import { createQuestions } from '../countries'
 
 const clients: Record<UUID, Client> = {}
 
@@ -28,6 +29,12 @@ export default defineIOHandler((io) => {
 
     socket.on('new-username', (username: string) => {
       client.username = username
+    })
+
+    socket.on('generate-question', async () => {
+      await createQuestions().then((question) => {
+        socket.emit('question', question as any)
+      })
     })
   })
 })
