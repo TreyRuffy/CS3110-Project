@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { createQuestions } from '~/components/CountryQuestion.vue'
+import { createQuestions } from '~/composables/CountryClient'
 
 interface Question {
   question: string
@@ -147,7 +147,9 @@ function generateClientQuestion() {
     <CardSlider :items="continents" />
     <CardSlider :items="countries" />
     <div>
-      <h1>Color mode: {{ $colorMode.value }}</h1>
+      <ClientOnly>
+        <h1>Color mode: {{ $colorMode.value }}</h1>
+      </ClientOnly>
       <select v-model="$colorMode.preference">
         <option value="system">System</option>
         <option value="light">Light</option>

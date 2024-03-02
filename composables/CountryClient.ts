@@ -1,4 +1,3 @@
-<script lang="ts">
 import { ofetch } from 'ofetch'
 
 interface Question {
@@ -121,4 +120,3 @@ export async function createQuestions(): Promise<Question> {
     }
   })
 }
-</script>
