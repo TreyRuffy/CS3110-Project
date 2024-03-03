@@ -38,7 +38,7 @@ export default defineIOHandler((io) => {
       await createQuestions().then((question) => {
         socket.emit('question', {
           question: question.question,
-          answers: shuffle(question.answers.flat()),
+          answers: shuffle(question.answers.flat()) as string[],
           image: question.image,
         } as any)
         lastCorrectQuestion = question.answers[0]

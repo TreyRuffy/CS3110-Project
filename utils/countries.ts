@@ -105,12 +105,14 @@ export async function createQuestions(): Promise<Question> {
       (c) => c.region === 'Europe' || c.region === 'Asia' || c.region === 'Africa',
     ) */
     const correct = countries[Math.floor(Math.random() * countries.length)]
+    countries = countries.filter((c) => c.name.common !== correct.name.common)
     // get 3 random countries that are not the correct one
     const wrong = Array.from({ length: 3 }, () => {
       let country = countries[Math.floor(Math.random() * countries.length)]
       while (country === correct) {
         country = countries[Math.floor(Math.random() * countries.length)]
       }
+      countries = countries.filter((c) => c.name.common !== country.name.common)
       return country
     })
     return {

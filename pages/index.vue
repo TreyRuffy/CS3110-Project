@@ -80,17 +80,20 @@ const countries: CardItem[] = [
 
 const socket = useSocket()
 
+const githubPages = process.env.GH_PAGES
 const connected = ref(false)
 const response = ref([''])
 const svgImage = ref('')
 const disableButton = ref(false)
-const answer1 = ref('')
-const answer2 = ref('')
-const answer3 = ref('')
-const answer4 = ref('')
+const answerList = ref([''])
 const score = ref(0)
+let client = false
+let correctClientAnswer = ''
 
 onMounted(() => {
+  if (githubPages) {
+    return
+  }
   socket.on('connect', () => {
     connected.value = socket.connected
   })
@@ -109,10 +112,8 @@ onMounted(() => {
       svgImage.value = image
     }
     disableButton.value = false
-    answer1.value = answers[0]
-    answer2.value = answers[1]
-    answer3.value = answers[2]
-    answer4.value = answers[3]
+    answerList.value = answers
+    client = false
   })
   socket.on('score', (_score: number) => {
     score.value = _score
@@ -133,31 +134,43 @@ function setUsername() {
 function generateQuestion() {
   disableButton.value = true
   socket.emit('generate-question')
+  client = false
+}
+
+function shuffle(array: any[]) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[array[i], array[j]] = [array[j], array[i]]
+  }
+
+  return array
 }
 
 function generateClientQuestion() {
   disableButton.value = true
   createQuestions().then((q: Question) => {
-    response.value.push(q.question + ' [' + q.answers + ']')
+    // response.value.push(q.question + ' [' + q.answers + ']')
     if (q.image) {
       svgImage.value = q.image
     }
     disableButton.value = false
+    answerList.value = shuffle(q.answers.flat())
+    correctClientAnswer = q.answers[0]
   })
+  client = true
 }
 
 function answerQuestion(answer: number) {
-  let data
-  if (answer === 1) {
-    data = answer1.value
-  } else if (answer === 2) {
-    data = answer2.value
-  } else if (answer === 3) {
-    data = answer3.value
-  } else if (answer === 4) {
-    data = answer4.value
+  if (client) {
+    if (answerList.value[answer - 1] === correctClientAnswer) {
+      score.value++
+      generateClientQuestion()
+    } else {
+      response.value.push('Wrong answer: ' + answerList.value[answer - 1])
+    }
+  } else {
+    socket.emit('answer', answerList.value[answer - 1])
   }
-  socket.emit('answer', data)
 }
 </script>
 
@@ -196,51 +209,35 @@ function answerQuestion(answer: number) {
       class="input input-bordered w-full max-w-xs"
     />
     <button class="btn btn-primary m-2" @click="setUsername()">Set username</button> <br />
-    <button class="btn btn-warning m-2" :disabled="disableButton" @click="generateQuestion()">
+    <button
+      v-if="!githubPages"
+      class="btn btn-warning m-2"
+      :disabled="disableButton"
+      @click="generateQuestion()"
+    >
       Generate Question
     </button>
     <button class="btn btn-warning m-2" :disabled="disableButton" @click="generateClientQuestion()">
       Generate Client-Side Question
     </button>
     <div v-if="svgImage">
-      <img :src="svgImage" alt="SVG Image" width="100" />
+      <img :src="svgImage" alt="Country Flag" width="200" :draggable="false" />
     </div>
     <br />
     <div>
       <h2>Score: {{ score }}</h2>
     </div>
-    <button
-      v-if="answer1"
-      class="btn btn-success m-1"
-      :disabled="disableButton"
-      @click="answerQuestion(1)"
-    >
-      {{ answer1 }}
-    </button>
-    <button
-      v-if="answer2"
-      class="btn btn-success m-1"
-      :disabled="disableButton"
-      @click="answerQuestion(2)"
-    >
-      {{ answer2 }}
-    </button>
-    <button
-      v-if="answer3"
-      class="btn btn-success m-1"
-      :disabled="disableButton"
-      @click="answerQuestion(3)"
-    >
-      {{ answer3 }}
-    </button>
-    <button
-      v-if="answer4"
-      class="btn btn-success m-1"
-      :disabled="disableButton"
-      @click="answerQuestion(4)"
-    >
-      {{ answer4 }}
-    </button>
+    <div v-if="answerList[0] !== '' && answerList.length > 1">
+      <button
+        v-for="answer in answerList"
+        :key="answer"
+        class="btn btn-success m-1"
+        :disabled="disableButton"
+        @click="answerQuestion(answerList.indexOf(answer) + 1)"
+      >
+        {{ answer }}
+      </button>
+    </div>
     <div>
       Response: <br />
       <div v-for="resp in response" :key="resp">{{ resp }}</div>
