@@ -100,10 +100,10 @@ async function getCountries() {
 }
 
 export async function createQuestions(): Promise<Question> {
-  return await getCountries().then((c) => {
-    const countries = c.filter(
+  return await getCountries().then((countries) => {
+    /* const countries = c.filter(
       (c) => c.region === 'Europe' || c.region === 'Asia' || c.region === 'Africa',
-    )
+    ) */
     const correct = countries[Math.floor(Math.random() * countries.length)]
     // get 3 random countries that are not the correct one
     const wrong = Array.from({ length: 3 }, () => {

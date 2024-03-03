@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { createQuestions } from '~/composables/CountryClient'
+import { createQuestions } from '~/utils/countries'
 
 interface Question {
   question: string
@@ -92,6 +92,11 @@ const connected = ref(false)
 const response = ref([''])
 const svgImage = ref('')
 const disableButton = ref(false)
+const answer1 = ref('')
+const answer2 = ref('')
+const answer3 = ref('')
+const answer4 = ref('')
+const score = ref(0)
 
 onMounted(() => {
   socket.on('connect', () => {
@@ -106,12 +111,22 @@ onMounted(() => {
   socket.on('dark', (data: boolean) => {
     useColorMode().preference = data ? 'dark' : 'light'
   })
-  socket.on('question', (data: Question) => {
-    response.value.push(data.question + ' [' + data.answers + ']')
-    if (data.image) {
-      svgImage.value = data.image
+  socket.on('question', ({ _, answers, image }) => {
+    // response.value.push(question + ' [' + answers + ']')
+    if (image) {
+      svgImage.value = image
     }
     disableButton.value = false
+    answer1.value = answers[0]
+    answer2.value = answers[1]
+    answer3.value = answers[2]
+    answer4.value = answers[3]
+  })
+  socket.on('score', (_score: number) => {
+    score.value = _score
+  })
+  socket.on('wrong-answer', (data: string) => {
+    response.value.push('Wrong answer: ' + data)
   })
 })
 
@@ -137,6 +152,20 @@ function generateClientQuestion() {
     }
     disableButton.value = false
   })
+}
+
+function answerQuestion(answer: number) {
+  let data
+  if (answer === 1) {
+    data = answer1.value
+  } else if (answer === 2) {
+    data = answer2.value
+  } else if (answer === 3) {
+    data = answer3.value
+  } else if (answer === 4) {
+    data = answer4.value
+  }
+  socket.emit('answer', data)
 }
 </script>
 
@@ -184,6 +213,42 @@ function generateClientQuestion() {
     <div v-if="svgImage">
       <img :src="svgImage" alt="SVG Image" width="100" />
     </div>
+    <br />
+    <div>
+      <h2>Score: {{ score }}</h2>
+    </div>
+    <button
+      v-if="answer1"
+      class="btn btn-success m-1"
+      :disabled="disableButton"
+      @click="answerQuestion(1)"
+    >
+      {{ answer1 }}
+    </button>
+    <button
+      v-if="answer2"
+      class="btn btn-success m-1"
+      :disabled="disableButton"
+      @click="answerQuestion(2)"
+    >
+      {{ answer2 }}
+    </button>
+    <button
+      v-if="answer3"
+      class="btn btn-success m-1"
+      :disabled="disableButton"
+      @click="answerQuestion(3)"
+    >
+      {{ answer3 }}
+    </button>
+    <button
+      v-if="answer4"
+      class="btn btn-success m-1"
+      :disabled="disableButton"
+      @click="answerQuestion(4)"
+    >
+      {{ answer4 }}
+    </button>
     <div>
       Response: <br />
       <div v-for="resp in response" :key="resp">{{ resp }}</div>

@@ -1,9 +1,11 @@
 import { defineIOHandler } from 'nuxt3-socket.io/helpers'
-import { Client, type UUID } from '../util'
-import { createQuestions } from '../countries'
+import { Client, shuffle, type UUID } from '../util'
+// noinspection ES6PreferShortImport
+import { createQuestions } from '../../utils/countries'
 
 const clients: Record<UUID, Client> = {}
 
+// noinspection JSUnusedGlobalSymbols
 export default defineIOHandler((io) => {
   io.on('connection', (socket) => {
     let client = new Client(socket.id)
@@ -31,10 +33,33 @@ export default defineIOHandler((io) => {
       client.username = username
     })
 
+    let lastCorrectQuestion = ''
     socket.on('generate-question', async () => {
       await createQuestions().then((question) => {
-        socket.emit('question', question as any)
+        socket.emit('question', {
+          question: question.question,
+          answers: shuffle(question.answers.flat()),
+          image: question.image,
+        } as any)
+        lastCorrectQuestion = question.answers[0]
       })
+    })
+
+    let score = 0
+    socket.on('answer', async (answer: string) => {
+      if (answer === lastCorrectQuestion) {
+        socket.emit('score', ++score as any)
+        await createQuestions().then((question) => {
+          socket.emit('question', {
+            question: question.question,
+            answers: shuffle(question.answers.flat()),
+            image: question.image,
+          } as any)
+          lastCorrectQuestion = question.answers[0]
+        })
+      } else {
+        socket.emit('wrong-answer', answer as any)
+      }
     })
   })
 })

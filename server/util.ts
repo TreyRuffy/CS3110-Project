@@ -1,5 +1,14 @@
 export type UUID = `${string}-${string}-${string}-${string}-${string}`
 
+export function shuffle(array: any[]) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[array[i], array[j]] = [array[j], array[i]]
+  }
+
+  return array
+}
+
 export class Client {
   _username
   _uuid: UUID = crypto.randomUUID()
@@ -91,7 +100,7 @@ export class GameClient {
 
 export interface Question {
   question: string
-  answers: [correct: string, wrong: string[]]
+  answers: [correct: string, ...wrong: string[]]
   image?: string
 }
 
