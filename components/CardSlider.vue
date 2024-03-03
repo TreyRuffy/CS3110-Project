@@ -1,10 +1,10 @@
 <script setup lang="ts">
-type CardItem = {
+interface CardItem {
   title: string
   link: string
   image: string
   description: string
-  newBadge: boolean
+  newBadge?: boolean
 }
 
 defineProps({
@@ -14,7 +14,23 @@ defineProps({
   },
 })
 
-const cardCount = useViewport().isLessThan('desktop') ? 2 : 3
+const cardCount = ref(
+  useViewport().isLessThan('desktop') ? (useViewport().isLessThan('tablet') ? 1 : 2) : 3,
+)
+const updateCardCount = () => {
+  cardCount.value = useViewport().isLessThan('desktop')
+    ? useViewport().isLessThan('tablet')
+      ? 1
+      : 2
+    : 3
+}
+
+onMounted(() => {
+  window.addEventListener('resize', updateCardCount)
+})
+onUnmounted(() => {
+  window.removeEventListener('resize', updateCardCount)
+})
 </script>
 
 <template>

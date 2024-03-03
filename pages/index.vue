@@ -1,18 +1,18 @@
-<script lang="ts">
-type CardItem = {
+<script setup lang="ts">
+interface CardItem {
   title: string
   link: string
   image: string
   description: string
-  newBadge: boolean
+  newBadge?: boolean
 }
+
 const world: CardItem[] = [
   {
     title: 'World',
     link: '/',
     image: 'https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg',
     description: 'Countries all over the world.',
-    newBadge: true,
   },
 ]
 
@@ -22,35 +22,30 @@ const continents: CardItem[] = [
     link: '/',
     image: 'https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg',
     description: 'Countries specific to Africa.',
-    newBadge: true,
   },
   {
     title: 'Americas',
     link: '/',
     image: 'https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg',
     description: 'Countries specific to North and South America.',
-    newBadge: true,
   },
   {
     title: 'Asia',
     link: '/',
     image: 'https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg',
     description: 'Countries specific to Asia.',
-    newBadge: true,
   },
   {
     title: 'Europe',
     link: '/',
     image: 'https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg',
     description: 'Countries specific to Europe.',
-    newBadge: true,
   },
   {
     title: 'Oceania',
     link: '/',
     image: 'https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg',
     description: 'Countries specific to Oceania.',
-    newBadge: true,
   },
 ]
 
@@ -60,33 +55,20 @@ const countries: CardItem[] = [
     link: '/',
     image: 'https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg',
     description: 'Provinces of Canada.',
-    newBadge: true,
   },
   {
     title: 'Japan',
     link: '/',
     image: 'https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg',
     description: 'Prefectures of Japan.',
-    newBadge: true,
   },
   {
     title: 'United States of America',
     link: '/',
     image: 'https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg',
     description: 'The 50 states of the USA.',
-    newBadge: true,
   },
 ]
-
-export default {
-  data() {
-    return {
-      world,
-      continents,
-      countries,
-    }
-  },
-}
 </script>
 
 <template>
