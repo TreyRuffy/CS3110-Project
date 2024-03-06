@@ -100,25 +100,72 @@ async function getCountries() {
 }
 
 export async function createQuestions(): Promise<Question> {
-  return await getCountries().then((countries) => {
-    /* const countries = c.filter(
-      (c) => c.region === 'Europe' || c.region === 'Asia' || c.region === 'Africa',
-    ) */
-    const correct = countries[Math.floor(Math.random() * countries.length)]
-    countries = countries.filter((c) => c.name.common !== correct.name.common)
-    // get 3 random countries that are not the correct one
-    const wrong = Array.from({ length: 3 }, () => {
-      let country = countries[Math.floor(Math.random() * countries.length)]
-      while (country === correct) {
-        country = countries[Math.floor(Math.random() * countries.length)]
+  return await new CountriesBuilder()
+    .all()
+    .build()
+    .then((countries) => {
+      const correct = countries[Math.floor(Math.random() * countries.length)]
+      countries = countries.filter((c) => c.name.common !== correct.name.common)
+      // get 3 random countries that are not the correct one
+      const wrong = Array.from({ length: 3 }, () => {
+        let country = countries[Math.floor(Math.random() * countries.length)]
+        while (country === correct) {
+          country = countries[Math.floor(Math.random() * countries.length)]
+        }
+        countries = countries.filter((c) => c.name.common !== country.name.common)
+        return country
+      })
+      return {
+        question: 'What is the name of this country?',
+        answers: [correct.name.common, wrong.map((c) => c.name.common)],
+        image: correct.flags.svg,
       }
-      countries = countries.filter((c) => c.name.common !== country.name.common)
-      return country
     })
-    return {
-      question: 'What is the name of this country?',
-      answers: [correct.name.common, wrong.map((c) => c.name.common)],
-      image: correct.flags.svg,
-    }
+}
+
+export async function getCountry(name: string) {
+  return await getCountries().then((countries) => {
+    return countries.find((c) => c.name.common === name)
   })
+}
+
+export class CountriesBuilder {
+  private filters: Record<'region' | 'subregion' | 'country', string[]>
+  private allCountries = false
+
+  constructor() {
+    this.filters = {
+      region: [],
+      subregion: [],
+      country: [],
+    }
+  }
+
+  async build() {
+    const countries = await getCountries()
+    return this.allCountries
+      ? countries
+      : countries.filter((c) => {
+          return (
+            this.filters.region.includes(c.region) ||
+            this.filters.subregion.includes(c.subregion) ||
+            this.filters.country.includes(c.name.common)
+          )
+        })
+  }
+
+  filterByRegion(region: string) {
+    this.filters.region.push(region)
+    return this
+  }
+
+  filterByCountry(country: string) {
+    this.filters.country.push(country)
+    return this
+  }
+
+  all() {
+    this.allCountries = true
+    return this
+  }
 }
