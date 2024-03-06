@@ -20,7 +20,7 @@ export default defineNuxtConfig({
     'nuxt-viewport',
     '@nuxtjs/eslint-module',
     '@vueuse/nuxt',
-    'vue3-carousel-nuxt',
+    'nuxt-swiper',
     'nuxt3-socket.io',
   ],
   experimental: {

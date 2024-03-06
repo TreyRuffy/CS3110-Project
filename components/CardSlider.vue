@@ -12,6 +12,11 @@ defineProps({
     type: Array as PropType<CardItem[]>,
     required: true,
   },
+  title: {
+    type: String,
+    required: false,
+    default: '',
+  },
 })
 
 const cardCount = ref(
@@ -34,27 +39,39 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-col items-center justify-center">
-    <Carousel
-      v-if="items.length > 0"
-      :wrap-around="items.length > (useViewport().isLessThan('desktop') ? 2 : 3)"
-      :items-to-show="cardCount"
-      class="btn-block m-auto max-w-[95vw] rounded-2xl drop-shadow-2xl sm:max-h-[60vh] sm:max-w-[85vw] lg:max-h-[70vh] lg:max-w-[80vw] xl:max-w-[70vw]"
+  <div class="flex flex-col items-center justify-center justify-items-center">
+    <h1
+      v-if="title !== ''"
+      class="drop-shadow-l m-auto w-full max-w-[95vw] sm:max-h-[60vh] sm:max-w-[85vw] lg:max-h-[70vh] lg:max-w-[80vw] xl:max-w-[70vw]"
     >
-      <Slide v-for="item in items" :key="item.title" class="rounded-2xl p-2 pb-6 pt-4">
-        <CategoryCard
-          :title="item.title"
-          :link="item.link"
-          :image="item.image"
-          :description="item.description"
-          :new-badge="item.newBadge"
-        />
-      </Slide>
-      <template #addons="{ slidesCount }">
-        <Navigation v-if="slidesCount > 1" />
-        <Pagination v-if="slidesCount > 1" />
-      </template>
-    </Carousel>
+      World
+    </h1>
+    <ClientOnly>
+      <swiper-container
+        v-if="items.length > 0"
+        :loop="items.length > cardCount"
+        :slides-per-view="cardCount"
+        class="drop-shadow-l m-auto mb-4 w-full max-w-[95vw] rounded-2xl sm:max-h-[60vh] sm:max-w-[85vw] lg:max-h-[70vh] lg:max-w-[80vw] xl:max-w-[70vw]"
+        :class="{ 'cursor-grab': items.length > cardCount }"
+        :navigation="true"
+        :pagination="true"
+        :pagination-dynamic-bullets="true"
+      >
+        <swiper-slide
+          v-for="item in items"
+          :key="item.title"
+          class="flex items-center justify-center rounded-2xl p-2 pb-8 pt-4"
+        >
+          <CategoryCard
+            :title="item.title"
+            :link="item.link"
+            :image="item.image"
+            :description="item.description"
+            :new-badge="item.newBadge"
+          />
+        </swiper-slide>
+      </swiper-container>
+    </ClientOnly>
   </div>
 </template>
 

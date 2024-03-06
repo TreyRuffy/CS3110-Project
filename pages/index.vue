@@ -27,31 +27,31 @@ const world: CardItem[] = [
 const continents: CardItem[] = [
   {
     title: 'Africa',
-    link: '/',
+    link: 'https://google.com',
     image: 'https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg',
     description: 'Countries specific to Africa.',
   },
   {
     title: 'Americas',
-    link: '/',
+    link: 'https://google.com',
     image: 'https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg',
     description: 'Countries specific to North and South America.',
   },
   {
     title: 'Asia',
-    link: '/',
+    link: 'https://google.com',
     image: 'https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg',
     description: 'Countries specific to Asia.',
   },
   {
     title: 'Europe',
-    link: '/',
+    link: 'https://google.com',
     image: 'https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg',
     description: 'Countries specific to Europe.',
   },
   {
     title: 'Oceania',
-    link: '/',
+    link: 'https://google.com',
     image: 'https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg',
     description: 'Countries specific to Oceania.',
   },
@@ -177,7 +177,7 @@ function answerQuestion(answer: number) {
 <template>
   <div>
     <p>Home page</p>
-    <CardSlider :items="world" />
+    <CardSlider :items="world" title="world" />
     <CardSlider :items="continents" />
     <CardSlider :items="countries" />
     <div>

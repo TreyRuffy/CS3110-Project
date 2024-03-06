@@ -973,7 +973,7 @@
   optionalDependencies:
     ipx "^2.1.0"
 
-"@nuxt/kit@3.10.3", "@nuxt/kit@^3.10.2", "@nuxt/kit@^3.10.3", "@nuxt/kit@^3.5.0", "@nuxt/kit@^3.6.3", "@nuxt/kit@^3.8.1", "@nuxt/kit@^3.8.2", "@nuxt/kit@^3.9.1", "@nuxt/kit@^3.9.3":
+"@nuxt/kit@3.10.3", "@nuxt/kit@^3.10.2", "@nuxt/kit@^3.10.3", "@nuxt/kit@^3.5.0", "@nuxt/kit@^3.8.1", "@nuxt/kit@^3.8.2", "@nuxt/kit@^3.9.1", "@nuxt/kit@^3.9.3":
   version "3.10.3"
   resolved "https://registry.yarnpkg.com/@nuxt/kit/-/kit-3.10.3.tgz#911bc431d9b7541a7269e9e63333f70c8ecb5fd6"
   integrity sha512-PUjYB9Mvx0qD9H1QZBwwtY4fLlCLET+Mm9BVqUOtXCaGoXd6u6BE4e/dGFPk2UEKkIcDGrUMSbqkHYvsEuK9NQ==
@@ -5830,6 +5830,14 @@ nuxi@^3.10.1:
   optionalDependencies:
     fsevents "~2.3.3"
 
+nuxt-swiper@^2.0.0-0:
+  version "2.0.0-0"
+  resolved "https://registry.yarnpkg.com/nuxt-swiper/-/nuxt-swiper-2.0.0-0.tgz#8caf7b2000d522c91856d09b1b15f61f04cfe014"
+  integrity sha512-VNP3HU4fFTLsUjvX5DawBTMxfpBWmHqvKVk7Sr28z2fq8uQO2fcGvNywPoDUUdk2t7HrbBD0R8K+8X17wKSngA==
+  dependencies:
+    "@nuxt/kit" "^3.8.2"
+    swiper "^11.0.5"
+
 nuxt-viewport@^2.1.4:
   version "2.1.4"
   resolved "https://registry.yarnpkg.com/nuxt-viewport/-/nuxt-viewport-2.1.4.tgz#2c395dc83b1c6c574e9b82b6c3d8ed9d13995b8b"
@@ -7568,6 +7576,11 @@ svgo@^3.2.0:
     csso "^5.0.5"
     picocolors "^1.0.0"
 
+swiper@^11.0.5:
+  version "11.0.7"
+  resolved "https://registry.yarnpkg.com/swiper/-/swiper-11.0.7.tgz#fe51bb64546c2c21a1ec6914e7764af953443ded"
+  integrity sha512-cDfglW1B6uSmB6eB6pNmzDTNLmZtu5bWWa1vak0RU7fOI9qHjMzl7gVBvYSl34b0RU2N11HxxETJqQ5LeqI1cA==
+
 synckit@^0.8.6:
   version "0.8.8"
   resolved "https://registry.yarnpkg.com/synckit/-/synckit-0.8.8.tgz#fe7fe446518e3d3d49f5e429f443cf08b6edfcd7"
@@ -8296,19 +8309,6 @@ vue-tsc@^1.8.27:
     "@volar/typescript" "~1.11.1"
     "@vue/language-core" "1.8.27"
     semver "^7.5.4"
-
-vue3-carousel-nuxt@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/vue3-carousel-nuxt/-/vue3-carousel-nuxt-1.1.0.tgz#4b10f1be35784f6b6eafb7a2c9b9a9d63d364dd5"
-  integrity sha512-l5nyzKi4PhFVRuopnNUvnPD4fOZ6vpLPH/RCwKcC+35sDmWPvTjpkSs6ondkiAHAgOX61LHoOB9WBJb8CRIdkQ==
-  dependencies:
-    "@nuxt/kit" "^3.6.3"
-    vue3-carousel "^0.3.1"
-
-vue3-carousel@^0.3.1:
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/vue3-carousel/-/vue3-carousel-0.3.1.tgz#d001be7dea416dc2f4e66afc4d56af66696dc117"
-  integrity sha512-86vUkNPBzL2PVuR9w6hUsI90ccFjLp+K8cSFpRTISf+SjUQY3fMHc5CFF5MUL62v1xYYm27zEBmQupO9VQx9Kw==
 
 vue@^3.4.14, vue@^3.4.19:
   version "3.4.21"
