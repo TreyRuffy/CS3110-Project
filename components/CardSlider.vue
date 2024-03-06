@@ -15,7 +15,7 @@ defineProps({
   title: {
     type: String,
     required: false,
-    default: '',
+    default: null,
   },
 })
 
@@ -41,8 +41,8 @@ onUnmounted(() => {
 <template>
   <div class="flex flex-col items-center justify-center justify-items-center">
     <h1
-      v-if="title !== ''"
-      class="m-auto w-full max-w-[95vw] font-[20px] font-bold sm:max-h-[60vh] sm:max-w-[85vw] lg:max-h-[70vh] lg:max-w-[80vw] xl:max-w-[70vw]"
+      v-if="title"
+      class="m-auto w-full max-w-[95vw] pl-2 font-bold sm:max-h-[60vh] sm:max-w-[85vw] lg:max-h-[70vh] lg:max-w-[80vw] xl:max-w-[70vw]"
     >
       {{ title }}
     </h1>
