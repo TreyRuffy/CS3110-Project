@@ -28,10 +28,8 @@ defineProps({
 </script>
 
 <template>
-  <div class="card card-compact w-96 rounded-2xl bg-base-100 shadow-xl">
-    <NuxtLink :href="link">
-      <NuxtImg :src="image" :alt="title" class="rounded-t-2xl" />
-    </NuxtLink>
+  <NuxtLink :href="link" class="card card-compact w-96 rounded-2xl bg-base-100 shadow-xl">
+    <NuxtImg :src="image" :alt="title" class="rounded-t-2xl" :width="400" :height="175" />
     <div class="card-body">
       <div class="card-title">
         {{ title }}
@@ -50,7 +48,7 @@ defineProps({
       </div>
       <p v-if="description" class="text-left">{{ description }}</p>
     </div>
-  </div>
+  </NuxtLink>
 </template>
 
 <style scoped></style>
