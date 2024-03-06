@@ -19,7 +19,7 @@ const world: CardItem[] = [
   {
     title: 'World',
     link: '/',
-    image: 'https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg',
+    image: 'images/World Political.jpg',
     description: 'Countries all over the world.',
   },
 ]
@@ -27,32 +27,32 @@ const world: CardItem[] = [
 const continents: CardItem[] = [
   {
     title: 'Africa',
-    link: 'https://google.com',
-    image: 'https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg',
+    link: '/',
+    image: 'images/Africa Political.jpg',
     description: 'Countries specific to Africa.',
   },
   {
     title: 'Americas',
-    link: 'https://google.com',
-    image: 'https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg',
+    link: '/',
+    image: 'images/Central America and the Caribbean.jpg',
     description: 'Countries specific to North and South America.',
   },
   {
     title: 'Asia',
-    link: 'https://google.com',
-    image: 'https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg',
+    link: '/',
+    image: 'images/Asia Politcal.jpg',
     description: 'Countries specific to Asia.',
   },
   {
     title: 'Europe',
-    link: 'https://google.com',
-    image: 'https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg',
+    link: '/',
+    image: 'images/Europe Political.jpg',
     description: 'Countries specific to Europe.',
   },
   {
     title: 'Oceania',
-    link: 'https://google.com',
-    image: 'https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg',
+    link: '/',
+    image: 'images/Oceania Political.jpg',
     description: 'Countries specific to Oceania.',
   },
 ]
@@ -61,19 +61,19 @@ const countries: CardItem[] = [
   {
     title: 'Canada',
     link: '/',
-    image: 'https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg',
+    image: 'images/Canada Map.jpg',
     description: 'Provinces of Canada.',
   },
   {
     title: 'Japan',
     link: '/',
-    image: 'https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg',
+    image: 'images/Japan Map.jpg',
     description: 'Prefectures of Japan.',
   },
   {
     title: 'United States of America',
     link: '/',
-    image: 'https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg',
+    image: 'images/USA Map.jpg',
     description: 'The 50 states of the USA.',
   },
 ]
@@ -177,9 +177,9 @@ function answerQuestion(answer: number) {
 <template>
   <div>
     <p>Home page</p>
-    <CardSlider :items="world" title="world" />
-    <CardSlider :items="continents" />
-    <CardSlider :items="countries" />
+    <CardSlider :items="world" title="World"/>
+    <CardSlider :items="continents" title="Continents" />
+    <CardSlider :items="countries" title="Countries"/>
     <div>
       <ClientOnly>
         <h1>Color mode: {{ $colorMode.value }}</h1>
