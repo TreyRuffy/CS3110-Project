@@ -43,6 +43,7 @@ onUnmounted(() => {
     <h1
       v-if="title"
       class="m-auto w-full max-w-[95vw] pl-2 font-bold sm:max-h-[60vh] sm:max-w-[85vw] lg:max-h-[70vh] lg:max-w-[80vw] xl:max-w-[70vw]"
+      :class="cardCount < 2 ? 'text-center' : 'pl-2'"
     >
       {{ title }}
     </h1>
