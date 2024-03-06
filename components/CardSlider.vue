@@ -42,9 +42,9 @@ onUnmounted(() => {
   <div class="flex flex-col items-center justify-center justify-items-center">
     <h1
       v-if="title !== ''"
-      class="drop-shadow-l m-auto w-full max-w-[95vw] sm:max-h-[60vh] sm:max-w-[85vw] lg:max-h-[70vh] lg:max-w-[80vw] xl:max-w-[70vw]"
+      class="m-auto w-full max-w-[95vw] font-[20px] font-bold sm:max-h-[60vh] sm:max-w-[85vw] lg:max-h-[70vh] lg:max-w-[80vw] xl:max-w-[70vw]"
     >
-      World
+      {{ title }}
     </h1>
     <ClientOnly>
       <swiper-container

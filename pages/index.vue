@@ -177,9 +177,9 @@ function answerQuestion(answer: number) {
 <template>
   <div>
     <p>Home page</p>
-    <CardSlider :items="world" title="World"/>
+    <CardSlider :items="world" title="World" />
     <CardSlider :items="continents" title="Continents" />
-    <CardSlider :items="countries" title="Countries"/>
+    <CardSlider :items="countries" title="Countries" />
     <div>
       <ClientOnly>
         <h1>Color mode: {{ $colorMode.value }}</h1>
