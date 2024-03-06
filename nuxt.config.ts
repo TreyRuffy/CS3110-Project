@@ -20,7 +20,6 @@ export default defineNuxtConfig({
     'nuxt-viewport',
     '@nuxtjs/eslint-module',
     '@vueuse/nuxt',
-    'nuxt-swiper',
     'nuxt3-socket.io',
   ],
   experimental: {
@@ -41,5 +40,10 @@ export default defineNuxtConfig({
   },
   socket: {
     serverOptions: {},
+  },
+  vue: {
+    compilerOptions: {
+      isCustomElement: (tag) => tag.startsWith('swiper-'),
+    },
   },
 })

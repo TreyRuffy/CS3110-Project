@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { register } from 'swiper/element/bundle'
+
 interface CardItem {
   title: string
   link: string
@@ -36,6 +38,7 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('resize', updateCardCount)
 })
+register()
 </script>
 
 <template>
