@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { register } from 'swiper/element/bundle'
+import { Socket } from 'socket.io-client'
+import type { DefaultEventsMap } from '@socket.io/component-emitter'
 import { createQuestions } from '~/utils/countries'
 
 register()
@@ -86,8 +88,13 @@ const countries: CardItem[] = [
   },
 ]
 
-const githubPages = window.location.hostname.includes('github.io')
-const socket = githubPages ? null : useSocket()
+const socket = ref(null as null | Socket<DefaultEventsMap, DefaultEventsMap>)
+
+function connectSocket() {
+  if (socket.value === null) {
+    socket.value = useSocket()
+  }
+}
 
 const connected = ref(false)
 const response = ref([''])
@@ -98,23 +105,23 @@ const score = ref(0)
 let client = false
 let correctClientAnswer = ''
 
-onMounted(() => {
-  if (socket === null) {
+watch(socket, () => {
+  if (socket.value === null) {
     return
   }
-  socket.on('connect', () => {
-    connected.value = socket.connected
+  socket.value.on('connect', () => {
+    connected.value = socket.value === null || socket.value.connected
   })
-  socket.on('disconnect', () => {
-    connected.value = socket.connected
+  socket.value.on('disconnect', () => {
+    connected.value = socket.value === null || socket.value.connected
   })
-  socket.on('hello-response', (id: string, data: string, time: string) => {
+  socket.value.on('hello-response', (id: string, data: string, time: string) => {
     response.value.push(id + ' [' + time + ']: ' + data)
   })
-  socket.on('dark', (data: boolean) => {
+  socket.value.on('dark', (data: boolean) => {
     useColorMode().preference = data ? 'dark' : 'light'
   })
-  socket.on('question', ({ _, answers, image }) => {
+  socket.value.on('question', ({ _, answers, image }) => {
     // response.value.push(question + ' [' + answers + ']')
     if (image) {
       svgImage.value = image
@@ -123,28 +130,28 @@ onMounted(() => {
     answerList.value = answers
     client = false
   })
-  socket.on('score', (_score: number) => {
+  socket.value.on('score', (_score: number) => {
     score.value = _score
   })
-  socket.on('wrong-answer', (data: string) => {
+  socket.value.on('wrong-answer', (data: string) => {
     response.value.push('Wrong answer: ' + data)
   })
 })
 
 const username = ref('')
 function setUsername() {
-  if (socket !== null && username && username.value !== '') {
-    socket.emit('new-username', username.value)
+  if (socket.value !== null && username && username.value !== '') {
+    socket.value.emit('new-username', username.value)
   }
   username.value = ''
 }
 
 function generateQuestion() {
-  if (socket === null) {
+  if (socket.value === null) {
     return
   }
   disableButton.value = true
-  socket.emit('generate-question')
+  socket.value.emit('generate-question')
   client = false
 }
 
@@ -172,7 +179,7 @@ function generateClientQuestion() {
 }
 
 function answerQuestion(answer: number) {
-  if (client || socket === null) {
+  if (client || socket.value === null) {
     if (answerList.value[answer - 1] === correctClientAnswer) {
       score.value++
       generateClientQuestion()
@@ -180,7 +187,7 @@ function answerQuestion(answer: number) {
       response.value.push('Wrong answer: ' + answerList.value[answer - 1])
     }
   } else {
-    socket.emit('answer', answerList.value[answer - 1])
+    socket.value.emit('answer', answerList.value[answer - 1])
   }
 }
 </script>
@@ -203,6 +210,7 @@ function answerQuestion(answer: number) {
       </select>
     </div>
     <div>Connected?: {{ connected }}</div>
+    <button class="btn btn-primary m-2" @click="connectSocket()">Connect</button>
     <button
       class="btn btn-success m-2"
       @click="socket !== null && socket.emit('hello', 'Hello World')"
@@ -224,7 +232,7 @@ function answerQuestion(answer: number) {
     />
     <button class="btn btn-primary m-2" @click="setUsername()">Set username</button> <br />
     <button
-      v-if="!githubPages"
+      v-if="socket !== null"
       class="btn btn-warning m-2"
       :disabled="disableButton"
       @click="generateQuestion()"
