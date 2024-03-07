@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import { register } from 'swiper/element/bundle'
 import { createQuestions } from '~/utils/countries'
+
+register()
 
 definePageMeta({
   title: 'Home',
@@ -83,9 +86,9 @@ const countries: CardItem[] = [
   },
 ]
 
-const socket = useSocket()
-
 const githubPages = process.env.GH_PAGES
+const socket = githubPages ? null : useSocket()
+
 const connected = ref(false)
 const response = ref([''])
 const svgImage = ref('')
@@ -96,7 +99,7 @@ let client = false
 let correctClientAnswer = ''
 
 onMounted(() => {
-  if (githubPages) {
+  if (!socket) {
     return
   }
   socket.on('connect', () => {
@@ -130,13 +133,16 @@ onMounted(() => {
 
 const username = ref('')
 function setUsername() {
-  if (username && username.value !== '') {
+  if (socket && username && username.value !== '') {
     socket.emit('new-username', username.value)
   }
   username.value = ''
 }
 
 function generateQuestion() {
+  if (!socket) {
+    return
+  }
   disableButton.value = true
   socket.emit('generate-question')
   client = false
@@ -166,7 +172,7 @@ function generateClientQuestion() {
 }
 
 function answerQuestion(answer: number) {
-  if (client) {
+  if (client || !socket) {
     if (answerList.value[answer - 1] === correctClientAnswer) {
       score.value++
       generateClientQuestion()

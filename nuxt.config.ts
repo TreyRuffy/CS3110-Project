@@ -33,6 +33,10 @@ export default defineNuxtConfig({
 
   image: {
     quality: 90,
+    provider: 'ipx',
+    ipx: {
+      maxAge: 31536000,
+    },
   },
   colorMode: {
     classSuffix: '',
