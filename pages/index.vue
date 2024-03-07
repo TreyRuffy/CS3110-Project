@@ -199,9 +199,11 @@ function answerQuestion(answer: number) {
     <CardSlider :items="continents" title="Continents" />
     <CardSlider :items="countries" title="Countries" />
     <div>
-      <ClientOnly>
-        <label for="page-color">Color mode: {{ $colorMode.value }}</label> <br />
-      </ClientOnly>
+      <label for="page-color"
+        >Color mode: <ClientOnly>{{ $colorMode.value }}</ClientOnly></label
+      >
+      <br />
+
       <select id="page-color" v-model="$colorMode.preference">
         <option value="system">System</option>
         <option value="light">Light</option>

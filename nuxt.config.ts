@@ -22,6 +22,7 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     'nuxt3-socket.io',
     'nuxt-simple-robots',
+    '@nuxtjs/sitemap',
   ],
   experimental: {
     payloadExtraction: false,
@@ -50,5 +51,9 @@ export default defineNuxtConfig({
     compilerOptions: {
       isCustomElement: (tag) => tag.startsWith('swiper-'),
     },
+  },
+  site: {
+    name: 'CS3110 Project',
+    description: 'CS3110 Project',
   },
 })

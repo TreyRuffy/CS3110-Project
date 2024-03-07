@@ -19,6 +19,7 @@
     "@nuxtjs/color-mode": "^3.3.2",
     "@nuxtjs/eslint-config-typescript": "^12.1.0",
     "@nuxtjs/eslint-module": "^4.1.0",
+    "@nuxtjs/sitemap": "^5.1.1",
     "@nuxtjs/tailwindcss": "^6.11.2",
     "@tailwindcss/typography": "^0.5.10",
     "@types/node": "^20.11.13",

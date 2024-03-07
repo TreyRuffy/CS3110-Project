@@ -47,9 +47,8 @@ updateCardCount()
     <div class="w-full max-w-full">
       <swiper-container
         v-if="items.length > 0"
-        :loop="items.length > cardCount"
         :slides-per-view="cardCount"
-        class="drop-shadow-l m-auto mb-4 w-full max-w-[95vw] rounded-2xl sm:max-h-[60vh] sm:max-w-[85vw] lg:max-h-[70vh] lg:max-w-[80vw] xl:max-w-[70vw]"
+        class="drop-shadow-l m-auto mb-4 flex w-full max-w-[95vw] items-center overflow-hidden rounded-2xl sm:max-h-[60vh] sm:max-w-[85vw] lg:max-h-[70vh] lg:max-w-[80vw] xl:max-w-[70vw]"
         :class="{ 'cursor-grab': items.length > cardCount }"
         :navigation="true"
         :pagination="true"
@@ -58,7 +57,7 @@ updateCardCount()
         <swiper-slide
           v-for="item in items"
           :key="item.title"
-          class="flex items-center justify-center rounded-2xl p-2 pb-8 pt-4"
+          class="flex w-96 items-center justify-center rounded-2xl p-2 pb-8 pt-4"
         >
           <CategoryCard
             :title="item.title"
