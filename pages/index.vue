@@ -99,7 +99,7 @@ let client = false
 let correctClientAnswer = ''
 
 onMounted(() => {
-  if (!socket) {
+  if (socket === null) {
     return
   }
   socket.on('connect', () => {
@@ -133,14 +133,14 @@ onMounted(() => {
 
 const username = ref('')
 function setUsername() {
-  if (socket && username && username.value !== '') {
+  if (socket !== null && username && username.value !== '') {
     socket.emit('new-username', username.value)
   }
   username.value = ''
 }
 
 function generateQuestion() {
-  if (!socket) {
+  if (socket === null) {
     return
   }
   disableButton.value = true
@@ -172,7 +172,7 @@ function generateClientQuestion() {
 }
 
 function answerQuestion(answer: number) {
-  if (client || !socket) {
+  if (client || socket === null) {
     if (answerList.value[answer - 1] === correctClientAnswer) {
       score.value++
       generateClientQuestion()
@@ -203,12 +203,15 @@ function answerQuestion(answer: number) {
       </select>
     </div>
     <div>Connected?: {{ connected }}</div>
-    <button class="btn btn-success m-2" @click="socket.emit('hello', 'Hello World')">
+    <button
+      class="btn btn-success m-2"
+      @click="socket !== null && socket.emit('hello', 'Hello World')"
+    >
       Hello World
     </button>
     <button
       class="btn btn-error m-2"
-      @click="socket.emit('all-dark', useColorMode().preference !== 'dark')"
+      @click="socket !== null && socket.emit('all-dark', useColorMode().preference !== 'dark')"
     >
       All Dark
     </button>
