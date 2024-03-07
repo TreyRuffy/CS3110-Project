@@ -39,8 +39,7 @@ updateCardCount()
   <div class="flex flex-col items-center justify-center justify-items-center">
     <h1
       v-if="title"
-      class="m-auto w-full max-w-[95vw] pl-2 font-bold sm:max-h-[60vh] sm:max-w-[85vw] lg:max-h-[70vh] lg:max-w-[80vw] xl:max-w-[70vw]"
-      :class="cardCount < 2 ? 'text-center' : 'pl-2'"
+      class="m-auto w-full max-w-[95vw] pl-2 text-center font-bold sm:max-h-[60vh] sm:max-w-[85vw] md:pl-2 md:text-left lg:max-h-[70vh] lg:max-w-[80vw] xl:max-w-[70vw] 2xl:pl-8"
     >
       {{ title }}
     </h1>
@@ -48,7 +47,7 @@ updateCardCount()
       <swiper-container
         v-if="items.length > 0"
         :slides-per-view="cardCount"
-        class="drop-shadow-l m-auto mb-4 flex w-full max-w-[95vw] items-center overflow-hidden rounded-2xl sm:max-h-[60vh] sm:max-w-[85vw] lg:max-h-[70vh] lg:max-w-[80vw] xl:max-w-[70vw]"
+        class="drop-shadow-l m-auto mb-4 flex w-full max-w-[95vw] items-center overflow-hidden rounded-2xl sm:max-h-[60vh] sm:max-w-[85vw] lg:max-h-[70vh] lg:max-w-[80vw] xl:max-w-[75vw]"
         :class="{ 'cursor-grab': items.length > cardCount }"
         :navigation="true"
         :pagination="true"

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { register } from 'swiper/element/bundle'
-import { Socket } from 'socket.io-client'
+import { io, Socket } from 'socket.io-client'
 import type { DefaultEventsMap } from '@socket.io/component-emitter'
 import { createQuestions } from '~/utils/countries'
 
@@ -92,7 +92,7 @@ const socket = ref(null as null | Socket<DefaultEventsMap, DefaultEventsMap>)
 
 function connectSocket() {
   if (socket.value === null) {
-    socket.value = useSocket()
+    socket.value = io()
   }
 }
 

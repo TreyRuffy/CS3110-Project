@@ -1,7 +1,7 @@
 import { defineIOHandler } from 'nuxt3-socket.io/helpers'
-import { Client, shuffle, type UUID } from '../util'
 // noinspection ES6PreferShortImport
 import { createQuestions } from '../../utils/countries'
+import { Client, shuffle, type UUID } from '../util'
 
 const clients: Record<UUID, Client> = {}
 
