@@ -86,7 +86,7 @@ const countries: CardItem[] = [
   },
 ]
 
-const githubPages = process.env.GH_PAGES
+const githubPages = window.location.hostname.includes('github.io')
 const socket = githubPages ? null : useSocket()
 
 const connected = ref(false)
