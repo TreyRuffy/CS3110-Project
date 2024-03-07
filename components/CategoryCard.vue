@@ -29,7 +29,14 @@ defineProps({
 
 <template>
   <NuxtLink :href="link" class="card card-compact w-96 rounded-2xl bg-base-100 shadow-xl">
-    <NuxtImg :src="image" :alt="title" class="rounded-t-2xl" :width="400" :height="175" />
+    <NuxtImg
+      :src="image"
+      :alt="title"
+      class="rounded-t-2xl"
+      :width="400"
+      :height="175"
+      format="webp"
+    />
     <div class="card-body">
       <div class="card-title">
         {{ title }}

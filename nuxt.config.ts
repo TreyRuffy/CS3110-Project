@@ -21,6 +21,7 @@ export default defineNuxtConfig({
     '@nuxtjs/eslint-module',
     '@vueuse/nuxt',
     'nuxt3-socket.io',
+    'nuxt-simple-robots',
   ],
   experimental: {
     payloadExtraction: false,

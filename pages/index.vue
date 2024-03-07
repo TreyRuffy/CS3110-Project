@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import { createQuestions } from '~/utils/countries'
 
+definePageMeta({
+  title: 'Home',
+  description: 'Home Page - CS3110 Project',
+})
+
 interface Question {
   question: string
   answers: [correct: string, wrong: string[]]
@@ -182,9 +187,9 @@ function answerQuestion(answer: number) {
     <CardSlider :items="countries" title="Countries" />
     <div>
       <ClientOnly>
-        <h1>Color mode: {{ $colorMode.value }}</h1>
+        <label for="page-color">Color mode: {{ $colorMode.value }}</label> <br />
       </ClientOnly>
-      <select v-model="$colorMode.preference">
+      <select id="page-color" v-model="$colorMode.preference">
         <option value="system">System</option>
         <option value="light">Light</option>
         <option value="dark">Dark</option>
