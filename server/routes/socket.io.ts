@@ -1,4 +1,5 @@
-import { defineIOHandler } from 'nuxt3-socket.io/helpers'
+import type { Server } from 'http'
+import { Server as SocketServer } from 'socket.io'
 // noinspection ES6PreferShortImport
 import { createQuestions } from '../../utils/countries'
 import { Client, shuffle, type UUID } from '../util'
@@ -6,7 +7,9 @@ import { Client, shuffle, type UUID } from '../util'
 const clients: Record<UUID, Client> = {}
 
 // noinspection JSUnusedGlobalSymbols
-export default defineIOHandler((io) => {
+export default defineEventHandler((event) => {
+  const httpServer = (event.node.req.socket as any).server as Server
+  const io = new SocketServer(httpServer)
   io.on('connection', (socket) => {
     let client = new Client(socket.id)
     clients[client.uuid] = client

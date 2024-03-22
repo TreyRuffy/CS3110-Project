@@ -20,7 +20,6 @@ export default defineNuxtConfig({
     'nuxt-viewport',
     '@nuxtjs/eslint-module',
     '@vueuse/nuxt',
-    'nuxt3-socket.io',
     'nuxt-simple-robots',
     '@nuxtjs/sitemap',
   ],
@@ -43,9 +42,6 @@ export default defineNuxtConfig({
     classSuffix: '',
     preference: 'light',
     dataValue: 'theme',
-  },
-  socket: {
-    serverOptions: {},
   },
   vue: {
     compilerOptions: {
