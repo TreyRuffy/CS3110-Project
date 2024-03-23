@@ -21,7 +21,6 @@ export default defineNuxtConfig({
     '@nuxtjs/eslint-module',
     '@vueuse/nuxt',
     'nuxt-simple-robots',
-    '@nuxtjs/sitemap',
   ],
   experimental: {
     payloadExtraction: false,

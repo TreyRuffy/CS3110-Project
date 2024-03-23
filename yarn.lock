@@ -1513,33 +1513,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxtjs/sitemap@npm:^5.1.2":
-  version: 5.1.2
-  resolution: "@nuxtjs/sitemap@npm:5.1.2"
-  dependencies:
-    "@nuxt/devtools-kit": "npm:^1.0.8"
-    "@nuxt/devtools-ui-kit": "npm:^1.0.8"
-    "@nuxt/kit": "npm:^3.10.3"
-    "@vueuse/core": "npm:^10.9.0"
-    chalk: "npm:^5.3.0"
-    defu: "npm:^6.1.4"
-    floating-vue: "npm:5.2.2"
-    h3-compression: "npm:^0.3.2"
-    nuxt-site-config: "npm:^2.2.11"
-    nuxt-site-config-kit: "npm:^2.2.11"
-    ofetch: "npm:^1.3.3"
-    pathe: "npm:^1.1.2"
-    pkg-types: "npm:^1.0.3"
-    radix3: "npm:^1.1.1"
-    semver: "npm:^7.6.0"
-    shiki: "npm:1.1.7"
-    sirv: "npm:^2.0.4"
-    site-config-stack: "npm:^2.2.11"
-    ufo: "npm:^1.4.0"
-  checksum: 10c0/3daecae27b9faed076fa36b977496bba8bce8e2eacb45cc875eaa72b1a06784c2e7a62b32033dd59e133b66c6c7814150be94337fab396281b87fa2224b01a40
-  languageName: node
-  linkType: hard
-
 "@nuxtjs/tailwindcss@npm:^6.11.4":
   version: 6.11.4
   resolution: "@nuxtjs/tailwindcss@npm:6.11.4"
@@ -1970,13 +1943,6 @@ __metadata:
   version: 1.0.0-beta.3
   resolution: "@shikijs/core@npm:1.0.0-beta.3"
   checksum: 10c0/04a4bf79787f6911d45c35f3089a59930ac054d3a255811b13a670ca072864180f8ee7b525fdca6d39fd57c19c7ff66dc6f41f17a807d3d21e99656aeb04d01c
-  languageName: node
-  linkType: hard
-
-"@shikijs/core@npm:1.1.7":
-  version: 1.1.7
-  resolution: "@shikijs/core@npm:1.1.7"
-  checksum: 10c0/ee59b88d4c81422792651c0ca52ff378c3035f9d1e4907b58c1d6da06fad02d530775a2e6f43bb033832cd3d2a5f69c9aa4eb5b6b05311396acc503f15442f37
   languageName: node
   linkType: hard
 
@@ -6386,15 +6352,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"h3-compression@npm:^0.3.2":
-  version: 0.3.2
-  resolution: "h3-compression@npm:0.3.2"
-  peerDependencies:
-    h3: ^1.6.0
-  checksum: 10c0/ad36daaca1d86ca1b7d6faf6b04069e2562197917880c6eff47636a12746c56a0f1578a73ce185f7a9f5fbbd6ae48f360c80f2491694116e04f7f28add5711ce
-  languageName: node
-  linkType: hard
-
 "h3@npm:^1.10.0, h3@npm:^1.10.2, h3@npm:^1.11.1":
   version: 1.11.1
   resolution: "h3@npm:1.11.1"
@@ -8526,7 +8483,6 @@ __metadata:
     "@nuxtjs/color-mode": "npm:^3.3.3"
     "@nuxtjs/eslint-config-typescript": "npm:^12.1.0"
     "@nuxtjs/eslint-module": "npm:^4.1.0"
-    "@nuxtjs/sitemap": "npm:^5.1.2"
     "@nuxtjs/tailwindcss": "npm:^6.11.4"
     "@tailwindcss/typography": "npm:^0.5.10"
     "@types/node": "npm:^20.11.30"
@@ -8586,7 +8542,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nuxt-site-config-kit@npm:2.2.11, nuxt-site-config-kit@npm:^2.2.11, nuxt-site-config-kit@npm:^2.2.8":
+"nuxt-site-config-kit@npm:2.2.11, nuxt-site-config-kit@npm:^2.2.8":
   version: 2.2.11
   resolution: "nuxt-site-config-kit@npm:2.2.11"
   dependencies:
@@ -8600,7 +8556,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nuxt-site-config@npm:^2.2.11, nuxt-site-config@npm:^2.2.8":
+"nuxt-site-config@npm:^2.2.8":
   version: 2.2.11
   resolution: "nuxt-site-config@npm:2.2.11"
   dependencies:
@@ -10505,15 +10461,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"shiki@npm:1.1.7":
-  version: 1.1.7
-  resolution: "shiki@npm:1.1.7"
-  dependencies:
-    "@shikijs/core": "npm:1.1.7"
-  checksum: 10c0/536f8dec961d7938f6d3a63dd6be64be082b56c1433380eda0a82cb57b5789759097947d9ef1726e521d4054a6fe2b73639e94bedaccea2044fa640667167501
-  languageName: node
-  linkType: hard
-
 "shiki@npm:^1.1.7":
   version: 1.2.0
   resolution: "shiki@npm:1.2.0"
@@ -10619,7 +10566,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"site-config-stack@npm:2.2.11, site-config-stack@npm:^2.2.11":
+"site-config-stack@npm:2.2.11":
   version: 2.2.11
   resolution: "site-config-stack@npm:2.2.11"
   dependencies:
