@@ -199,9 +199,9 @@ function answerQuestion(answer: number) {
     <CardSlider :items="continents" title="Continents" />
     <CardSlider :items="countries" title="Countries" />
     <div>
-      <label for="page-color"
-        >Color mode: <ClientOnly>{{ $colorMode.value }}</ClientOnly></label
-      >
+      <label for="page-color">
+        Color mode: <ClientOnly>{{ $colorMode.value }} </ClientOnly>
+      </label>
       <br />
 
       <select id="page-color" v-model="$colorMode.preference">
@@ -232,7 +232,8 @@ function answerQuestion(answer: number) {
       placeholder="Set new username"
       class="input input-bordered w-full max-w-xs"
     />
-    <button class="btn btn-primary m-2" @click="setUsername()">Set username</button> <br />
+    <button class="btn btn-primary m-2" @click="setUsername()">Set username</button>
+    <br />
     <button
       v-if="socket !== null"
       class="btn btn-warning m-2"

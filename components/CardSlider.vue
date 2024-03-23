@@ -5,6 +5,7 @@ interface CardItem {
   image: string
   description: string
   newBadge?: boolean
+  alt?: string
 }
 
 defineProps({
@@ -17,6 +18,16 @@ defineProps({
     required: false,
     default: null,
   },
+  altPrefix: {
+    type: String,
+    required: false,
+    default: null,
+  },
+  altSuffix: {
+    type: String,
+    required: false,
+    default: null,
+  },
 })
 
 const cardCount = ref(3)
@@ -25,7 +36,9 @@ const updateCardCount = () => {
     ? useViewport().isLessThan('tablet')
       ? 1
       : 2
-    : 3
+    : useViewport().isGreaterOrEquals('desktopWide')
+      ? 4
+      : 3
 }
 
 watch(useViewport().breakpoint, () => {
@@ -39,7 +52,7 @@ updateCardCount()
   <div class="flex flex-col items-center justify-center justify-items-center">
     <h1
       v-if="title"
-      class="m-auto w-full max-w-[95vw] pl-2 text-center font-bold sm:max-h-[60vh] sm:max-w-[85vw] md:pl-2 md:text-left lg:max-h-[70vh] lg:max-w-[80vw] xl:max-w-[70vw] 2xl:pl-8"
+      class="m-auto w-full max-w-[95vw] text-center font-bold sm:max-h-[60vh] sm:max-w-[85vw] md:text-left lg:max-h-[70vh] lg:max-w-[80vw] xl:max-w-[70vw]"
     >
       {{ title }}
     </h1>
@@ -47,7 +60,7 @@ updateCardCount()
       <swiper-container
         v-if="items.length > 0"
         :slides-per-view="cardCount"
-        class="drop-shadow-l m-auto mb-4 flex w-full max-w-[95vw] items-center overflow-hidden rounded-2xl sm:max-h-[60vh] sm:max-w-[85vw] lg:max-h-[70vh] lg:max-w-[80vw] xl:max-w-[75vw]"
+        class="drop-shadow-l m-auto mb-4 flex w-full max-w-[95vw] items-center overflow-clip rounded-2xl sm:max-h-[60vh] sm:max-w-[85vw] lg:max-h-[70vh] lg:max-w-[80vw] xl:max-w-[75vw]"
         :class="{ 'cursor-grab': items.length > cardCount }"
         :navigation="true"
         :pagination="true"
@@ -56,7 +69,7 @@ updateCardCount()
         <swiper-slide
           v-for="item in items"
           :key="item.title"
-          class="flex w-96 items-center justify-center rounded-2xl p-2 pb-8 pt-4"
+          class="w-items-center flex justify-center rounded-2xl p-2 pb-8 pt-4"
         >
           <CategoryCard
             :title="item.title"
@@ -64,6 +77,11 @@ updateCardCount()
             :image="item.image"
             :description="item.description"
             :new-badge="item.newBadge"
+            :alt="
+              item.alt
+                ? item.alt
+                : (altPrefix ? altPrefix : '') + item.title + (altSuffix ? altSuffix : '')
+            "
           />
         </swiper-slide>
       </swiper-container>
