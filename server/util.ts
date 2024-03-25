@@ -1,3 +1,5 @@
+import { generateJoinCode } from './room-manager'
+
 export type UUID = `${string}-${string}-${string}-${string}-${string}`
 
 export function shuffle(array: any[]) {
@@ -9,11 +11,19 @@ export function shuffle(array: any[]) {
   return array
 }
 
+export interface Question {
+  question: string
+  answers: [correct: string, wrong: string[]]
+  image?: string
+  questionLength?: number
+}
+
 export class Client {
   _username
   _uuid: UUID = crypto.randomUUID()
   readonly _creationDate = new Date()
   _lastPacket = new Date()
+  _gamesPlayed: UUID[] = []
 
   constructor(username: string)
   constructor(username: string, uuid?: UUID) {
@@ -44,14 +54,19 @@ export class Client {
   set lastPacket(lastPacket: Date) {
     this._lastPacket = lastPacket
   }
+
+  get gamesPlayed() {
+    return this._gamesPlayed
+  }
+
+  addGame(gameUuid: UUID) {
+    this._gamesPlayed.push(gameUuid)
+  }
 }
 
 export class GameClient {
   _client: Client
   _score = 0
-  _creationDate = new Date()
-  _gamesWon = 0
-  _gamesPlayed = 0
 
   constructor(client: Client) {
     this._client = client
@@ -76,42 +91,15 @@ export class GameClient {
   addScore(score: number) {
     this._score += score
   }
-
-  get creationDate() {
-    return this._creationDate
-  }
-
-  get gamesWon() {
-    return this._gamesWon
-  }
-
-  incrementGamesWon() {
-    this._gamesWon++
-  }
-
-  get gamesPlayed() {
-    return this._gamesPlayed
-  }
-
-  incrementGamesPlayed() {
-    this._gamesPlayed++
-  }
-}
-
-export interface Question {
-  question: string
-  answers: [correct: string, ...wrong: string[]]
-  image?: string
 }
 
 export class Game {
   _uuid: UUID = crypto.randomUUID()
   _creationDate: Date = new Date()
-  _gameEnd: Date = new Date(0)
   _questions: Question[] = []
-  _clients: GameClient[] = []
   _currentQuestion = 0
-  _winner: GameClient | null = null
+  _rankings: GameClient[] = []
+  _gameEnd: Date = new Date(0)
 
   constructor(questions: Question[]) {
     this._questions = questions
@@ -137,10 +125,6 @@ export class Game {
     return this._questions
   }
 
-  get clients() {
-    return this._clients
-  }
-
   get currentQuestion() {
     return this._currentQuestion
   }
@@ -149,27 +133,23 @@ export class Game {
     this._currentQuestion = currentQuestion
   }
 
-  get winner() {
-    return this._winner
-  }
-
-  set winner(winner: GameClient | null) {
-    this._winner = winner
-  }
-
   addClient(client: GameClient) {
-    this._clients.push(client)
+    this._rankings.push(client)
   }
 
   removeClient(client: GameClient) {
-    this._clients = this._clients.filter((c) => c !== client)
+    this._rankings = this._rankings.filter((c) => c !== client)
+  }
+
+  sortRankings() {
+    this._rankings.sort((a, b) => b.score - a.score)
   }
 
   get duration() {
     return this._gameEnd.getTime() - this._creationDate.getTime()
   }
 
-  get isOver() {
+  get isFinished() {
     return this._gameEnd.getTime() !== 0
   }
 }
@@ -177,19 +157,22 @@ export class Game {
 export class Room {
   _uuid: UUID = crypto.randomUUID()
   _creationDate: Date = new Date()
-  _players: Client[] = []
-  _winner: Client | null = null
-  _currentGame: Game | null = null
-  _host: Client
   _joinCode
+  _host: Client
+  _players: Client[] = []
+  _currentGame: Game | null = null
 
-  constructor(host: Client, joinCode: string) {
+  constructor(host: Client, joinCode?: string) {
     this._host = host
-    this._joinCode = joinCode
+    this._joinCode = joinCode || generateJoinCode()
   }
 
   get uuid() {
     return this._uuid
+  }
+
+  get joinCode() {
+    return this._joinCode
   }
 
   get creationDate() {
@@ -198,14 +181,6 @@ export class Room {
 
   get players() {
     return this._players
-  }
-
-  get winner() {
-    return this._winner
-  }
-
-  set winner(winner: Client | null) {
-    this._winner = winner
   }
 
   addPlayer(player: Client) {

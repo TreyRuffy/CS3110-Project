@@ -2,7 +2,7 @@
 import { register } from 'swiper/element/bundle'
 import { io, Socket } from 'socket.io-client'
 import type { DefaultEventsMap } from '@socket.io/component-emitter'
-import { createQuestions } from '~/utils/countries'
+import { CountriesBuilder, createQuestions } from '~/utils/countries'
 
 register()
 
@@ -10,12 +10,6 @@ definePageMeta({
   title: 'Home',
   description: 'Home Page - CS3110 Project',
 })
-
-interface Question {
-  question: string
-  answers: [correct: string, wrong: string[]]
-  image?: string
-}
 
 const socket = ref(null as null | Socket<DefaultEventsMap, DefaultEventsMap>)
 
@@ -95,8 +89,10 @@ function shuffle(array: any[]) {
 
 function generateClientQuestion() {
   disableButton.value = true
-  createQuestions().then((q: Question) => {
-    // response.value.push(q.question + ' [' + q.answers + ']')
+  const countries = new CountriesBuilder()
+  countries.all()
+  countries.build().then((countries) => {
+    const q = createQuestions(countries, 1)[0]
     if (q.image) {
       svgImage.value = q.image
     }
