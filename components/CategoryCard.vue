@@ -4,6 +4,11 @@ defineProps({
     type: String,
     required: true,
   },
+  alt: {
+    type: String,
+    required: false,
+    default: null,
+  },
   svg: {
     type: String,
     default: null,
@@ -20,37 +25,32 @@ defineProps({
     type: String,
     required: true,
   },
-  newBadge: {
-    type: Boolean,
-    default: false,
+  badge: {
+    type: String,
+    default: null,
+    required: false,
   },
 })
 </script>
 
 <template>
-  <div class="card card-compact w-96 rounded-2xl bg-base-100 shadow-xl">
-    <NuxtLink :href="link">
-      <NuxtImg :src="image" :alt="title" class="rounded-t-2xl" />
-    </NuxtLink>
+  <NuxtLink :href="link" class="min-w-70 card card-compact w-96 rounded-2xl bg-base-100 shadow-xl">
+    <NuxtImg
+      :src="image"
+      :alt="alt == null ? title : alt"
+      class="rounded-t-2xl"
+      :width="800"
+      :height="350"
+      format="webp"
+    />
     <div class="card-body">
       <div class="card-title">
         {{ title }}
-        <div
-          v-if="newBadge"
-          class="badge badge-secondary badge-sm invisible absolute sm:visible sm:relative"
-        >
-          NEW!
-        </div>
-      </div>
-      <div
-        v-if="newBadge"
-        class="badge badge-secondary badge-xs visible relative sm:invisible sm:absolute"
-      >
-        NEW
+        <div v-if="badge" class="badge badge-secondary badge-sm">{{ badge }}</div>
       </div>
       <p v-if="description" class="text-left">{{ description }}</p>
     </div>
-  </div>
+  </NuxtLink>
 </template>
 
 <style scoped></style>

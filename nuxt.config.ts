@@ -20,7 +20,7 @@ export default defineNuxtConfig({
     'nuxt-viewport',
     '@nuxtjs/eslint-module',
     '@vueuse/nuxt',
-    'vue3-carousel-nuxt',
+    'nuxt-simple-robots',
   ],
   experimental: {
     payloadExtraction: false,
@@ -32,10 +32,23 @@ export default defineNuxtConfig({
 
   image: {
     quality: 90,
+    provider: 'ipx',
+    ipx: {
+      maxAge: 31536000,
+    },
   },
   colorMode: {
     classSuffix: '',
     preference: 'light',
     dataValue: 'theme',
+  },
+  vue: {
+    compilerOptions: {
+      isCustomElement: (tag) => tag.startsWith('swiper-'),
+    },
+  },
+  site: {
+    name: 'CS3110 Project',
+    description: 'CS3110 Project',
   },
 })

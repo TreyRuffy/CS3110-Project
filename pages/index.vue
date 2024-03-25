@@ -1,4 +1,22 @@
 <script setup lang="ts">
+import { register } from 'swiper/element/bundle'
+import { io, Socket } from 'socket.io-client'
+import type { DefaultEventsMap } from '@socket.io/component-emitter'
+import { createQuestions } from '~/utils/countries'
+
+register()
+
+definePageMeta({
+  title: 'Home',
+  description: 'Home Page - CS3110 Project',
+})
+
+interface Question {
+  question: string
+  answers: [correct: string, wrong: string[]]
+  image?: string
+}
+
 interface CardItem {
   title: string
   link: string
@@ -11,7 +29,7 @@ const world: CardItem[] = [
   {
     title: 'World',
     link: '/',
-    image: 'https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg',
+    image: 'images/World Political.jpg',
     description: 'Countries all over the world.',
   },
 ]
@@ -20,31 +38,31 @@ const continents: CardItem[] = [
   {
     title: 'Africa',
     link: '/',
-    image: 'https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg',
+    image: 'images/Africa Political.jpg',
     description: 'Countries specific to Africa.',
   },
   {
     title: 'Americas',
     link: '/',
-    image: 'https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg',
+    image: 'images/Central America and the Caribbean.jpg',
     description: 'Countries specific to North and South America.',
   },
   {
     title: 'Asia',
     link: '/',
-    image: 'https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg',
+    image: 'images/Asia Politcal.jpg',
     description: 'Countries specific to Asia.',
   },
   {
     title: 'Europe',
     link: '/',
-    image: 'https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg',
+    image: 'images/Europe Political.jpg',
     description: 'Countries specific to Europe.',
   },
   {
     title: 'Oceania',
     link: '/',
-    image: 'https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg',
+    image: 'images/Oceania Political.jpg',
     description: 'Countries specific to Oceania.',
   },
 ]
@@ -53,38 +71,201 @@ const countries: CardItem[] = [
   {
     title: 'Canada',
     link: '/',
-    image: 'https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg',
+    image: 'images/Canada Map.jpg',
     description: 'Provinces of Canada.',
   },
   {
     title: 'Japan',
     link: '/',
-    image: 'https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg',
+    image: 'images/Japan Map.jpg',
     description: 'Prefectures of Japan.',
   },
   {
     title: 'United States of America',
     link: '/',
-    image: 'https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg',
+    image: 'images/USA Map.jpg',
     description: 'The 50 states of the USA.',
   },
 ]
+
+const socket = ref(null as null | Socket<DefaultEventsMap, DefaultEventsMap>)
+
+function connectSocket() {
+  if (socket.value === null) {
+    socket.value = io()
+  }
+}
+
+const connected = ref(false)
+const response = ref([''])
+const svgImage = ref('')
+const disableButton = ref(false)
+const answerList = ref([''])
+const score = ref(0)
+let client = false
+let correctClientAnswer = ''
+
+watch(socket, () => {
+  if (socket.value === null) {
+    return
+  }
+  socket.value.on('connect', () => {
+    connected.value = socket.value === null || socket.value.connected
+  })
+  socket.value.on('disconnect', () => {
+    connected.value = socket.value === null || socket.value.connected
+  })
+  socket.value.on('hello-response', (id: string, data: string, time: string) => {
+    response.value.push(id + ' [' + time + ']: ' + data)
+  })
+  socket.value.on('dark', (data: boolean) => {
+    useColorMode().preference = data ? 'dark' : 'light'
+  })
+  socket.value.on('question', ({ _, answers, image }) => {
+    // response.value.push(question + ' [' + answers + ']')
+    if (image) {
+      svgImage.value = image
+    }
+    disableButton.value = false
+    answerList.value = answers
+    client = false
+  })
+  socket.value.on('score', (_score: number) => {
+    score.value = _score
+  })
+  socket.value.on('wrong-answer', (data: string) => {
+    response.value.push('Wrong answer: ' + data)
+  })
+})
+
+const username = ref('')
+function setUsername() {
+  if (socket.value !== null && username && username.value !== '') {
+    socket.value.emit('new-username', username.value)
+  }
+  username.value = ''
+}
+
+function generateQuestion() {
+  if (socket.value === null) {
+    return
+  }
+  disableButton.value = true
+  socket.value.emit('generate-question')
+  client = false
+}
+
+function shuffle(array: any[]) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[array[i], array[j]] = [array[j], array[i]]
+  }
+
+  return array
+}
+
+function generateClientQuestion() {
+  disableButton.value = true
+  createQuestions().then((q: Question) => {
+    // response.value.push(q.question + ' [' + q.answers + ']')
+    if (q.image) {
+      svgImage.value = q.image
+    }
+    disableButton.value = false
+    answerList.value = shuffle(q.answers.flat())
+    correctClientAnswer = q.answers[0]
+  })
+  client = true
+}
+
+function answerQuestion(answer: number) {
+  if (client || socket.value === null) {
+    if (answerList.value[answer - 1] === correctClientAnswer) {
+      score.value++
+      generateClientQuestion()
+    } else {
+      response.value.push('Wrong answer: ' + answerList.value[answer - 1])
+    }
+  } else {
+    socket.value.emit('answer', answerList.value[answer - 1])
+  }
+}
 </script>
 
 <template>
   <div>
     <p>Home page</p>
-    <CardSlider :items="world" />
-    <CardSlider :items="continents" />
-    <CardSlider :items="countries" />
+    <CardSlider :items="world" title="World" />
+    <CardSlider :items="continents" title="Continents" />
+    <CardSlider :items="countries" title="Countries" />
     <div>
-      <h1>Color mode: {{ $colorMode.value }}</h1>
-      <select v-model="$colorMode.preference">
+      <label for="page-color">
+        Color mode: <ClientOnly>{{ $colorMode.value }} </ClientOnly>
+      </label>
+      <br />
+
+      <select id="page-color" v-model="$colorMode.preference">
         <option value="system">System</option>
         <option value="light">Light</option>
         <option value="dark">Dark</option>
         <option value="sepia">Sepia</option>
       </select>
+    </div>
+    <div>Connected?: {{ connected }}</div>
+    <button class="btn btn-primary m-2" @click="connectSocket()">Connect</button>
+    <button
+      class="btn btn-success m-2"
+      @click="socket !== null && socket.emit('hello', 'Hello World')"
+    >
+      Hello World
+    </button>
+    <button
+      class="btn btn-error m-2"
+      @click="socket !== null && socket.emit('all-dark', useColorMode().preference !== 'dark')"
+    >
+      All Dark
+    </button>
+    <br />
+    <input
+      v-model="username"
+      type="text"
+      placeholder="Set new username"
+      class="input input-bordered w-full max-w-xs"
+    />
+    <button class="btn btn-primary m-2" @click="setUsername()">Set username</button>
+    <br />
+    <button
+      v-if="socket !== null"
+      class="btn btn-warning m-2"
+      :disabled="disableButton"
+      @click="generateQuestion()"
+    >
+      Generate Question
+    </button>
+    <button class="btn btn-warning m-2" :disabled="disableButton" @click="generateClientQuestion()">
+      Generate Client-Side Question
+    </button>
+    <div v-if="svgImage">
+      <img :src="svgImage" alt="Country Flag" width="200" :draggable="false" />
+    </div>
+    <br />
+    <div>
+      <h2>Score: {{ score }}</h2>
+    </div>
+    <div v-if="answerList[0] !== '' && answerList.length > 1">
+      <button
+        v-for="answer in answerList"
+        :key="answer"
+        class="btn btn-success m-1"
+        :disabled="disableButton"
+        @click="answerQuestion(answerList.indexOf(answer) + 1)"
+      >
+        {{ answer }}
+      </button>
+    </div>
+    <div>
+      Response: <br />
+      <div v-for="resp in response" :key="resp">{{ resp }}</div>
     </div>
   </div>
 </template>
