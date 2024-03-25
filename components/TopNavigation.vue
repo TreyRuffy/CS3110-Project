@@ -27,13 +27,13 @@
           <li>
             <span>Room</span>
             <ul class="p-2">
-              <li><a>Create</a></li>
+              <li><NuxtLink href="/create-room">Create Room</NuxtLink></li>
               <li><a>Join Room</a></li>
             </ul>
           </li>
         </ul>
       </div>
-      <NuxtLink href="/" class="btn btn-ghost text-xl">Home</NuxtLink>
+      <NuxtLink href="/" class="btn btn-ghost text-xl">Quizoot</NuxtLink>
     </div>
     <div class="navbar-center hidden lg:flex">
       <ul class="menu menu-horizontal px-1">
@@ -41,7 +41,7 @@
           <details>
             <summary>Room</summary>
             <ul class="p-2">
-              <li><a class="text-nowrap">Create Room</a></li>
+              <li><NuxtLink class="text-nowrap" href="/create-room">Create Room</NuxtLink></li>
               <li><a class="text-nowrap">Join Room</a></li>
             </ul>
           </details>
