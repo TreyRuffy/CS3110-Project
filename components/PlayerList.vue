@@ -1,12 +1,4 @@
 <script setup lang="ts">
-const props = defineProps({
-  players: {
-    type: Array,
-    required: false,
-    default: [],
-  },
-})
-
 function generateRoomCode() {
   return Math.random().toString(36).substring(2, 8).toUpperCase()
 }
