@@ -29,7 +29,7 @@ const world: CardItem[] = [
   {
     title: 'World',
     link: '/',
-    image: 'images/World Political.jpg',
+    image: 'images/World.jpg',
     description: 'Countries all over the world.',
   },
 ]
@@ -38,7 +38,7 @@ const continents: CardItem[] = [
   {
     title: 'Africa',
     link: '/',
-    image: 'images/Africa Political.jpg',
+    image: 'images/Africa.jpg',
     description: 'Countries specific to Africa.',
   },
   {
@@ -50,19 +50,19 @@ const continents: CardItem[] = [
   {
     title: 'Asia',
     link: '/',
-    image: 'images/Asia Politcal.jpg',
+    image: 'images/Asia.jpg',
     description: 'Countries specific to Asia.',
   },
   {
     title: 'Europe',
     link: '/',
-    image: 'images/Europe Political.jpg',
+    image: 'images/Europe.jpg',
     description: 'Countries specific to Europe.',
   },
   {
     title: 'Oceania',
     link: '/',
-    image: 'images/Oceania Political.jpg',
+    image: 'images/Oceania.jpg',
     description: 'Countries specific to Oceania.',
   },
 ]
