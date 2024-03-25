@@ -17,7 +17,7 @@ interface CardItem {
 const world: CardItem[] = [
   {
     title: 'World',
-    link: '/',
+    link: props.singlePlayer ? '/' : '/api/create-server-room?region=world',
     image: 'images/World.jpg',
     description: 'Countries all over the world.',
   },
@@ -26,31 +26,31 @@ const world: CardItem[] = [
 const continents: CardItem[] = [
   {
     title: 'Africa',
-    link: props.singlePlayer ? '/' : '/waiting-room',
+    link: props.singlePlayer ? '/' : '/api/create-server-room?region=africa',
     image: 'images/Africa.jpg',
     description: 'Countries specific to Africa.',
   },
   {
     title: 'Americas',
-    link: '/',
+    link: props.singlePlayer ? '/' : '/api/create-server-room?region=americas',
     image: 'images/Central America and the Caribbean.jpg',
     description: 'Countries specific to North and South America.',
   },
   {
     title: 'Asia',
-    link: '/',
+    link: props.singlePlayer ? '/' : '/api/create-server-room?region=asia',
     image: 'images/Asia.jpg',
     description: 'Countries specific to Asia.',
   },
   {
     title: 'Europe',
-    link: '/',
+    link: props.singlePlayer ? '/' : '/api/create-server-room?region=europe',
     image: 'images/Europe.jpg',
     description: 'Countries specific to Europe.',
   },
   {
     title: 'Oceania',
-    link: '/',
+    link: props.singlePlayer ? '/' : '/api/create-server-room?region=oceania',
     image: 'images/Oceania.jpg',
     description: 'Countries specific to Oceania.',
   },
@@ -59,19 +59,19 @@ const continents: CardItem[] = [
 const countries: CardItem[] = [
   {
     title: 'Canada',
-    link: '/',
+    link: props.singlePlayer ? '/' : '/api/create-server-room?region=canada',
     image: 'images/Canada Map.jpg',
     description: 'Provinces of Canada.',
   },
   {
     title: 'Japan',
-    link: '/',
+    link: props.singlePlayer ? '/' : '/api/create-server-room?region=japan',
     image: 'images/Japan Map.jpg',
     description: 'Prefectures of Japan.',
   },
   {
     title: 'United States of America',
-    link: '/',
+    link: props.singlePlayer ? '/' : '/api/create-server-room?region=usa',
     image: 'images/USA Map.jpg',
     description: 'The 50 states of the USA.',
   },

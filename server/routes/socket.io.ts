@@ -1,7 +1,7 @@
 import type { Server } from 'http'
 import { Server as SocketServer } from 'socket.io'
 // noinspection ES6PreferShortImport
-import { createQuestions } from '../../utils/countries'
+import { CountriesBuilder, createQuestions } from '../../utils/countries'
 import { Client, shuffle, type UUID } from '../util'
 
 const clients: Record<UUID, Client> = {}
@@ -37,8 +37,11 @@ export default defineEventHandler((event) => {
     })
 
     let lastCorrectQuestion = ''
-    socket.on('generate-question', async () => {
-      await createQuestions().then((question) => {
+    socket.on('generate-question', () => {
+      const countries = new CountriesBuilder()
+      countries.all()
+      countries.build().then((countries) => {
+        const question = createQuestions(countries, 1)[0]
         socket.emit('question', {
           question: question.question,
           answers: shuffle(question.answers.flat()) as string[],
@@ -49,13 +52,15 @@ export default defineEventHandler((event) => {
     })
 
     let score = 0
-    socket.on('answer', async (answer: string) => {
+    socket.on('answer', (answer: string) => {
       if (answer === lastCorrectQuestion) {
         socket.emit('score', ++score as any)
-        await createQuestions().then((question) => {
+        const countries = new CountriesBuilder().all()
+        countries.build().then((countries) => {
+          const question = createQuestions(countries, 1)[0]
           socket.emit('question', {
             question: question.question,
-            answers: shuffle(question.answers.flat()),
+            answers: shuffle(question.answers.flat()) as string[],
             image: question.image,
           } as any)
           lastCorrectQuestion = question.answers[0]

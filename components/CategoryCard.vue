@@ -1,5 +1,5 @@
 <script setup lang="ts">
-defineProps({
+const props = defineProps({
   image: {
     type: String,
     required: true,
@@ -31,26 +31,63 @@ defineProps({
     required: false,
   },
 })
+
+function sendFetch() {
+  $fetch(props.link)
+    .then((response) => {
+      console.log(response)
+    })
+    .catch((error) => {
+      console.error(error)
+    })
+}
 </script>
 
 <template>
-  <NuxtLink :href="link" class="min-w-70 card card-compact w-96 rounded-2xl bg-base-100 shadow-xl">
-    <NuxtImg
-      :src="image"
-      :alt="alt == null ? title : alt"
-      class="rounded-t-2xl"
-      :width="800"
-      :height="350"
-      format="webp"
-    />
-    <div class="card-body">
-      <div class="card-title">
-        {{ title }}
-        <div v-if="badge" class="badge badge-secondary badge-sm">{{ badge }}</div>
+  <div>
+    <NuxtLink
+      v-if="!link.includes('api')"
+      :href="link"
+      class="min-w-70 card card-compact w-96 rounded-2xl bg-base-100 shadow-xl"
+    >
+      <NuxtImg
+        :src="image"
+        :alt="alt == null ? title : alt"
+        class="rounded-t-2xl"
+        :width="800"
+        :height="350"
+        format="webp"
+      />
+      <div class="card-body">
+        <div class="card-title">
+          {{ title }}
+          <div v-if="badge" class="badge badge-secondary badge-sm">{{ badge }}</div>
+        </div>
+        <p v-if="description" class="text-left">{{ description }}</p>
       </div>
-      <p v-if="description" class="text-left">{{ description }}</p>
+    </NuxtLink>
+    <div
+      v-else
+      class="min-w-70 card card-compact w-96 rounded-2xl bg-base-100 shadow-xl"
+      @click="sendFetch()"
+    >
+      <NuxtImg
+        :src="image"
+        :alt="alt == null ? title : alt"
+        class="rounded-t-2xl"
+        :width="800"
+        :height="350"
+        format="webp"
+      />
+      <div class="card-body">
+        <div class="card-title">
+          {{ title }}
+          <div v-if="badge" class="badge badge-secondary badge-sm">{{ badge }}</div>
+        </div>
+        <p v-if="description" class="text-left">{{ description }}</p>
+      </div>
     </div>
-  </NuxtLink>
+  </div>
 </template>
 
 <style scoped></style>

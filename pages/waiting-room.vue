@@ -2,7 +2,7 @@
 
 <template>
   <div>
-    <h1>Waiting ROom</h1>
+    <h1>Waiting Room</h1>
     <PlayerList />
   </div>
 </template>

@@ -1,10 +1,5 @@
 import { ofetch } from 'ofetch'
-
-interface Question {
-  question: string
-  answers: [correct: string, wrong: string[]]
-  image?: string
-}
+import type { Question } from '~/server/util'
 
 interface Country {
   name: {
@@ -99,28 +94,27 @@ async function getCountries() {
   return restcountries
 }
 
-export async function createQuestions(): Promise<Question> {
-  return await new CountriesBuilder()
-    .all()
-    .build()
-    .then((countries) => {
-      const correct = countries[Math.floor(Math.random() * countries.length)]
-      countries = countries.filter((c) => c.name.common !== correct.name.common)
-      // get 3 random countries that are not the correct one
-      const wrong = Array.from({ length: 3 }, () => {
-        let country = countries[Math.floor(Math.random() * countries.length)]
-        while (country === correct) {
-          country = countries[Math.floor(Math.random() * countries.length)]
-        }
-        countries = countries.filter((c) => c.name.common !== country.name.common)
-        return country
-      })
-      return {
-        question: 'What is the name of this country?',
-        answers: [correct.name.common, wrong.map((c) => c.name.common)],
-        image: correct.flags.svg,
+export function createQuestions(countries: Country[], count?: number): Question[] {
+  const questions: Question[] = []
+  for (let i = 0; i < (count || 10); i++) {
+    const correct = countries[Math.floor(Math.random() * countries.length)]
+    countries = countries.filter((c) => c.name.common !== correct.name.common)
+    // get 3 random countries that are not the correct one
+    const wrong = Array.from({ length: 3 }, () => {
+      let country = countries[Math.floor(Math.random() * countries.length)]
+      while (country === correct) {
+        country = countries[Math.floor(Math.random() * countries.length)]
       }
+      countries = countries.filter((c) => c.name.common !== country.name.common)
+      return country
     })
+    questions.push({
+      question: 'What is the name of this country?',
+      answers: [correct.name.common, wrong.map((c) => c.name.common)],
+      image: correct.flags.svg,
+    })
+  }
+  return questions
 }
 
 export async function getCountry(name: string) {
