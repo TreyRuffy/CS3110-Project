@@ -1,12 +1,17 @@
 <script setup lang="ts">
-function generateRoomCode() {
-  return Math.random().toString(36).substring(2, 8).toUpperCase()
-}
+defineProps({
+  players: {
+    type: Array as PropType<string[]>,
+    required: true,
+  },
+})
 </script>
 
 <template>
-  <h1>Room code: {{ generateRoomCode() }}</h1>
-  <h1>Players: INSERT PLAYER LIST HERE</h1>
+  <div>
+    Players:
+    <p v-for="player in players" :key="player">{{ player }}</p>
+  </div>
 </template>
 
 <style scoped></style>

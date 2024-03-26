@@ -29,7 +29,7 @@
               <span>Room</span>
               <ul class="z-[101] p-2">
                 <li><NuxtLink href="/create-room">Create Room</NuxtLink></li>
-                <li><a>Join Room</a></li>
+                <li><a onclick="join_room_modal.showModal()">Join Room</a></li>
               </ul>
             </li>
           </ul>
