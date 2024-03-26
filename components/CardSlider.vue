@@ -2,10 +2,12 @@
 interface CardItem {
   title: string
   link: string
-  image: string
   description: string
-  newBadge?: boolean
+  image: string
   alt?: string
+  internalFetch?: boolean
+  openLinkFunction?: () => void
+  badge?: string
 }
 
 defineProps({
@@ -60,6 +62,7 @@ updateCardCount()
       <swiper-container
         v-if="items.length > 0"
         :slides-per-view="cardCount"
+        :space-between="10"
         class="drop-shadow-l m-auto mb-4 flex w-full max-w-[95vw] items-center overflow-clip rounded-2xl sm:max-h-[60vh] sm:max-w-[85vw] lg:max-h-[70vh] lg:max-w-[80vw] xl:max-w-[75vw]"
         :class="{ 'cursor-grab': items.length > cardCount }"
         :navigation="true"
@@ -76,7 +79,9 @@ updateCardCount()
             :link="item.link"
             :image="item.image"
             :description="item.description"
-            :new-badge="item.newBadge"
+            :badge="item.badge"
+            :internal-fetch="item.internalFetch"
+            :open-link-function="item.openLinkFunction"
             :alt="
               item.alt
                 ? item.alt
