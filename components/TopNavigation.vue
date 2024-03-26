@@ -37,17 +37,27 @@
         <NuxtLink href="/" class="btn btn-ghost text-xl">Quizoot</NuxtLink>
       </div>
       <div class="navbar-center hidden lg:flex">
-        <ul class="menu menu-horizontal px-1">
-          <li class="z-[101]">
-            <details>
-              <summary>Room</summary>
-              <ul class="p-2">
-                <li><NuxtLink class="text-nowrap" href="/create-room">Create Room</NuxtLink></li>
-                <li><a class="text-nowrap" onclick="my_modal_5.showModal()">Join Room</a></li>
-              </ul>
-            </details>
-          </li>
-        </ul>
+        <div class="dropdown dropdown-hover">
+          <div tabindex="0" role="button" class="btn m-1">
+            Room
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 18"
+              stroke-width="1.2"
+              stroke="currentColor"
+              class="h-4 w-4"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+            </svg>
+          </div>
+          <ul class="menu dropdown-content z-[101] w-52 rounded-box bg-base-100 p-2 shadow">
+            <li><NuxtLink class="text-nowrap" href="/create-room">Create Room</NuxtLink></li>
+            <li>
+              <a class="text-nowrap" onclick="join_room_modal.showModal()">Join Room</a>
+            </li>
+          </ul>
+        </div>
       </div>
       <div class="navbar-end">
         <button class="btn btn-circle">
@@ -57,7 +67,7 @@
             viewBox="0 0 24 24"
             stroke-width="1.5"
             stroke="currentColor"
-            class="h-6 w-6"
+            class="h-7 w-7"
           >
             <path
               stroke-linecap="round"
@@ -68,7 +78,7 @@
         </button>
       </div>
     </div>
-    <dialog id="my_modal_5" class="modal modal-bottom sm:modal-middle">
+    <dialog id="join_room_modal" class="modal modal-bottom sm:modal-middle">
       <div class="modal-box">
         <form method="dialog">
           <button class="btn btn-circle btn-ghost btn-md absolute right-2 top-2">✕</button>
