@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { register } from 'swiper/element/bundle'
-import { io, Socket } from 'socket.io-client'
+import { io, type Socket } from 'socket.io-client'
 import type { DefaultEventsMap } from '@socket.io/component-emitter'
 import { CountriesBuilder, createQuestions } from '~/utils/countries'
 
@@ -44,7 +44,7 @@ watch(socket, () => {
   socket.value.on('dark', (data: boolean) => {
     useColorMode().preference = data ? 'dark' : 'light'
   })
-  socket.value.on('question', ({ _, answers, image }) => {
+  socket.value.on('question', ({ answers, image }) => {
     // response.value.push(question + ' [' + answers + ']')
     if (image) {
       svgImage.value = image
@@ -78,7 +78,7 @@ function generateQuestion() {
   client = false
 }
 
-function shuffle(array: any[]) {
+function shuffle<T>(array: T[]) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1))
     ;[array[i], array[j]] = [array[j], array[i]]

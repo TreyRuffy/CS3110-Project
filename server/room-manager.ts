@@ -1,4 +1,4 @@
-import { Room, Client } from '~/server/util'
+import { type Client, Room } from '~/server/util'
 
 const rooms: Room[] = []
 

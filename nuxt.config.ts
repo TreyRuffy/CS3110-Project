@@ -14,11 +14,11 @@ export default defineNuxtConfig({
     },
   },
   modules: [
+    '@nuxt/eslint',
     '@nuxt/image',
     '@nuxtjs/tailwindcss',
     '@nuxtjs/color-mode',
     'nuxt-viewport',
-    '@nuxtjs/eslint-module',
     '@vueuse/nuxt',
     'nuxt-simple-robots',
   ],
@@ -50,5 +50,8 @@ export default defineNuxtConfig({
   site: {
     name: 'CS3110 Project',
     description: 'CS3110 Project',
+  },
+  eslint: {
+    checker: true,
   },
 })

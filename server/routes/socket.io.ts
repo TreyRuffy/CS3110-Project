@@ -4,15 +4,15 @@ import { Server as SocketServer } from 'socket.io'
 import { CountriesBuilder, createQuestions } from '../../utils/countries'
 import { Client, shuffle, type UUID } from '../util'
 
-const clients: Record<UUID, Client> = {}
+const clients: Map<UUID, Client> = new Map()
 
-// noinspection JSUnusedGlobalSymbols
 export default defineEventHandler((event) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const httpServer = (event.node.req.socket as any).server as Server
   const io = new SocketServer(httpServer)
   io.on('connection', (socket) => {
-    let client = new Client(socket.id)
-    clients[client.uuid] = client
+    const client = new Client(socket.id)
+    clients.set(client.uuid, client)
 
     socket.on('hello', (arg) => {
       io.emit('hello-response', client.username, arg, Date())
@@ -24,11 +24,11 @@ export default defineEventHandler((event) => {
 
     socket.on('reauth', (uuid: UUID, username: string) => {
       // TODO - add more authentication logic before allowing re-authentication
-      // JWTs? OAuth? etc.
-      if (clients[uuid] && clients[uuid].username === username) {
-        clients[uuid].lastPacket = new Date()
-        delete clients[client.uuid]
-        client = clients[uuid]
+      // JWTs? OAuth?
+
+      const client = clients.get(uuid)
+      if (client && client.username === username) {
+        client.lastPacket = new Date()
       }
     })
 
@@ -46,7 +46,7 @@ export default defineEventHandler((event) => {
           question: question.question,
           answers: shuffle(question.answers.flat()) as string[],
           image: question.image,
-        } as any)
+        })
         lastCorrectQuestion = question.answers[0]
       })
     })
@@ -54,19 +54,19 @@ export default defineEventHandler((event) => {
     let score = 0
     socket.on('answer', (answer: string) => {
       if (answer === lastCorrectQuestion) {
-        socket.emit('score', ++score as any)
+        socket.emit('score', ++score)
         const countries = new CountriesBuilder().all()
         countries.build().then((countries) => {
           const question = createQuestions(countries, 1)[0]
           socket.emit('question', {
             question: question.question,
-            answers: shuffle(question.answers.flat()) as string[],
+            answers: shuffle(question.answers.flat()),
             image: question.image,
-          } as any)
+          })
           lastCorrectQuestion = question.answers[0]
         })
       } else {
-        socket.emit('wrong-answer', answer as any)
+        socket.emit('wrong-answer', answer)
       }
     })
   })
