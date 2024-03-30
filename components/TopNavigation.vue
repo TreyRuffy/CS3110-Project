@@ -1,4 +1,11 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const dropdown = ref<HTMLElement | null>(null)
+const closeDropdown = () => {
+  if (dropdown.value) {
+    dropdown.value.hidden = true
+  }
+}
+</script>
 
 <template>
   <div>
@@ -28,8 +35,19 @@
             <li>
               <span>Room</span>
               <ul class="z-[101] p-2">
-                <li><NuxtLink href="/create-room" tabindex="0">Create Room</NuxtLink></li>
-                <li><a tabindex="0" onclick="join_room_modal.showModal()">Join Room</a></li>
+                <li>
+                  <NuxtLink href="/create-room" tabindex="0" @click="closeDropdown()">
+                    Create Room
+                  </NuxtLink>
+                </li>
+                <li>
+                  <a
+                    tabindex="0"
+                    onclick="join_room_modal.showModal() && document.activeElement.blur()"
+                  >
+                    Join Room
+                  </a>
+                </li>
               </ul>
             </li>
           </ul>
@@ -51,14 +69,26 @@
               <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
             </svg>
           </div>
-          <ul class="menu dropdown-content z-[101] w-52 rounded-box bg-base-100 p-2 shadow">
+          <ul
+            ref="dropdown"
+            class="menu dropdown-content z-[101] w-52 rounded-box bg-base-100 p-2 shadow"
+          >
             <li>
-              <NuxtLink class="text-nowrap" href="/create-room" tabindex="0">
+              <NuxtLink
+                class="text-nowrap"
+                href="/create-room"
+                tabindex="0"
+                onclick="document.activeElement.blur()"
+              >
                 Create Room
               </NuxtLink>
             </li>
             <li>
-              <a class="text-nowrap" onclick="join_room_modal.showModal()" tabindex="0">
+              <a
+                class="text-nowrap"
+                onclick="join_room_modal.showModal() && document.activeElement.blur()"
+                tabindex="0"
+              >
                 Join Room
               </a>
             </li>
@@ -135,8 +165,8 @@
               />
             </label>
 
-            <span class="mt-4 flex justify-center">
-              <span class="btn btn-primary px-8">Join</span>
+            <span class="mt-10 flex justify-center">
+              <span class="btn btn-primary w-full px-8">Join</span>
             </span>
           </label>
         </form>

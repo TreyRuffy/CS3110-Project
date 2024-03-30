@@ -51,11 +51,8 @@ updateCardCount()
 </script>
 
 <template>
-  <div class="flex flex-col items-center justify-center justify-items-center">
-    <h1
-      v-if="title"
-      class="m-auto w-full max-w-[95vw] text-center font-bold sm:max-h-[60vh] sm:max-w-[85vw] md:text-left lg:max-h-[70vh] lg:max-w-[80vw] xl:max-w-[70vw]"
-    >
+  <div class="content-wrapper flex flex-col items-center justify-center justify-items-center">
+    <h1 v-if="title" class="m-auto flex w-full justify-center font-bold">
       {{ title }}
     </h1>
     <div class="w-full max-w-full">

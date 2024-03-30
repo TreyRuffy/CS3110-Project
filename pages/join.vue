@@ -18,11 +18,63 @@ function joinRoom() {
 </script>
 
 <template>
-  <div>
-    <h1>Join Room</h1>
-    <input v-model="roomCode" placeholder="Room Code" />
-    <input v-model="username" placeholder="Username" />
-    <button class="btn btn-primary" @click="joinRoom">Join Room</button>
+  <div class="mt-4">
+    <div class="flex items-center">
+      <div class="card mx-auto w-full max-w-2xl lg:shadow-xl">
+        <div class="px-10 py-10">
+          <h2 class="mb-4 text-center text-2xl font-semibold">Join Room</h2>
+          <label for="room-code" class="input input-bordered mt-2 flex items-center gap-2">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              class="h-5 w-5"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M9.493 2.852a.75.75 0 0 0-1.486-.204L7.545 6H4.198a.75.75 0 0 0 0 1.5h3.14l-.69 5H3.302a.75.75 0 0 0 0 1.5h3.14l-.435 3.148a.75.75 0 0 0 1.486.204L7.955 14h2.986l-.434 3.148a.75.75 0 0 0 1.486.204L12.456 14h3.346a.75.75 0 0 0 0-1.5h-3.14l.69-5h3.346a.75.75 0 0 0 0-1.5h-3.14l.435-3.148a.75.75 0 0 0-1.486-.204L12.045 6H9.059l.434-3.148ZM8.852 7.5l-.69 5h2.986l.69-5H8.852Z"
+                clip-rule="evenodd"
+              />
+            </svg>
+
+            <input
+              id="room-code"
+              v-model="roomCode"
+              type="text"
+              placeholder="Room code"
+              class="grow"
+              :maxlength="6"
+              oninput="this.value = this.value.toUpperCase()"
+            />
+          </label>
+
+          <label for="username" class="input input-bordered mt-2 flex items-center gap-2">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              class="h-5 w-5"
+            >
+              <path
+                d="M10 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM3.465 14.493a1.23 1.23 0 0 0 .41 1.412A9.957 9.957 0 0 0 10 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.408-1.41a7.002 7.002 0 0 0-13.074.003Z"
+              />
+            </svg>
+
+            <input
+              id="username"
+              v-model="username"
+              type="text"
+              placeholder="Username"
+              class="grow"
+              :maxlength="32"
+            />
+          </label>
+          <span class="mt-10 flex justify-center">
+            <span class="btn btn-primary w-full px-8" @click="joinRoom">Join</span>
+          </span>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 

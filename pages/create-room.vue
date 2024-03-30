@@ -6,7 +6,7 @@ register()
 
 <template>
   <div>
-    <h1>Create Room</h1>
+    <h1 class="mb-2 mt-4 text-center text-2xl font-semibold">Create Room</h1>
     <RegionChoice :single-player="false" />
   </div>
 </template>
