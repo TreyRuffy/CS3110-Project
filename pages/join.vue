@@ -13,7 +13,10 @@ function joinRoom() {
     alert('Please enter a username')
     return
   }
+  // TODO join room logic
   console.log('Room code: ' + roomCode.value + '\nUsername: ' + username.value)
+  roomCode.value = null
+  username.value = null
 }
 </script>
 
@@ -21,7 +24,7 @@ function joinRoom() {
   <div class="mt-4">
     <div class="flex items-center">
       <div class="card mx-auto w-full max-w-2xl lg:shadow-xl">
-        <div class="px-10 py-10">
+        <form class="px-10 py-10" method="dialog" @submit="joinRoom()">
           <h2 class="mb-4 text-center text-2xl font-semibold">Join Room</h2>
           <label for="room-code" class="input input-bordered mt-6 flex items-center gap-2">
             <svg
@@ -44,6 +47,7 @@ function joinRoom() {
               placeholder="Room code"
               class="grow"
               :maxlength="6"
+              :required="true"
               oninput="this.value = this.value.toUpperCase()"
             />
           </label>
@@ -67,12 +71,13 @@ function joinRoom() {
               placeholder="Username"
               class="grow"
               :maxlength="32"
+              :required="true"
             />
           </label>
           <span class="mt-8 flex justify-center">
-            <span class="btn btn-primary w-full px-8" @click="joinRoom">Join</span>
+            <input type="submit" class="btn btn-primary w-full px-8" value="Join" />
           </span>
-        </div>
+        </form>
       </div>
     </div>
   </div>

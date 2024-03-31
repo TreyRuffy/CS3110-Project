@@ -5,6 +5,24 @@ const closeDropdown = () => {
     dropdown.value.hidden = true
   }
 }
+
+const roomCode = ref<string | null>(null)
+const username = ref<string | null>(null)
+
+function joinRoom() {
+  if (!roomCode.value) {
+    alert('Please enter a room code')
+    return
+  }
+  if (!username.value) {
+    alert('Please enter a username')
+    return
+  }
+  // TODO join room logic
+  console.log('Room code: ' + roomCode.value + '\nUsername: ' + username.value)
+  roomCode.value = null
+  username.value = null
+}
 </script>
 
 <template>
@@ -118,7 +136,7 @@ const closeDropdown = () => {
           <button class="btn btn-circle btn-ghost btn-md absolute right-2 top-2">✕</button>
         </form>
         <h3 class="bottom-2 text-lg font-bold">Join Room</h3>
-        <form method="dialog" class="mt-2">
+        <form method="dialog" class="mt-2" @submit="joinRoom()">
           <label class="form-control w-full">
             <label for="room-code" class="input input-bordered mt-2 flex items-center gap-2">
               <svg
@@ -136,10 +154,12 @@ const closeDropdown = () => {
 
               <input
                 id="room-code"
+                v-model="roomCode"
                 type="text"
                 placeholder="Room code"
                 class="grow"
                 :maxlength="6"
+                :required="true"
                 oninput="this.value = this.value.toUpperCase()"
               />
             </label>
@@ -158,15 +178,17 @@ const closeDropdown = () => {
 
               <input
                 id="username"
+                v-model="username"
                 type="text"
                 placeholder="Username"
                 class="grow"
                 :maxlength="32"
+                :required="true"
               />
             </label>
 
             <span class="mt-4 flex justify-center">
-              <span class="btn btn-primary w-full px-8">Join</span>
+              <input type="submit" class="btn btn-primary w-full px-8" value="Join" />
             </span>
           </label>
         </form>
