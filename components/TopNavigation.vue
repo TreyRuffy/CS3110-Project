@@ -23,6 +23,22 @@ function joinRoom() {
   roomCode.value = null
   username.value = null
 }
+
+const closeModal = () => {
+  const modal = document.getElementById('join_room_modal') as HTMLDialogElement
+  if (modal) {
+    modal.close()
+  }
+}
+
+const el = ref(null)
+useSwipe(el, {
+  onSwipeEnd(_, direction) {
+    if (direction === 'down') {
+      closeModal()
+    }
+  },
+})
 </script>
 
 <template>
@@ -131,7 +147,7 @@ function joinRoom() {
       </div>
     </div>
     <dialog id="join_room_modal" class="modal modal-bottom sm:modal-middle">
-      <div class="modal-box">
+      <div ref="el" class="modal-box">
         <form method="dialog">
           <button class="btn btn-circle btn-ghost btn-md absolute right-2 top-2">✕</button>
         </form>
