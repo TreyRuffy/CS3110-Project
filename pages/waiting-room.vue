@@ -1,4 +1,12 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const socketStore = useSocketStore()
+const socket = computed({
+  get: () => socketStore.socket,
+  set: (value) => {
+    socketStore.socket = value
+  },
+})
+</script>
 
 <template>
   <div>
@@ -19,6 +27,12 @@
         'Kelly',
       ]"
     />
+    <button
+      class="btn btn-error m-2"
+      @click="socket && socket.emit('all-dark', useColorMode().preference !== 'dark')"
+    >
+      All Dark
+    </button>
   </div>
 </template>
 

@@ -44,6 +44,8 @@
   },
   "dependencies": {
     "@nuxt/image": "^1.4.0",
+    "@pinia/nuxt": "^0.5.1",
+    "pinia": "^2.1.7",
     "socket.io": "^4.7.5",
     "socket.io-client": "^4.7.5",
     "swiper": "^11.1.0"

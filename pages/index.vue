@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { register } from 'swiper/element/bundle'
-import { io, type Socket } from 'socket.io-client'
-import type { DefaultEventsMap } from '@socket.io/component-emitter'
 import { CountriesBuilder, createQuestions } from '~/utils/countries'
 
 register()
@@ -11,14 +9,6 @@ definePageMeta({
   description: 'Home Page - CS3110 Project',
 })
 
-const socket = ref(null as null | Socket<DefaultEventsMap, DefaultEventsMap>)
-
-function connectSocket() {
-  if (socket.value === null) {
-    socket.value = io()
-  }
-}
-
 const connected = ref(false)
 const response = ref([''])
 const svgImage = ref('')
@@ -27,6 +17,14 @@ const answerList = ref([''])
 const score = ref(0)
 let client = false
 let correctClientAnswer = ''
+
+const socketStore = useSocketStore()
+const socket = computed({
+  get: () => socketStore.socket,
+  set: (value) => {
+    socketStore.socket = value
+  },
+})
 
 watch(socket, () => {
   if (socket.value === null) {
@@ -135,19 +133,17 @@ function answerQuestion(answer: number) {
       </select>
     </div>
     <div>Connected?: {{ connected }}</div>
-    <button class="btn btn-primary m-2" @click="connectSocket()">Connect</button>
-    <button
-      class="btn btn-success m-2"
-      @click="socket !== null && socket.emit('hello', 'Hello World')"
-    >
+    <button class="btn btn-primary m-2" @click="socketStore.connect()">Connect</button>
+    <button class="btn btn-success m-2" @click="socket && socket.emit('hello', 'Hello World')">
       Hello World
     </button>
     <button
       class="btn btn-error m-2"
-      @click="socket !== null && socket.emit('all-dark', useColorMode().preference !== 'dark')"
+      @click="socket && socket.emit('all-dark', useColorMode().preference !== 'dark')"
     >
       All Dark
     </button>
+    <NuxtLink href="/waiting-room" class="btn btn-primary m-2"> Waiting Room </NuxtLink>
     <br />
     <input
       v-model="username"
@@ -158,7 +154,7 @@ function answerQuestion(answer: number) {
     <button class="btn btn-primary m-2" @click="setUsername()">Set username</button>
     <br />
     <button
-      v-if="socket !== null"
+      v-if="socket"
       class="btn btn-warning m-2"
       :disabled="disableButton"
       @click="generateQuestion()"

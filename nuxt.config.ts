@@ -21,6 +21,7 @@ export default defineNuxtConfig({
     'nuxt-viewport',
     '@vueuse/nuxt',
     'nuxt-simple-robots',
+    '@pinia/nuxt',
   ],
   experimental: {
     payloadExtraction: false,
