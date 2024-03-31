@@ -4,19 +4,33 @@ const { roomCode: roomCodeParam, username: usernameParam } = route.query
 const roomCode = ref(roomCodeParam)
 const username = ref(usernameParam)
 
+const roomCodeInput = ref<HTMLInputElement | null>(null)
+const usernameInput = ref<HTMLInputElement | null>(null)
+const inputError = ref<string | null>(null)
+
 function joinRoom() {
+  inputError.value = null
   if (!roomCode.value) {
-    alert('Please enter a room code')
-    return
+    roomCodeInput.value?.classList.add('input-error')
+    inputError.value = 'Please enter a room code'
   }
   if (!username.value) {
-    alert('Please enter a username')
+    usernameInput.value?.classList.add('input-error')
+    if (inputError.value) {
+      inputError.value += ' and a username'
+    } else {
+      inputError.value = 'Please enter a username'
+    }
+  }
+  if (!roomCode.value || !username.value) {
     return
   }
   // TODO join room logic
   console.log('Room code: ' + roomCode.value + '\nUsername: ' + username.value)
   roomCode.value = null
   username.value = null
+  usernameInput.value?.classList.remove('input-error')
+  roomCodeInput.value?.classList.remove('input-error')
 }
 </script>
 
@@ -26,7 +40,11 @@ function joinRoom() {
       <div class="card mx-auto w-full max-w-2xl lg:shadow-xl">
         <form class="px-10 py-10" method="dialog" @submit="joinRoom()">
           <h2 class="mb-4 text-center text-2xl font-semibold">Join Room</h2>
-          <label for="room-code" class="input input-bordered mt-6 flex items-center gap-2">
+          <label
+            ref="roomCodeInput"
+            for="room-code"
+            class="input input-bordered mt-6 flex items-center gap-2"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"
@@ -47,12 +65,15 @@ function joinRoom() {
               placeholder="Room code"
               class="grow"
               :maxlength="6"
-              :required="true"
               oninput="this.value = this.value.toUpperCase()"
             />
           </label>
 
-          <label for="username" class="input input-bordered mt-2 flex items-center gap-2">
+          <label
+            ref="usernameInput"
+            for="username"
+            class="input input-bordered mt-2 flex items-center gap-2"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"
@@ -71,10 +92,12 @@ function joinRoom() {
               placeholder="Username"
               class="grow"
               :maxlength="32"
-              :required="true"
             />
           </label>
-          <span class="mt-8 flex justify-center">
+          <p v-if="inputError !== null" class="mt-4 justify-center text-center text-red-600">
+            {{ inputError }}
+          </p>
+          <span class="flex justify-center" :class="inputError !== null ? 'mt-4' : 'mt-8'">
             <input type="submit" class="btn btn-primary w-full px-8" value="Join" />
           </span>
         </form>
