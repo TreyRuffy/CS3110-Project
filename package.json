@@ -20,6 +20,7 @@
     "@nuxtjs/color-mode": "^3.3.3",
     "@nuxtjs/tailwindcss": "^6.11.4",
     "@tailwindcss/typography": "^0.5.12",
+    "@types/eslint": "^8.56.6",
     "@types/node": "^20.12.2",
     "@vueuse/core": "^10.9.0",
     "@vueuse/nuxt": "^10.9.0",
@@ -32,7 +33,9 @@
     "nuxt-viewport": "^2.1.4",
     "prettier": "^3.2.5",
     "prettier-plugin-tailwindcss": "^0.5.13",
+    "tailwindcss": "^3.4.3",
     "typescript": "^5.4.3",
+    "vite-plugin-eslint2": "^4.4.0",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0",
     "vue-tsc": "^1.8.27"

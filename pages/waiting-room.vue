@@ -3,6 +3,7 @@
 <template>
   <div>
     <h1>Waiting Room</h1>
+    <div>Room Code: 123456</div>
     <RoomCode room-code="123456" />
     <PlayerList
       :players="[
