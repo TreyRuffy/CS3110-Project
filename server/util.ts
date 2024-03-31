@@ -1,4 +1,4 @@
-import { generateJoinCode } from './room-manager'
+import { type codeLength, generateJoinCode } from './room-manager'
 
 export type UUID = `${string}-${string}-${string}-${string}-${string}`
 
@@ -157,12 +157,12 @@ export class Game {
 export class Room {
   _uuid: UUID = crypto.randomUUID()
   _creationDate: Date = new Date()
-  _joinCode
+  _joinCode: `${string & { length: typeof codeLength }}`
   _host: Client
   _players: Client[] = []
   _currentGame: Game | null = null
 
-  constructor(host: Client, joinCode?: string) {
+  constructor(host: Client, joinCode?: `${string & { length: typeof codeLength }}`) {
     this._host = host
     this._joinCode = joinCode || generateJoinCode()
   }

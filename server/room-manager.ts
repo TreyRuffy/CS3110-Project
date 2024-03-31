@@ -1,23 +1,29 @@
 import { type Client, Room } from '~/server/util'
 
-const rooms: Room[] = []
+const characters = 'ABCDEFGHJKMNPQRSTUVWXYZ123456789'
+export const codeLength = 1
+export type JoinCode = `${string & { length: typeof codeLength }}`
 
-export function generateJoinCode() {
-  const characters = 'ABCDEFGHJKMNPQRSTUVWXYZ123456789'
+const rooms = new Map<JoinCode, Room>()
+
+export function generateJoinCode(): JoinCode {
   let code = ''
+  let retries = 10
 
   do {
-    for (let i = 0; i < 6; i++) {
+    code = ''
+    for (let i = 0; i < codeLength; i++) {
       code += characters.charAt(Math.floor(Math.random() * characters.length))
     }
-  } while (rooms.some((room) => room._joinCode === code))
+  } while (rooms.has(<JoinCode>code) && retries-- > 0)
+  // TODO add real denial of service protection
 
-  return code
+  return <JoinCode>code
 }
 
 export function createRoom(client: Client) {
   const room = new Room(client)
-  rooms.push(room)
+  rooms.set(room.joinCode, room)
   return room
 }
 

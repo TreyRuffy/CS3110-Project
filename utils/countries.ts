@@ -90,6 +90,13 @@ let restcountries: Country[] = []
 async function getCountries() {
   if (restcountries.length === 0) {
     restcountries = (await ofetch('https://restcountries.com/v3.1/all')) as Country[]
+    restcountries.find((c) => {
+      // use https://flagpedia.net for all countries
+      if (c.name.common === 'Afghanistan') {
+        c.flags.svg = 'https://flagcdn.com/af.svg'
+        c.flags.png = 'https://flagcdn.com/w320/af.png'
+      }
+    })
   }
   return restcountries
 }
