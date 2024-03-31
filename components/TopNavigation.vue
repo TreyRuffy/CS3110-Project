@@ -56,7 +56,7 @@ const closeDropdown = () => {
       </div>
       <div class="navbar-center hidden lg:flex">
         <div class="dropdown dropdown-hover">
-          <div tabindex="0" role="button" class="btn m-1">
+          <div tabindex="0" role="button" class="btn m-1 shadow">
             Room
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -165,7 +165,7 @@ const closeDropdown = () => {
               />
             </label>
 
-            <span class="mt-10 flex justify-center">
+            <span class="mt-4 flex justify-center">
               <span class="btn btn-primary w-full px-8">Join</span>
             </span>
           </label>

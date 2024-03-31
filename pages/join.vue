@@ -23,7 +23,7 @@ function joinRoom() {
       <div class="card mx-auto w-full max-w-2xl lg:shadow-xl">
         <div class="px-10 py-10">
           <h2 class="mb-4 text-center text-2xl font-semibold">Join Room</h2>
-          <label for="room-code" class="input input-bordered mt-2 flex items-center gap-2">
+          <label for="room-code" class="input input-bordered mt-6 flex items-center gap-2">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"
@@ -69,7 +69,7 @@ function joinRoom() {
               :maxlength="32"
             />
           </label>
-          <span class="mt-10 flex justify-center">
+          <span class="mt-8 flex justify-center">
             <span class="btn btn-primary w-full px-8" @click="joinRoom">Join</span>
           </span>
         </div>
