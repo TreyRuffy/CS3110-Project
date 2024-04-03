@@ -76,15 +76,6 @@ const username = ref('')
 //   client = false
 // }
 
-function shuffle<T>(array: T[]) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[array[i], array[j]] = [array[j], array[i]]
-  }
-
-  return array
-}
-
 function generateClientQuestion() {
   disableButton.value = true
   const countries = new CountriesBuilder()
@@ -95,8 +86,8 @@ function generateClientQuestion() {
       svgImage.value = q.image
     }
     disableButton.value = false
-    answerList.value = shuffle(q.answers.flat())
-    correctClientAnswer = q.answers[0]
+    answerList.value = q.shuffledAnswers()
+    correctClientAnswer = q.correctAnswer()
   })
   client = true
 }

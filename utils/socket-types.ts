@@ -1,5 +1,12 @@
+import type { RoomSettings } from '~/utils/utils'
+
+export type UUID = `${string}-${string}-${string}-${string}-${string}`
+
 export interface ServerToClientEvents {
-  'successful-connection': (uuid: string) => void
+  'successful-connection': (uuid: UUID) => void
+
+  'reauthenticate-error': (errorMessage: string) => void
+  'reauthenticate-success': () => void
 
   'username-error': (
     errorType: 'username-taken' | 'username-length' | 'username-invalid',
@@ -13,11 +20,14 @@ export interface ServerToClientEvents {
   ) => void
   'room-joined': (roomCode: string) => void
   'room-created': (roomCode: string) => void
-  'room-player-update': (roomCode: string, players: [uuid: string, username: string][]) => void
+  'room-player-update': (roomCode: string, players: [uuid: UUID, username: string][]) => void
   'update-room-settings': (settings: Record<string, unknown>) => void
 
-  'player-kicked': (uuid: string) => void
+  'player-kicked': (uuid: UUID) => void
   'self-kicked': () => void
+
+  'player-banned': (uuid: UUID) => void
+  'self-banned': () => void
 
   'game-starting': (timer: number) => void
   'game-started': (questionCount: number) => void
@@ -28,21 +38,23 @@ export interface ServerToClientEvents {
   'question-answered-correct': (score: number) => void
   'question-answered-incorrect': (score: number) => void
 
-  leaderboard: (leaderboard: [uuid: string, username: string, score: number][]) => void
+  leaderboard: (leaderboard: [uuid: UUID, username: string, score: number][]) => void
 
   'invalid-action': (message: string) => void
 }
 
 export interface ClientToServerEvents {
-  reauthenticate: (uuid: string, username: string) => void
+  reauthenticate: (uuid: UUID) => void
+
   'select-username': (username: string) => void
 
   'join-room': (roomCode: string) => void
   'create-room': () => void
   'leave-room': () => void
 
-  'host-update-room-settings': (settings: Record<string, unknown>) => void
-  'host-kick-player': (uuid: string) => void
+  'host-update-room-settings': (settings: Partial<RoomSettings>) => void
+  'host-kick-player': (uuid: UUID) => void
+  'host-ban-player': (uuid: UUID) => void
   'host-start-game': (timer?: number) => void
   'host-next-question': () => void
 

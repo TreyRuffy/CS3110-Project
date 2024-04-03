@@ -1,11 +1,12 @@
 import { createRoom } from '~/server/room-manager'
 import { Client, Game } from '~/server/util'
 import { CountriesBuilder, createQuestions } from '~/utils/countries'
+import { Socket } from 'socket.io'
 
 export default defineEventHandler((event) => {
   const query = getQuery(event)
   console.log('Creating room with query:', query)
-  const room = createRoom(new Client('Username'))
+  /*const room = createRoom(new Client('Username'))
   const countryBuilder = new CountriesBuilder()
   if (query.region) {
     switch (query.region) {
@@ -44,5 +45,5 @@ export default defineEventHandler((event) => {
   return {
     joinCode: room.joinCode,
     roomUuid: room.uuid,
-  }
+  }*/
 })

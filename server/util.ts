@@ -1,22 +1,9 @@
 import { type codeLength, generateJoinCode } from './room-manager'
-
-export type UUID = `${string}-${string}-${string}-${string}-${string}`
-
-export function shuffle<T>(array: T[]) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[array[i], array[j]] = [array[j], array[i]]
-  }
-
-  return array
-}
-
-export interface Question {
-  question: string
-  answers: [correct: string, wrong: string[]]
-  image?: string
-  questionLength?: number
-}
+import type { ServerToClientEvents } from '~/utils/socket-types'
+import { type UUID } from '~/utils/socket-types'
+import type { Socket } from 'socket.io'
+import type { Question } from '~/utils/utils'
+import { RoomSettings } from '~/utils/utils'
 
 export class Client {
   _username
@@ -24,11 +11,13 @@ export class Client {
   readonly _creationDate = new Date()
   _lastPacket = new Date()
   _gamesPlayed: UUID[] = []
+  _socket: Socket
 
-  constructor(username: string)
-  constructor(username: string, uuid?: UUID) {
+  constructor(socket: Socket, username: string)
+  constructor(socket: Socket, username: string, uuid?: UUID) {
     this._username = username
     this._uuid = uuid || this._uuid
+    this._socket = socket
   }
 
   get uuid() {
@@ -61,6 +50,10 @@ export class Client {
 
   addGame(gameUuid: UUID) {
     this._gamesPlayed.push(gameUuid)
+  }
+
+  get socket() {
+    return this._socket
   }
 }
 
@@ -161,6 +154,7 @@ export class Room {
   _host: Client
   _players: Client[] = []
   _currentGame: Game | null = null
+  _settings: RoomSettings = new RoomSettings()
 
   constructor(host: Client, joinCode?: `${string & { length: typeof codeLength }}`) {
     this._host = host
@@ -189,5 +183,34 @@ export class Room {
 
   removePlayer(player: Client) {
     this._players = this._players.filter((p) => p !== player)
+  }
+
+  get host() {
+    return this._host
+  }
+
+  get currentGame() {
+    return this._currentGame
+  }
+
+  set currentGame(game: Game | null) {
+    this._currentGame = game
+  }
+
+  get settings() {
+    return this._settings
+  }
+
+  changeSettings(settings: Partial<RoomSettings>) {
+    Object.assign(this._settings, settings)
+  }
+
+  broadcast<T extends keyof ServerToClientEvents>(
+    event: T,
+    ...args: Parameters<ServerToClientEvents[T]>
+  ) {
+    for (const player of this._players) {
+      player.socket.emit(event, ...args)
+    }
   }
 }

@@ -1,8 +1,10 @@
 import type { Server } from 'http'
 import { Server as SocketServer } from 'socket.io'
 // import { CountriesBuilder, createQuestions } from '~/utils/countries'
-import { Client, type UUID } from '../util'
-import type { ClientToServerEvents, ServerToClientEvents } from '~/utils/socket-types'
+import { Client } from '../util'
+import type { ClientToServerEvents, ServerToClientEvents, UUID } from '~/utils/socket-types'
+import type { JoinCode } from '~/server/room-manager'
+import { codeLength, getAllRooms } from '~/server/room-manager'
 
 const clients: Map<UUID, Client> = new Map()
 
@@ -12,8 +14,21 @@ export default defineEventHandler((event) => {
   const io = new SocketServer<ClientToServerEvents, ServerToClientEvents>(httpServer)
 
   io.on('connection', (socket) => {
-    const client = new Client(socket.id)
+    let client = new Client(socket, socket.id)
     clients.set(client.uuid, client)
+    socket.emit('successful-connection', client.uuid)
+
+    socket.on('reauthenticate', (uuid: UUID) => {
+      const oldClient = clients.get(uuid)
+      if (!oldClient) {
+        socket.emit('reauthenticate-error', 'Client data not found')
+        return
+      }
+      clients.delete(client.uuid)
+      client = oldClient
+      client.lastPacket = new Date()
+      socket.emit('reauthenticate-success')
+    })
 
     /**
      * Select a username for the client.
@@ -47,60 +62,28 @@ export default defineEventHandler((event) => {
       socket.emit('username-accepted', username)
     })
 
-    //   socket.on('hello', (arg) => {
-    //     io.emit('hello-response', client.username, arg, Date())
-    //   })
-    //
-    //   socket.on('all-dark', (arg) => {
-    //     io.emit('dark', arg === true)
-    //   })
-    //
-    //   socket.on('reauth', (uuid: UUID, username: string) => {
-    //     // TODO - add more authentication logic before allowing re-authentication
-    //     // JWTs? OAuth?
-    //
-    //     const client = clients.get(uuid)
-    //     if (client && client.username === username) {
-    //       client.lastPacket = new Date()
-    //     }
-    //   })
-    //
-    //   socket.on('new-username', (username: string) => {
-    //     client.username = username
-    //   })
-    //
-    //   let lastCorrectQuestion = ''
-    //   socket.on('generate-question', () => {
-    //     const countries = new CountriesBuilder()
-    //     countries.all()
-    //     countries.build().then((countries) => {
-    //       const question = createQuestions(countries, 1)[0]
-    //       socket.emit('question', {
-    //         question: question.question,
-    //         answers: shuffle(question.answers.flat()) as string[],
-    //         image: question.image,
-    //       })
-    //       lastCorrectQuestion = question.answers[0]
-    //     })
-    //   })
-    //
-    //   let score = 0
-    //   socket.on('answer', (answer: string) => {
-    //     if (answer === lastCorrectQuestion) {
-    //       socket.emit('score', ++score)
-    //       const countries = new CountriesBuilder().all()
-    //       countries.build().then((countries) => {
-    //         const question = createQuestions(countries, 1)[0]
-    //         socket.emit('question', {
-    //           question: question.question,
-    //           answers: shuffle(question.answers.flat()),
-    //           image: question.image,
-    //         })
-    //         lastCorrectQuestion = question.answers[0]
-    //       })
-    //     } else {
-    //       socket.emit('wrong-answer', answer)
-    //     }
-    //   })
+    socket.on('join-room', (roomCode: string) => {
+      if (roomCode.length !== codeLength) {
+        socket.emit('room-error', 'room-code-invalid', 'Room code must be 6 characters')
+      }
+      const room = getAllRooms().get(<JoinCode>roomCode)
+      if (!room) {
+        socket.emit('room-error', 'room-not-found', 'Room not found')
+        return
+      }
+      if (room.players.length >= room.settings.maxPlayers) {
+        socket.emit('room-error', 'room-full', 'Room is full')
+        return
+      }
+      room.addPlayer(client)
+      socket.emit('room-joined', roomCode)
+      room.broadcast(
+        'room-player-update',
+        room.joinCode,
+        room.players.map((p) => [p.uuid, p.username]),
+      )
+    })
+
+    socket.on('create-room', () => {})
   })
 })
