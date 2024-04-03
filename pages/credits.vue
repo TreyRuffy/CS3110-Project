@@ -36,6 +36,12 @@
             <NuxtLink href="https://vuejs.org/" target="_blank"> Vue </NuxtLink>
           </li>
           <li>
+            <NuxtLink href="https://pinia.vuejs.org/" target="_blank"> Pinia </NuxtLink>
+          </li>
+          <li>
+            <NuxtLink href="https://vueuse.org/" target="_blank"> VueUse </NuxtLink>
+          </li>
+          <li>
             <NuxtLink href="https://vitejs.dev/" target="_blank"> Vite </NuxtLink>
           </li>
           <li>
