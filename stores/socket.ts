@@ -1,9 +1,9 @@
 import { defineStore } from 'pinia'
 import { io, type Socket } from 'socket.io-client'
-import type { DefaultEventsMap } from '@socket.io/component-emitter'
+import type { ClientToServerEvents, ServerToClientEvents } from '~/utils/socket-types'
 
 export const useSocketStore = defineStore('socket', () => {
-  const socket = ref<null | Socket<DefaultEventsMap, DefaultEventsMap>>(null)
+  const socket = ref<null | Socket<ServerToClientEvents, ClientToServerEvents>>(null)
   function connect() {
     socket.value = io()
   }

@@ -27,12 +27,12 @@ const socket = computed({
         'Kelly',
       ]"
     />
-    <button
+    <!-- <button
       class="btn btn-error m-2"
       @click="socket && socket.emit('all-dark', useColorMode().preference !== 'dark')"
     >
       All Dark
-    </button>
+    </button> -->
   </div>
 </template>
 

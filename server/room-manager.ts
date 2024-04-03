@@ -1,7 +1,7 @@
 import { type Client, Room } from '~/server/util'
 
 const characters = 'ABCDEFGHJKMNPQRSTUVWXYZ123456789'
-export const codeLength = 1
+export const codeLength = 6
 export type JoinCode = `${string & { length: typeof codeLength }}`
 
 const rooms = new Map<JoinCode, Room>()

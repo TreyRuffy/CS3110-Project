@@ -36,45 +36,45 @@ watch(socket, () => {
   socket.value.on('disconnect', () => {
     connected.value = socket.value === null || socket.value.connected
   })
-  socket.value.on('hello-response', (id: string, data: string, time: string) => {
-    response.value.push(id + ' [' + time + ']: ' + data)
-  })
-  socket.value.on('dark', (data: boolean) => {
-    useColorMode().preference = data ? 'dark' : 'light'
-  })
-  socket.value.on('question', ({ answers, image }) => {
-    // response.value.push(question + ' [' + answers + ']')
-    if (image) {
-      svgImage.value = image
-    }
-    disableButton.value = false
-    answerList.value = answers
-    client = false
-  })
-  socket.value.on('score', (_score: number) => {
-    score.value = _score
-  })
-  socket.value.on('wrong-answer', (data: string) => {
-    response.value.push('Wrong answer: ' + data)
-  })
+  // socket.value.on('hello-response', (id: string, data: string, time: string) => {
+  //   response.value.push(id + ' [' + time + ']: ' + data)
+  // })
+  // socket.value.on('dark', (data: boolean) => {
+  //   useColorMode().preference = data ? 'dark' : 'light'
+  // })
+  // socket.value.on('question', ({ answers, image }) => {
+  //   // response.value.push(question + ' [' + answers + ']')
+  //   if (image) {
+  //     svgImage.value = image
+  //   }
+  //   disableButton.value = false
+  //   answerList.value = answers
+  //   client = false
+  // })
+  // socket.value.on('score', (_score: number) => {
+  //   score.value = _score
+  // })
+  // socket.value.on('wrong-answer', (data: string) => {
+  //   response.value.push('Wrong answer: ' + data)
+  // })
 })
 
 const username = ref('')
-function setUsername() {
-  if (socket.value !== null && username && username.value !== '') {
-    socket.value.emit('new-username', username.value)
-  }
-  username.value = ''
-}
+// function setUsername() {
+//   if (socket.value !== null && username && username.value !== '') {
+//     socket.value.emit('new-username', username.value)
+//   }
+//   username.value = ''
+// }
 
-function generateQuestion() {
-  if (socket.value === null) {
-    return
-  }
-  disableButton.value = true
-  socket.value.emit('generate-question')
-  client = false
-}
+// function generateQuestion() {
+//   if (socket.value === null) {
+//     return
+//   }
+//   disableButton.value = true
+//   socket.value.emit('generate-question')
+//   client = false
+// }
 
 function shuffle<T>(array: T[]) {
   for (let i = array.length - 1; i > 0; i--) {
@@ -110,7 +110,7 @@ function answerQuestion(answer: number) {
       response.value.push('Wrong answer: ' + answerList.value[answer - 1])
     }
   } else {
-    socket.value.emit('answer', answerList.value[answer - 1])
+    // socket.value.emit('answer', answerList.value[answer - 1])
   }
 }
 </script>
@@ -134,15 +134,15 @@ function answerQuestion(answer: number) {
     </div>
     <div>Connected?: {{ connected }}</div>
     <button class="btn btn-primary m-2" @click="socketStore.connect()">Connect</button>
-    <button class="btn btn-success m-2" @click="socket && socket.emit('hello', 'Hello World')">
+    <!--    <button class="btn btn-success m-2" @click="socket && socket.emit('hello', 'Hello World')">
       Hello World
-    </button>
-    <button
+    </button>-->
+    <!--    <button
       class="btn btn-error m-2"
       @click="socket && socket.emit('all-dark', useColorMode().preference !== 'dark')"
     >
       All Dark
-    </button>
+    </button>-->
     <NuxtLink href="/waiting-room" class="btn btn-primary m-2"> Waiting Room </NuxtLink>
     <br />
     <input
@@ -151,7 +151,7 @@ function answerQuestion(answer: number) {
       placeholder="Set new username"
       class="input input-bordered w-full max-w-xs"
     />
-    <button class="btn btn-primary m-2" @click="setUsername()">Set username</button>
+    <!--    <button class="btn btn-primary m-2" @click="setUsername()">Set username</button>
     <br />
     <button
       v-if="socket"
@@ -160,7 +160,7 @@ function answerQuestion(answer: number) {
       @click="generateQuestion()"
     >
       Generate Question
-    </button>
+    </button>-->
     <button class="btn btn-warning m-2" :disabled="disableButton" @click="generateClientQuestion()">
       Generate Client-Side Question
     </button>
