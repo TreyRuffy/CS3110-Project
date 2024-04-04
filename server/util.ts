@@ -6,12 +6,12 @@ import type { Question } from '~/utils/utils'
 import { RoomSettings } from '~/utils/utils'
 
 export class Client {
-  _username
-  _uuid: UUID = crypto.randomUUID()
-  readonly _creationDate = new Date()
-  _lastPacket = new Date()
-  _gamesPlayed: UUID[] = []
-  _socket: Socket
+  private _username
+  private readonly _uuid: UUID = crypto.randomUUID()
+  private readonly _creationDate = new Date()
+  private _lastPacket = new Date()
+  private _gamesPlayed: UUID[] = []
+  private _socket: Socket
 
   constructor(socket: Socket, username: string)
   constructor(socket: Socket, username: string, uuid?: UUID) {
@@ -55,11 +55,15 @@ export class Client {
   get socket() {
     return this._socket
   }
+
+  set socket(socket: Socket) {
+    this._socket = socket
+  }
 }
 
 export class GameClient {
-  _client: Client
-  _score = 0
+  private readonly _client: Client
+  private _score = 0
 
   constructor(client: Client) {
     this._client = client
@@ -87,12 +91,12 @@ export class GameClient {
 }
 
 export class Game {
-  _uuid: UUID = crypto.randomUUID()
-  _creationDate: Date = new Date()
-  _questions: Question[] = []
-  _currentQuestion = 0
-  _rankings: GameClient[] = []
-  _gameEnd: Date = new Date(0)
+  private _uuid: UUID = crypto.randomUUID()
+  private _creationDate: Date = new Date()
+  private readonly _questions: Question[] = []
+  private _currentQuestion = 0
+  private _rankings: GameClient[] = []
+  private _gameEnd: Date = new Date(0)
 
   constructor(questions: Question[]) {
     this._questions = questions
@@ -148,13 +152,13 @@ export class Game {
 }
 
 export class Room {
-  _uuid: UUID = crypto.randomUUID()
-  _creationDate: Date = new Date()
-  _joinCode: `${string & { length: typeof codeLength }}`
-  _host: Client
-  _players: Client[] = []
-  _currentGame: Game | null = null
-  _settings: RoomSettings = new RoomSettings()
+  private _uuid: UUID = crypto.randomUUID()
+  private _creationDate: Date = new Date()
+  private readonly _joinCode: `${string & { length: typeof codeLength }}`
+  private _host: Client
+  private _players: Client[] = []
+  private _currentGame: Game | null = null
+  private _settings: RoomSettings = new RoomSettings()
 
   constructor(host: Client, joinCode?: `${string & { length: typeof codeLength }}`) {
     this._host = host
@@ -187,6 +191,10 @@ export class Room {
 
   get host() {
     return this._host
+  }
+
+  set host(host: Client) {
+    this._host = host
   }
 
   get currentGame() {

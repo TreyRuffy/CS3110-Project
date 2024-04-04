@@ -1,4 +1,5 @@
 import { ofetch } from 'ofetch'
+import type { Answer } from '~/utils/utils'
 import { addQuiz, GenerativeQuiz } from '~/utils/utils'
 
 interface Country {
@@ -102,19 +103,27 @@ async function getCountries() {
   return restcountries
 }
 
-export type Filters =
-  | 'world'
-  | 'africa'
-  | 'americas'
-  | 'asia'
-  | 'europe'
-  | 'oceania'
-  | 'canada'
-  | 'japan'
-  | 'usa'
+export const filters = [
+  'world',
+  'africa',
+  'americas',
+  'asia',
+  'europe',
+  'oceania',
+  'canada',
+  'japan',
+  'usa',
+] as const
 
-export function createQuiz(filter: Filters) {
-  let countryBuilder = null
+export async function createQuizzes() {
+  if (filters.every((f) => getQuiz(f) != undefined)) {
+    return
+  }
+  return Promise.all(filters.map((f) => createQuiz(f)))
+}
+
+export async function createQuiz(filter: (typeof filters)[number]) {
+  let countryBuilder: CountriesBuilder | null = null
   switch (filter) {
     case 'world':
       countryBuilder = new CountriesBuilder().all()
@@ -134,6 +143,7 @@ export function createQuiz(filter: Filters) {
     case 'oceania':
       countryBuilder = new CountriesBuilder().filterByRegion('Oceania')
       break
+    // TODO fix canada, japan, usa
     case 'canada':
       countryBuilder = new CountriesBuilder().filterByCountry('Canada')
       break
@@ -141,19 +151,31 @@ export function createQuiz(filter: Filters) {
       countryBuilder = new CountriesBuilder().filterByCountry('Japan')
       break
     case 'usa':
-      countryBuilder = new CountriesBuilder().filterByCountry('United States')
+      countryBuilder = new CountriesBuilder()
+        .filterByCountry('United States')
+        .filterByCountry('Japan')
+        .filterByCountry('Canada')
+        .filterByCountry('Mexico')
       break
     default:
       throw new Error('Invalid filter')
   }
-  getCountries().then((countries) => {
-    const answers = countries.map((c) => ({
+  return getCountries().then((countries) => {
+    if (countryBuilder === null) {
+      return
+    }
+    const answers: Answer[] = countries.map((c) => ({
       question: 'What is the name of this country?',
       answer: c.name.common,
       image: c.flags.svg,
     }))
-    const quiz = new GenerativeQuiz(answers)
-    addQuiz(filter, quiz)
+    const quizFilter = (answers: Answer[]) => {
+      return answers.filter((a) =>
+        countryBuilder.build(countries).some((c) => c.name.common === a.answer),
+      )
+    }
+    const quiz = new GenerativeQuiz(answers, quizFilter)
+    return addQuiz(filter, quiz)
   })
 }
 

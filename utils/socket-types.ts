@@ -15,11 +15,12 @@ export interface ServerToClientEvents {
   'username-accepted': (username: string) => void
 
   'room-error': (
-    errorType: 'room-not-found' | 'room-full' | 'room-code-invalid',
+    errorType: 'room-not-found' | 'room-full' | 'room-code-invalid' | 'not-in-room',
     errorMessage: string,
   ) => void
   'room-joined': (roomCode: string) => void
   'room-created': (roomCode: string) => void
+  'room-left': () => void
   'room-player-update': (roomCode: string, players: [uuid: UUID, username: string][]) => void
   'update-room-settings': (settings: Record<string, unknown>) => void
 
@@ -32,6 +33,10 @@ export interface ServerToClientEvents {
   'game-starting': (timer: number) => void
   'game-started': (questionCount: number) => void
   'game-ended': () => void
+  'game-error': (
+    errorType: 'game-not-started' | 'game-already-started',
+    errorMessage: string,
+  ) => void
 
   question: (questionNumber: number, question: string, answers: string[], image: string) => void
   'question-answered': () => void
@@ -41,6 +46,8 @@ export interface ServerToClientEvents {
   leaderboard: (leaderboard: [uuid: UUID, username: string, score: number][]) => void
 
   'invalid-action': (message: string) => void
+
+  'receive-chat-message': (username: string, message: string) => void
 }
 
 export interface ClientToServerEvents {
@@ -59,4 +66,6 @@ export interface ClientToServerEvents {
   'host-next-question': () => void
 
   'answer-question': (answer: string) => void
+
+  'send-chat-message': (message: string) => void
 }

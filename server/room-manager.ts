@@ -24,6 +24,7 @@ export function generateJoinCode(): JoinCode {
 export function createRoom(client: Client) {
   const room = new Room(client)
   rooms.set(room.joinCode, room)
+  room.addPlayer(client)
   return room
 }
 

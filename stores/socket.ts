@@ -5,7 +5,9 @@ import type { ClientToServerEvents, ServerToClientEvents } from '~/utils/socket-
 export const useSocketStore = defineStore('socket', () => {
   const socket = ref<null | Socket<ServerToClientEvents, ClientToServerEvents>>(null)
   function connect() {
-    socket.value = io()
+    if (!socket.value) {
+      socket.value = io()
+    }
   }
   function disconnect() {
     if (socket.value) {

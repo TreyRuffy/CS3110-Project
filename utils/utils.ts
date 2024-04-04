@@ -2,6 +2,7 @@ const quizzes = new Map<string, Quiz>()
 
 export class RoomSettings {
   maxPlayers = 100
+  startTimer = 3000
   questionCount = 10
   questionTimer = 30000
   questionPoints = 1000
@@ -78,9 +79,7 @@ export class Question {
   }
 }
 
-export interface QuizOptions {
-  questionCount: number
-}
+export interface QuizOptions {}
 
 export class Quiz {
   protected _questions: Question[]
@@ -88,9 +87,7 @@ export class Quiz {
 
   constructor(questions: Question[], quizOptions?: QuizOptions) {
     this._questions = questions
-    this._quizOptions = quizOptions || {
-      questionCount: 10,
-    }
+    this._quizOptions = quizOptions || {}
   }
 
   get questions() {
@@ -110,25 +107,30 @@ export class GenerativeQuiz extends Quiz {
 
   constructor(
     allAnswers: Answer[],
-    filter: (answers: Answer[]) => Answer[],
+    filter?: (answers: Answer[]) => Answer[],
     quizOptions?: QuizOptions,
   ) {
     super([], quizOptions)
     this._allAnswers = allAnswers
-    this._filter = filter
-    this.generateQuestions()
+    this._filter = filter || ((answers) => answers)
   }
 
-  private generateQuestions() {
+  async generateQuestions(questionCount?: number) {
     const generatedQuestions: Question[] = []
     const answers = this._filter(this._allAnswers)
-    for (let i = 0; i < this._quizOptions.questionCount; i++) {
-      const correct = answers[Math.floor(Math.random() * answers.length)]
+    for (let i = 0; i < (questionCount || answers.length); i++) {
+      let correct = answers[Math.floor(Math.random() * answers.length)]
+      while (!generatedQuestions.every((q) => q.correctAnswer() !== correct.answer)) {
+        correct = answers[Math.floor(Math.random() * answers.length)]
+      }
+      const unavailable: Answer[] = []
       const wrong = Array.from({ length: 3 }, () => {
         let answer = answers[Math.floor(Math.random() * answers.length)]
-        while (answer === correct) {
+        // TODO fix if there are less than 4 answers
+        while (answer === correct || unavailable.includes(answer)) {
           answer = answers[Math.floor(Math.random() * answers.length)]
         }
+        unavailable.push(answer)
         return answer
       })
       generatedQuestions.push(
@@ -140,7 +142,7 @@ export class GenerativeQuiz extends Quiz {
         ),
       )
     }
-    this._questions = generatedQuestions
+    return generatedQuestions
   }
 }
 
@@ -150,8 +152,27 @@ export function getQuiz(name: string) {
 
 export function addQuiz(name: string, quiz: Quiz) {
   quizzes.set(name, quiz)
+  return quiz
 }
 
 export function removeQuiz(name: string) {
   quizzes.delete(name)
 }
+
+export function allQuizzes() {
+  return quizzes
+}
+
+const aquestions = new Question('What is 1 + 1?', '2', ['1', '3', '4'])
+const banswers = [
+  { question: 'What is 1 + 1?', answer: '2' },
+  { question: 'What is 2 + 2?', answer: '4' },
+  { question: 'What is 3 + 3?', answer: '6' },
+  { question: 'What is 4 + 4?', answer: '8' },
+  { question: 'What is 5 + 5?', answer: '10' },
+  { question: 'What is 6 + 6?', answer: '12' },
+]
+const aquiz = new Quiz([aquestions])
+const bquiz = new GenerativeQuiz(banswers)
+addQuiz('test', aquiz)
+addQuiz('test2', bquiz)

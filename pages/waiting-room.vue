@@ -1,11 +1,10 @@
 <script setup lang="ts">
-const socketStore = useSocketStore()
-const socket = computed({
-  get: () => socketStore.socket,
-  set: (value) => {
-    socketStore.socket = value
-  },
-})
+const beforeUnloadHandler = (event: BeforeUnloadEvent) => {
+  event.preventDefault()
+  event.returnValue = true
+}
+
+useEventListener('beforeunload', beforeUnloadHandler)
 </script>
 
 <template>

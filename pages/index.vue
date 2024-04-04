@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { register } from 'swiper/element/bundle'
-import { CountriesBuilder, createQuestions } from '~/utils/countries'
+import { createQuizzes } from '~/utils/countries'
 
 register()
 
@@ -13,6 +13,7 @@ const connected = ref(false)
 const response = ref([''])
 const svgImage = ref('')
 const disableButton = ref(false)
+const question = ref('')
 const answerList = ref([''])
 const score = ref(0)
 let client = false
@@ -36,58 +37,36 @@ watch(socket, () => {
   socket.value.on('disconnect', () => {
     connected.value = socket.value === null || socket.value.connected
   })
-  // socket.value.on('hello-response', (id: string, data: string, time: string) => {
-  //   response.value.push(id + ' [' + time + ']: ' + data)
-  // })
-  // socket.value.on('dark', (data: boolean) => {
-  //   useColorMode().preference = data ? 'dark' : 'light'
-  // })
-  // socket.value.on('question', ({ answers, image }) => {
-  //   // response.value.push(question + ' [' + answers + ']')
-  //   if (image) {
-  //     svgImage.value = image
-  //   }
-  //   disableButton.value = false
-  //   answerList.value = answers
-  //   client = false
-  // })
-  // socket.value.on('score', (_score: number) => {
-  //   score.value = _score
-  // })
-  // socket.value.on('wrong-answer', (data: string) => {
-  //   response.value.push('Wrong answer: ' + data)
-  // })
 })
-
-const username = ref('')
-// function setUsername() {
-//   if (socket.value !== null && username && username.value !== '') {
-//     socket.value.emit('new-username', username.value)
-//   }
-//   username.value = ''
-// }
-
-// function generateQuestion() {
-//   if (socket.value === null) {
-//     return
-//   }
-//   disableButton.value = true
-//   socket.value.emit('generate-question')
-//   client = false
-// }
 
 function generateClientQuestion() {
   disableButton.value = true
-  const countries = new CountriesBuilder()
-  countries.all()
-  countries.build().then((countries) => {
-    const q = createQuestions(countries, 1)[0]
-    if (q.image) {
-      svgImage.value = q.image
+  createQuizzes().then(() => {
+    const quiz = getQuiz('test2')
+    if (!quiz) {
+      return
     }
-    disableButton.value = false
-    answerList.value = q.shuffledAnswers()
-    correctClientAnswer = q.correctAnswer()
+    if (!(quiz instanceof GenerativeQuiz)) {
+      const q = quiz.questions[0]
+      if (q.image) {
+        svgImage.value = q.image
+      }
+      disableButton.value = false
+      question.value = q.question
+      answerList.value = q.shuffledAnswers()
+      correctClientAnswer = q.correctAnswer()
+      return
+    }
+    quiz.generateQuestions(1).then((questions) => {
+      const q = questions[0]
+      if (q.image) {
+        svgImage.value = q.image
+      }
+      disableButton.value = false
+      question.value = q.question
+      answerList.value = q.shuffledAnswers()
+      correctClientAnswer = q.correctAnswer()
+    })
   })
   client = true
 }
@@ -125,33 +104,8 @@ function answerQuestion(answer: number) {
     </div>
     <div>Connected?: {{ connected }}</div>
     <button class="btn btn-primary m-2" @click="socketStore.connect()">Connect</button>
-    <!--    <button class="btn btn-success m-2" @click="socket && socket.emit('hello', 'Hello World')">
-      Hello World
-    </button>-->
-    <!--    <button
-      class="btn btn-error m-2"
-      @click="socket && socket.emit('all-dark', useColorMode().preference !== 'dark')"
-    >
-      All Dark
-    </button>-->
     <NuxtLink href="/waiting-room" class="btn btn-primary m-2"> Waiting Room </NuxtLink>
     <br />
-    <input
-      v-model="username"
-      type="text"
-      placeholder="Set new username"
-      class="input input-bordered w-full max-w-xs"
-    />
-    <!--    <button class="btn btn-primary m-2" @click="setUsername()">Set username</button>
-    <br />
-    <button
-      v-if="socket"
-      class="btn btn-warning m-2"
-      :disabled="disableButton"
-      @click="generateQuestion()"
-    >
-      Generate Question
-    </button>-->
     <button class="btn btn-warning m-2" :disabled="disableButton" @click="generateClientQuestion()">
       Generate Client-Side Question
     </button>
@@ -161,6 +115,9 @@ function answerQuestion(answer: number) {
     <br />
     <div>
       <h2>Score: {{ score }}</h2>
+    </div>
+    <div v-if="answerList[0] !== '' && answerList.length > 1">
+      <p>{{ question }}</p>
     </div>
     <div v-if="answerList[0] !== '' && answerList.length > 1">
       <button
