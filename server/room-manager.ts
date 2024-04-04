@@ -1,4 +1,5 @@
 import { type Client, Room } from '~/server/util'
+import { getClientRoom } from '~/server/routes/socket.io'
 
 const characters = 'ABCDEFGHJKMNPQRSTUVWXYZ123456789'
 export const codeLength = 6
@@ -26,6 +27,12 @@ export function createRoom(client: Client) {
   rooms.set(room.joinCode, room)
   room.addPlayer(client)
   return room
+}
+
+export function removeRoom(room: Room) {
+  room.broadcast('room-left')
+  rooms.delete(room.joinCode)
+  getClientRoom().delete(room.host)
 }
 
 export function getAllRooms() {
