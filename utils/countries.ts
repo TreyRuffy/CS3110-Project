@@ -1,5 +1,6 @@
 import { ofetch } from 'ofetch'
-import type { Question } from '~/server/util'
+import type { Answer } from '~/utils/utils'
+import { addQuiz, GenerativeQuiz } from '~/utils/utils'
 
 interface Country {
   name: {
@@ -92,41 +93,89 @@ async function getCountries() {
     restcountries = (await ofetch('https://restcountries.com/v3.1/all')) as Country[]
     restcountries.find((c) => {
       // use https://flagpedia.net for all countries
-      if (c.name.common === 'Afghanistan') {
-        c.flags.svg = 'https://flagcdn.com/af.svg'
-        c.flags.png = 'https://flagcdn.com/w320/af.png'
+      if (!c.flags.svg.includes('flagcdn.com') || !c.flags.png.includes('flagcdn.com')) {
+        const id = c.cca2.toLowerCase()
+        c.flags.svg = `https://flagcdn.com/${id}.svg`
+        c.flags.png = `https://flagcdn.com/w320/${id}.png`
       }
     })
   }
   return restcountries
 }
 
-export function createQuestions(countries: Country[], count?: number): Question[] {
-  const questions: Question[] = []
-  for (let i = 0; i < (count || 10); i++) {
-    const correct = countries[Math.floor(Math.random() * countries.length)]
-    countries = countries.filter((c) => c.name.common !== correct.name.common)
-    // get 3 random countries that are not the correct one
-    const wrong = Array.from({ length: 3 }, () => {
-      let country = countries[Math.floor(Math.random() * countries.length)]
-      while (country === correct) {
-        country = countries[Math.floor(Math.random() * countries.length)]
-      }
-      countries = countries.filter((c) => c.name.common !== country.name.common)
-      return country
-    })
-    questions.push({
-      question: 'What is the name of this country?',
-      answers: [correct.name.common, wrong.map((c) => c.name.common)],
-      image: correct.flags.svg,
-    })
+export const filters = [
+  'world',
+  'africa',
+  'americas',
+  'asia',
+  'europe',
+  'oceania',
+  'canada',
+  'japan',
+  'usa',
+] as const
+
+export async function createQuizzes() {
+  if (filters.every((f) => getQuiz(f) != undefined)) {
+    return
   }
-  return questions
+  return Promise.all(filters.map((f) => createQuiz(f)))
 }
 
-export async function getCountry(name: string) {
-  return await getCountries().then((countries) => {
-    return countries.find((c) => c.name.common === name)
+export async function createQuiz(filter: (typeof filters)[number]) {
+  let countryBuilder: CountriesBuilder | null = null
+  switch (filter) {
+    case 'world':
+      countryBuilder = new CountriesBuilder().all()
+      break
+    case 'africa':
+      countryBuilder = new CountriesBuilder().filterByRegion('Africa')
+      break
+    case 'americas':
+      countryBuilder = new CountriesBuilder().filterByRegion('Americas')
+      break
+    case 'asia':
+      countryBuilder = new CountriesBuilder().filterByRegion('Asia')
+      break
+    case 'europe':
+      countryBuilder = new CountriesBuilder().filterByRegion('Europe')
+      break
+    case 'oceania':
+      countryBuilder = new CountriesBuilder().filterByRegion('Oceania')
+      break
+    // TODO fix canada, japan, usa
+    case 'canada':
+      countryBuilder = new CountriesBuilder().filterByCountry('Canada')
+      break
+    case 'japan':
+      countryBuilder = new CountriesBuilder().filterByCountry('Japan')
+      break
+    case 'usa':
+      countryBuilder = new CountriesBuilder()
+        .filterByCountry('United States')
+        .filterByCountry('Japan')
+        .filterByCountry('Canada')
+        .filterByCountry('Mexico')
+      break
+    default:
+      throw new Error('Invalid filter')
+  }
+  return getCountries().then((countries) => {
+    if (countryBuilder === null) {
+      return
+    }
+    const answers: Answer[] = countries.map((c) => ({
+      question: 'What is the name of this country?',
+      answer: c.name.common,
+      image: c.flags.svg,
+    }))
+    const quizFilter = (answers: Answer[]) => {
+      return answers.filter((a) =>
+        countryBuilder.build(countries).some((c) => c.name.common === a.answer),
+      )
+    }
+    const quiz = new GenerativeQuiz(answers, quizFilter)
+    return addQuiz(filter, quiz)
   })
 }
 
@@ -142,8 +191,7 @@ export class CountriesBuilder {
     }
   }
 
-  async build() {
-    const countries = await getCountries()
+  build(countries: Country[]) {
     return this.allCountries
       ? countries
       : countries.filter((c) => {

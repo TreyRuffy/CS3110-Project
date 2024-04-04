@@ -8,6 +8,19 @@ const roomCodeInput = ref<HTMLInputElement | null>(null)
 const usernameInput = ref<HTMLInputElement | null>(null)
 const inputError = ref<string | null>(null)
 
+const connected = ref(false)
+const response = ref([''])
+
+const chatMessage = ref('')
+
+const socketStore = useSocketStore()
+const socket = computed({
+  get: () => socketStore.socket,
+  set: (value) => {
+    socketStore.socket = value
+  },
+})
+
 function joinRoom() {
   inputError.value = null
   if (!roomCode.value) {
@@ -25,13 +38,49 @@ function joinRoom() {
   if (!roomCode.value || !username.value) {
     return
   }
-  // TODO join room logic
-  console.log('Room code: ' + roomCode.value + '\nUsername: ' + username.value)
+
+  socketStore.connect()
+  socket.value?.emit('select-username', username.value + '')
+  socket.value?.emit('join-room', roomCode.value + '')
+
   roomCode.value = null
   username.value = null
   usernameInput.value?.classList.remove('input-error')
   roomCodeInput.value?.classList.remove('input-error')
 }
+
+watch(socket, () => {
+  if (socket.value === null) {
+    return
+  }
+  socket.value.on('connect', () => {
+    connected.value = socket.value === null || socket.value.connected
+  })
+  socket.value.on('disconnect', () => {
+    connected.value = socket.value === null || socket.value.connected
+  })
+  socket.value.on('successful-connection', (data) => {
+    response.value.push(data)
+  })
+  socket.value.on('username-error', (errorType, errorMessage) => {
+    response.value.push(errorType + ': ' + errorMessage)
+  })
+  socket.value.on('username-accepted', (username) => {
+    response.value.push(username)
+  })
+  socket.value.on('room-joined', (roomCode) => {
+    response.value.push(roomCode)
+  })
+  socket.value.on('room-created', (roomCode) => {
+    response.value.push(roomCode)
+  })
+  socket.value.on('room-error', (errorType, errorMessage) => {
+    response.value.push(errorType + ': ' + errorMessage)
+  })
+  socket.value.on('receive-chat-message', (username, message) => {
+    response.value.push(username + ': ' + message)
+  })
+})
 </script>
 
 <template>
@@ -101,6 +150,41 @@ function joinRoom() {
             <input type="submit" class="btn btn-primary w-full px-8" value="Join" />
           </span>
         </form>
+      </div>
+    </div>
+    <div>
+      <ClientOnly>
+        <span> Connected?: {{ connected }} </span>
+      </ClientOnly>
+      <button v-if="!connected" class="btn btn-primary m-2" @click="socketStore.connect()">
+        Connect
+      </button>
+      <br />
+      <button
+        v-if="connected"
+        class="btn btn-primary m-2"
+        @click="socket && socket.emit('create-room')"
+      >
+        Create Room
+      </button>
+      <br />
+      <input
+        v-if="connected"
+        v-model="chatMessage"
+        type="text"
+        placeholder="Send a chat message"
+        class="input input-bordered w-full max-w-xs"
+      />
+      <button
+        v-if="connected"
+        class="btn btn-primary m-2"
+        @click="socket && socket.emit('send-chat-message', chatMessage)"
+      >
+        Send Message
+      </button>
+      <div>
+        Response: <br />
+        <div v-for="resp in response" :key="resp">{{ resp }}</div>
       </div>
     </div>
   </div>
