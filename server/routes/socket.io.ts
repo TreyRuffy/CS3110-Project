@@ -3,10 +3,11 @@ import { Server as SocketServer } from 'socket.io'
 import { Client, type Room } from '../util'
 import type { ClientToServerEvents, ServerToClientEvents, UUID } from '~/utils/socket-types'
 import type { JoinCode } from '~/server/room-manager'
-import { codeLength, createRoom, getAllRooms } from '~/server/room-manager'
+import { codeLength, createRoom, getAllRooms, removeRoom } from '~/server/room-manager'
 import { createQuizzes } from '~/utils/countries'
 
 const clients: Map<UUID, Client> = new Map()
+const clientRoom: Map<Client, Room> = new Map()
 
 export default defineEventHandler((event) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -19,7 +20,6 @@ export default defineEventHandler((event) => {
 
   io.on('connection', (socket) => {
     let client = new Client(socket, socket.id)
-    let currentRoom: Room | null = null
     clients.set(client.uuid, client)
     socket.emit('successful-connection', client.uuid)
 
@@ -80,6 +80,7 @@ export default defineEventHandler((event) => {
         socket.emit('room-error', 'room-full', 'Room is full')
         return
       }
+      const currentRoom = clientRoom.get(client)
       if (currentRoom) {
         currentRoom.removePlayer(client)
         socket.emit('room-left')
@@ -90,7 +91,7 @@ export default defineEventHandler((event) => {
         )
       }
       room.addPlayer(client)
-      currentRoom = room
+      clientRoom.set(client, room)
       socket.emit('room-joined', roomCode)
       room.broadcast(
         'room-player-update',
@@ -100,13 +101,23 @@ export default defineEventHandler((event) => {
     })
 
     socket.on('create-room', () => {
-      currentRoom = createRoom(client)
+      clientRoom.set(client, createRoom(client))
+      const currentRoom = clientRoom.get(client)
+      if (!currentRoom) {
+        socket.emit('room-error', 'not-in-room', 'Not in a room')
+        return
+      }
       socket.emit('room-created', currentRoom.joinCode)
     })
 
     socket.on('leave-room', () => {
+      const currentRoom = clientRoom.get(client)
       if (!currentRoom) {
         socket.emit('room-error', 'not-in-room', 'Not in a room')
+        return
+      }
+      if (currentRoom.host === client) {
+        removeRoom(currentRoom)
         return
       }
       currentRoom.removePlayer(client)
@@ -119,6 +130,7 @@ export default defineEventHandler((event) => {
     })
 
     socket.on('host-update-room-settings', (settings) => {
+      const currentRoom = clientRoom.get(client)
       if (!currentRoom) {
         socket.emit('room-error', 'not-in-room', 'Not in a room')
         return
@@ -132,12 +144,17 @@ export default defineEventHandler((event) => {
     })
 
     socket.on('host-kick-player', (uuid: UUID) => {
+      const currentRoom = clientRoom.get(client)
       if (!currentRoom) {
         socket.emit('room-error', 'not-in-room', 'Not in a room')
         return
       }
       if (currentRoom.host !== client) {
         socket.emit('invalid-action', 'Only the host can kick players')
+        return
+      }
+      if (currentRoom.host === clients.get(uuid)) {
+        socket.emit('invalid-action', 'Cannot kick the host')
         return
       }
       const player = clients.get(uuid)
@@ -156,6 +173,7 @@ export default defineEventHandler((event) => {
     })
 
     socket.on('host-ban-player', (uuid: UUID) => {
+      const currentRoom = clientRoom.get(client)
       if (!currentRoom) {
         socket.emit('room-error', 'not-in-room', 'Not in a room')
         return
@@ -164,11 +182,16 @@ export default defineEventHandler((event) => {
         socket.emit('invalid-action', 'Only the host can ban players')
         return
       }
+      if (currentRoom.host === clients.get(uuid)) {
+        socket.emit('invalid-action', 'Cannot ban the host')
+        return
+      }
       const player = clients.get(uuid)
       if (!player) {
         socket.emit('invalid-action', 'Player not found')
         return
       }
+      // TODO: Implement ban player
       currentRoom.removePlayer(player)
       player.socket.emit('self-banned', client.uuid)
       socket.emit('player-banned', player.uuid)
@@ -180,6 +203,7 @@ export default defineEventHandler((event) => {
     })
 
     socket.on('host-start-game', (timer?: number) => {
+      const currentRoom = clientRoom.get(client)
       if (!currentRoom) {
         socket.emit('room-error', 'not-in-room', 'Not in a room')
         return
@@ -192,6 +216,7 @@ export default defineEventHandler((event) => {
     })
 
     socket.on('host-next-question', () => {
+      const currentRoom = clientRoom.get(client)
       if (!currentRoom) {
         socket.emit('room-error', 'not-in-room', 'Not in a room')
         return
@@ -204,6 +229,7 @@ export default defineEventHandler((event) => {
     })
 
     socket.on('answer-question', (answer: string) => {
+      const currentRoom = clientRoom.get(client)
       if (!currentRoom) {
         socket.emit('room-error', 'not-in-room', 'Not in a room')
         return
@@ -218,6 +244,7 @@ export default defineEventHandler((event) => {
     // TODO: Implement questions and leaderboard
 
     socket.on('send-chat-message', (message: string) => {
+      const currentRoom = clientRoom.get(client)
       if (!currentRoom) {
         socket.emit('room-error', 'not-in-room', 'Not in a room')
         return
@@ -226,7 +253,12 @@ export default defineEventHandler((event) => {
     })
 
     socket.on('disconnect', () => {
+      const currentRoom = clientRoom.get(client)
       if (currentRoom) {
+        if (currentRoom.host === client) {
+          removeRoom(currentRoom)
+          return
+        }
         currentRoom.removePlayer(client)
         currentRoom.broadcast(
           'room-player-update',
@@ -237,3 +269,7 @@ export default defineEventHandler((event) => {
     })
   })
 })
+
+export function getClientRoom() {
+  return clientRoom
+}
