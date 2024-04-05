@@ -136,13 +136,13 @@ useSwipe(el, {
         </form>
         <h3 class="bottom-2 text-lg font-bold">Multiplayer</h3>
         <span class="mt-4 flex justify-center sm:hidden" @click="closeModal()">
-          <NuxtLink href="/create-room" class="btn btn-primary w-full px-8"> Create Room </NuxtLink>
+          <NuxtLink href="/create-room" class="btn w-full px-8"> Create Room </NuxtLink>
           <br />
         </span>
         <form method="dialog" class="mt-2" @submit="joinRoom()">
           <label class="form-control w-full">
             <span class="flex justify-center sm:hidden">
-              <p>- OR -</p>
+              <span>- OR -</span>
             </span>
             <label for="room-code" class="input input-bordered mt-2 flex items-center gap-2">
               <svg
@@ -197,12 +197,12 @@ useSwipe(el, {
               <input type="submit" class="btn btn-primary w-full px-8" value="Join Room" /> <br />
             </span>
             <span class="mt-4 hidden justify-center sm:flex">
-              <p>- OR -</p>
+              <span>- OR -</span>
             </span>
           </label>
         </form>
         <span class="mt-4 hidden justify-center sm:flex" @click="closeModal()">
-          <NuxtLink href="/create-room" class="btn btn-primary w-full px-8"> Create Room </NuxtLink>
+          <NuxtLink href="/create-room" class="btn w-full px-8"> Create Room </NuxtLink>
           <br />
         </span>
       </div>

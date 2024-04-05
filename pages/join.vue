@@ -89,9 +89,9 @@ watch(socket, () => {
 <template>
   <div>
     <TopNavigation />
-    <div class="mt-4">
+    <div class="mt-8">
       <div class="flex items-center">
-        <div class="card mx-auto w-full max-w-2xl lg:shadow-xl">
+        <div class="card mx-auto w-full max-w-2xl lg:shadow-[0_20px_50px_-10px_rgba(0,0,0,0.25)]">
           <form class="px-10 py-10" method="dialog" @submit="joinRoom()">
             <h2 class="mb-4 text-center text-2xl font-semibold">Join Room</h2>
             <label
@@ -161,13 +161,13 @@ watch(socket, () => {
         <ClientOnly>
           <span> Connected?: {{ connected }} </span>
         </ClientOnly>
-        <button v-if="!connected" class="btn btn-primary m-2" @click="socketStore.connect()">
+        <button v-if="!connected" class="btn btn-secondary m-2" @click="socketStore.connect()">
           Connect
         </button>
         <br />
         <button
           v-if="connected"
-          class="btn btn-primary m-2"
+          class="btn btn-accent m-2"
           @click="socket && socket.emit('create-room')"
         >
           Create Room
