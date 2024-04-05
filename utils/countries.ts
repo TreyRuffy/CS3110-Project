@@ -1,6 +1,6 @@
 import { ofetch } from 'ofetch'
 import type { Answer } from '~/utils/utils'
-import { addQuiz, GenerativeQuiz } from '~/utils/utils'
+import { addQuiz, GenerativeQuiz, getQuiz } from '~/utils/utils'
 
 interface Country {
   name: {

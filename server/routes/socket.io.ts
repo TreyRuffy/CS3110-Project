@@ -5,6 +5,7 @@ import type { ClientToServerEvents, ServerToClientEvents, UUID } from '~/utils/s
 import type { JoinCode } from '~/server/room-manager'
 import { codeLength, createRoom, getAllRooms, removeRoom } from '~/server/room-manager'
 import { createQuizzes } from '~/utils/countries'
+import { randomUUID } from 'uncrypto'
 
 const clients: Map<UUID, Client> = new Map()
 const clientRoom: Map<Client, Room> = new Map()
@@ -19,7 +20,11 @@ export default defineEventHandler((event) => {
   })
 
   io.on('connection', (socket) => {
-    let client = new Client(socket, socket.id)
+    let uuid = randomUUID()
+    while (clients.has(uuid)) {
+      uuid = randomUUID()
+    }
+    let client = new Client(socket, socket.id, uuid)
     clients.set(client.uuid, client)
     socket.emit('successful-connection', client.uuid)
 
@@ -41,8 +46,8 @@ export default defineEventHandler((event) => {
      * If the username is available, set the client's username and emit a 'username-accepted' event.
      */
     socket.on('select-username', (username: string) => {
-      if (username.length < 3) {
-        socket.emit('username-error', 'username-length', 'Username must be at least 3 characters')
+      if (username.length < 2) {
+        socket.emit('username-error', 'username-length', 'Username must be at least 2 characters')
         return
       }
       if (username.length > 20) {

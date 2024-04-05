@@ -36,5 +36,5 @@ export function removeRoom(room: Room) {
 }
 
 export function getAllRooms() {
-  return rooms
+  return rooms as ReadonlyMap<JoinCode, Room>
 }

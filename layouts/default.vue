@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import TopNavigation from '~/components/TopNavigation.vue'
-
 const route = useRoute()
 
 useHead({
@@ -27,7 +25,6 @@ useHead({
 
 <template>
   <div>
-    <TopNavigation />
     <main>
       <slot />
     </main>

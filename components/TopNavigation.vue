@@ -1,11 +1,4 @@
 <script setup lang="ts">
-const dropdown = ref<HTMLElement | null>(null)
-const closeDropdown = () => {
-  if (dropdown.value) {
-    dropdown.value.hidden = true
-  }
-}
-
 const roomCode = ref<string | null>(null)
 const username = ref<string | null>(null)
 
@@ -67,22 +60,15 @@ useSwipe(el, {
             class="menu dropdown-content menu-sm z-[98] mt-3 w-52 rounded-box bg-base-100 p-2 shadow"
           >
             <li>
-              <span>Room</span>
-              <ul class="z-[101] p-2">
-                <li>
-                  <NuxtLink href="/create-room" tabindex="0" @click="closeDropdown()">
-                    Create Room
-                  </NuxtLink>
-                </li>
-                <li>
-                  <a
-                    tabindex="0"
-                    onclick="join_room_modal.showModal() && document.activeElement.blur()"
-                  >
-                    Join Room
-                  </a>
-                </li>
-              </ul>
+              <NuxtLink to="/singleplayer" onclick="document.activeElement.blur()">
+                Single Player
+              </NuxtLink>
+              <a
+                tabindex="0"
+                onclick="join_room_modal.showModal() && document.activeElement.blur()"
+              >
+                Multiplayer
+              </a>
             </li>
           </ul>
         </div>
@@ -91,7 +77,7 @@ useSwipe(el, {
       <div class="navbar-center hidden lg:flex">
         <div class="dropdown dropdown-hover">
           <div tabindex="0" role="button" class="btn m-1 shadow">
-            Room
+            Play
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -103,18 +89,15 @@ useSwipe(el, {
               <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
             </svg>
           </div>
-          <ul
-            ref="dropdown"
-            class="menu dropdown-content z-[101] w-52 rounded-box bg-base-100 p-2 shadow"
-          >
+          <ul class="menu dropdown-content z-[101] w-52 rounded-box bg-base-100 p-2 shadow">
             <li>
               <NuxtLink
                 class="text-nowrap"
-                href="/create-room"
+                to="/singleplayer"
                 tabindex="0"
                 onclick="document.activeElement.blur()"
               >
-                Create Room
+                Single Player
               </NuxtLink>
             </li>
             <li>
@@ -123,7 +106,7 @@ useSwipe(el, {
                 onclick="join_room_modal.showModal() && document.activeElement.blur()"
                 tabindex="0"
               >
-                Join Room
+                Multiplayer
               </a>
             </li>
           </ul>
@@ -151,9 +134,16 @@ useSwipe(el, {
         <form method="dialog">
           <button class="btn btn-circle btn-ghost btn-md absolute right-2 top-2">✕</button>
         </form>
-        <h3 class="bottom-2 text-lg font-bold">Join Room</h3>
+        <h3 class="bottom-2 text-lg font-bold">Multiplayer</h3>
+        <span class="mt-4 flex justify-center sm:hidden" @click="closeModal()">
+          <NuxtLink href="/create-room" class="btn btn-primary w-full px-8"> Create Room </NuxtLink>
+          <br />
+        </span>
         <form method="dialog" class="mt-2" @submit="joinRoom()">
           <label class="form-control w-full">
+            <span class="flex justify-center sm:hidden">
+              <p>- OR -</p>
+            </span>
             <label for="room-code" class="input input-bordered mt-2 flex items-center gap-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -204,10 +194,17 @@ useSwipe(el, {
             </label>
 
             <span class="mt-4 flex justify-center">
-              <input type="submit" class="btn btn-primary w-full px-8" value="Join" />
+              <input type="submit" class="btn btn-primary w-full px-8" value="Join Room" /> <br />
+            </span>
+            <span class="mt-4 hidden justify-center sm:flex">
+              <p>- OR -</p>
             </span>
           </label>
         </form>
+        <span class="mt-4 hidden justify-center sm:flex" @click="closeModal()">
+          <NuxtLink href="/create-room" class="btn btn-primary w-full px-8"> Create Room </NuxtLink>
+          <br />
+        </span>
       </div>
       <form method="dialog" class="modal-backdrop">
         <button>close</button>

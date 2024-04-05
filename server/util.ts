@@ -7,16 +7,15 @@ import { RoomSettings } from '~/utils/utils'
 
 export class Client {
   private _username
-  private readonly _uuid: UUID = crypto.randomUUID()
+  private readonly _uuid: UUID
   private readonly _creationDate = new Date()
   private _lastPacket = new Date()
   private _gamesPlayed: UUID[] = []
   private _socket: Socket
 
-  constructor(socket: Socket, username: string)
-  constructor(socket: Socket, username: string, uuid?: UUID) {
+  constructor(socket: Socket, username: string, uuid: UUID) {
     this._username = username
-    this._uuid = uuid || this._uuid
+    this._uuid = uuid
     this._socket = socket
   }
 
@@ -91,7 +90,6 @@ export class GameClient {
 }
 
 export class Game {
-  private _uuid: UUID = crypto.randomUUID()
   private _creationDate: Date = new Date()
   private readonly _questions: Question[] = []
   private _currentQuestion = 0
@@ -100,10 +98,6 @@ export class Game {
 
   constructor(questions: Question[]) {
     this._questions = questions
-  }
-
-  get uuid() {
-    return this._uuid
   }
 
   get creationDate() {
@@ -152,7 +146,6 @@ export class Game {
 }
 
 export class Room {
-  private _uuid: UUID = crypto.randomUUID()
   private _creationDate: Date = new Date()
   private readonly _joinCode: `${string & { length: typeof codeLength }}`
   private _host: Client
@@ -163,10 +156,6 @@ export class Room {
   constructor(host: Client, joinCode?: `${string & { length: typeof codeLength }}`) {
     this._host = host
     this._joinCode = joinCode || generateJoinCode()
-  }
-
-  get uuid() {
-    return this._uuid
   }
 
   get joinCode() {

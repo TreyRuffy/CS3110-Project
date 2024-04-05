@@ -1,7 +1,10 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import TopNavigation from '~/components/TopNavigation.vue'
+</script>
 
 <template>
   <div>
+    <TopNavigation />
     <h1 class="mb-2 mt-4 text-center text-2xl font-semibold">Credits</h1>
     <div class="m-auto flex justify-center gap-2">
       <div>
@@ -49,6 +52,9 @@
           </li>
           <li>
             <NuxtLink href="https://github.com/unjs/uqr" target="_blank"> uqr </NuxtLink>
+          </li>
+          <li>
+            <NuxtLink href="https://github.com/unjs/uncrypto" target="_blank"> uncrypto </NuxtLink>
           </li>
           <li>
             <NuxtLink href="https://github.com/leizongmin/js-xss" target="_blank"> xss </NuxtLink>
