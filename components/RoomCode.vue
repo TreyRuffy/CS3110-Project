@@ -11,7 +11,7 @@ const props = defineProps({
 const svg = () => {
   const safeRoomCode = xss(props.roomCode)
   const hostname = useRequestURL().origin
-  return renderSVG(hostname + '/join?roomCode=' + safeRoomCode)
+  return xss(renderSVG(hostname + '/join?roomCode=' + safeRoomCode))
 }
 </script>
 

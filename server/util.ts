@@ -1,9 +1,8 @@
 import { type codeLength, generateJoinCode } from './room-manager'
-import type { ServerToClientEvents } from '~/utils/socket-types'
-import { type UUID } from '~/utils/socket-types'
 import type { Socket } from 'socket.io'
 import type { Question } from '~/utils/utils'
 import { RoomSettings } from '~/utils/utils'
+import type { ServerToClientEvents, UUID } from '~/utils/socket-types'
 
 export class Client {
   private _username
