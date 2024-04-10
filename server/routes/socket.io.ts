@@ -243,6 +243,7 @@ export default defineEventHandler((event) => {
         socket.emit('game-error', 'game-not-started', 'Game not started')
         return
       }
+      console.log(answer)
       // TODO: Implement answer question
     })
 
