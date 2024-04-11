@@ -224,7 +224,7 @@ export class Game {
       client.client.socket.emit(
         'game-error',
         'question-not-allowed',
-        'The game is not allowing questions right now, skill issue!',
+        'The game is not allowing questions right now!',
       )
       return
     }
@@ -233,7 +233,7 @@ export class Game {
 
     const question = this._questions[this._currentQuestion]
     if (question.correctAnswer() === answer) {
-      client.addScore(1)
+      client.addScore(this._room.settings.questionPoints)
       client.client.socket.emit('question-answered-correct', client.score)
     } else {
       client.client.socket.emit('question-answered-incorrect', client.score)
@@ -241,7 +241,7 @@ export class Game {
 
     const allAnswered = this._rankings.every((c) => c.questionAnswered)
     if (allAnswered) {
-      this.finishQuestion()
+      await this.finishQuestion()
     }
   }
 
@@ -272,6 +272,7 @@ export class Room {
   private _players: Client[] = []
   private _currentGame: Game | null = null
   private _settings: RoomSettings = new RoomSettings()
+  private _bannedPlayers: UUID[] = []
 
   constructor(host: Client, joinCode?: `${string & { length: typeof codeLength }}`) {
     this._host = host
@@ -302,6 +303,15 @@ export class Room {
         this._currentGame.removeClient(gameClient)
       }
     }
+  }
+
+  bannedPlayers() {
+    return this._bannedPlayers
+  }
+
+  banPlayer(player: Client) {
+    this._bannedPlayers.push(player.uuid)
+    this.removePlayer(player)
   }
 
   get host() {
@@ -340,12 +350,12 @@ export class Room {
 
   startGame() {
     createQuizzes().then(() => {
-      const quiz = getQuiz('europe')
+      const quiz = getQuiz(this._settings.quiz)
       if (!quiz) {
         return
       }
       if (quiz instanceof GenerativeQuiz) {
-        quiz.generateQuestions(10).then((questions) => {
+        quiz.generateQuestions(this._settings.questionCount).then((questions) => {
           this._currentGame = new Game(this, questions)
           this._currentGame.startGame()
         })

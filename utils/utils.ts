@@ -11,6 +11,8 @@ export class RoomSettings {
   questionPointsDecayDelay = 1000
   questionPointsDecayMinimumPoints = 500
 
+  quiz = 'europe'
+
   constructor(settings?: Partial<RoomSettings>) {
     Object.assign(this, settings)
   }

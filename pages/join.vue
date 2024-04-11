@@ -126,6 +126,8 @@ watch(socket, () => {
       'Question ' + questionNumber + ': ' + _question + ' with answers ' + answers.join(', '),
     )
 
+    printDelay(0)
+
     question.value = _question
     answerList.value = answers
 
@@ -157,6 +159,14 @@ watch(socket, () => {
 
   socket.value.on('room-player-update', (_, players) => {
     response.value.push('Players: ' + players.join(', '))
+  })
+
+  socket.value.on('room-left', () => {
+    response.value.push('Left room')
+  })
+
+  socket.value.on('invalid-action', (message) => {
+    response.value.push('Invalid action: ' + message)
   })
 })
 

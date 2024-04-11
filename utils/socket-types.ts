@@ -25,7 +25,8 @@ export interface ServerToClientEvents {
       | 'room-full'
       | 'room-code-invalid'
       | 'not-in-room'
-      | 'already-in-room',
+      | 'already-in-room'
+      | 'banned',
     errorMessage: string,
   ) => void
   'room-joined': (roomCode: string) => void

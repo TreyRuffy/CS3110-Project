@@ -2,7 +2,7 @@ import { type Client, Room } from '~/server/util'
 import { getClientRoom } from '~/server/routes/socket.io'
 
 const characters = 'ABCDEFGHJKMNPQRSTUVWXYZ123456789'
-export const codeLength = 6
+export const codeLength = 4
 export type JoinCode = `${string & { length: typeof codeLength }}`
 
 const rooms = new Map<JoinCode, Room>()
@@ -30,7 +30,6 @@ export function createRoom(client: Client) {
 }
 
 export function removeRoom(room: Room) {
-  room.broadcast('room-left')
   rooms.delete(room.joinCode)
   getClientRoom().delete(room.host)
 }

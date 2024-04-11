@@ -87,6 +87,7 @@ export default defineEventHandler((event) => {
       const currentRoom = clientRoom.get(client)
       if (currentRoom) {
         currentRoom.removePlayer(client)
+        clientRoom.delete(client)
         socket.emit('room-left')
         currentRoom.broadcast(
           'room-player-update',
@@ -94,6 +95,10 @@ export default defineEventHandler((event) => {
           currentRoom.players.map((p) => [p.uuid, p.username]),
         )
       }
+      // if (room.bannedPlayers.has(client.uuid)) {
+      //   socket.emit('room-error', 'banned', 'You are banned from this room')
+      //   return
+      // }
       room.addPlayer(client)
       clientRoom.set(client, room)
       socket.emit('room-joined', roomCode)
@@ -125,9 +130,14 @@ export default defineEventHandler((event) => {
         return
       }
       if (currentRoom.host === client) {
+        currentRoom.players.forEach((p) => {
+          p.socket.emit('room-left')
+          clientRoom.delete(p)
+        })
         removeRoom(currentRoom)
         return
       }
+      clientRoom.delete(client)
       currentRoom.removePlayer(client)
       socket.emit('room-left')
       currentRoom.broadcast(
@@ -199,8 +209,7 @@ export default defineEventHandler((event) => {
         socket.emit('invalid-action', 'Player not found')
         return
       }
-      // TODO: Implement ban player
-      currentRoom.removePlayer(player)
+      currentRoom.banPlayer(player)
       player.socket.emit('self-banned', client.uuid)
       socket.emit('player-banned', player.uuid)
       currentRoom.broadcast(
@@ -284,6 +293,11 @@ export default defineEventHandler((event) => {
         return
       }
 
+      if (currentRoom.host !== client) {
+        socket.emit('invalid-action', 'Only the host can start the next question')
+        return
+      }
+
       currentRoom.currentGame.nextQuestion()
     })
 
@@ -291,6 +305,10 @@ export default defineEventHandler((event) => {
       const currentRoom = clientRoom.get(client)
       if (currentRoom) {
         if (currentRoom.host === client) {
+          currentRoom.players.forEach((p) => {
+            p.socket.emit('room-left')
+            clientRoom.delete(p)
+          })
           removeRoom(currentRoom)
           return
         }
