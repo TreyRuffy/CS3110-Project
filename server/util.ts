@@ -62,6 +62,7 @@ export class Client {
 export class GameClient {
   private readonly _client: Client
   private _score = 0
+  private _questionAnswered = false
 
   constructor(client: Client) {
     this._client = client
@@ -79,6 +80,10 @@ export class GameClient {
     return this._score
   }
 
+  get questionAnswered() {
+    return this._questionAnswered
+  }
+
   resetScore() {
     this._score = 0
   }
@@ -86,16 +91,30 @@ export class GameClient {
   addScore(score: number) {
     this._score += score
   }
+
+  answerQuestion() {
+    this._questionAnswered = true
+  }
+
+  resetQuestion() {
+    this._questionAnswered = false
+  }
 }
 
+export type GameState = 'not-started' | 'in-question' | 'paused' | 'finished'
+
 export class Game {
-  private _creationDate: Date = new Date()
   private readonly _questions: Question[] = []
+  private _creationDate: Date = new Date()
   private _currentQuestion = 0
   private _rankings: GameClient[] = []
   private _gameEnd: Date = new Date(0)
+  private _state: GameState = 'not-started'
+  private _room: Room
+  private _questionTimeoutId: NodeJS.Timeout | null = null
 
-  constructor(questions: Question[]) {
+  constructor(room: Room, questions: Question[]) {
+    this._room = room
     this._questions = questions
   }
 
@@ -127,6 +146,10 @@ export class Game {
     this._rankings.push(client)
   }
 
+  getGameClient(client: Client) {
+    return this._rankings.find((c) => c.client === client)
+  }
+
   removeClient(client: GameClient) {
     this._rankings = this._rankings.filter((c) => c !== client)
   }
@@ -140,7 +163,85 @@ export class Game {
   }
 
   get isFinished() {
-    return this._gameEnd.getTime() !== 0
+    return this._state === 'finished'
+  }
+
+  async startGame() {}
+
+  async nextQuestion() {
+    if (this._currentQuestion >= this._questions.length) {
+      this._state = 'finished'
+      this._room.broadcast('game-ended')
+      return
+    }
+
+    if (this._state === 'in-question' || this._state === 'finished') {
+      return
+    }
+
+    // Move to the next question
+    const question = this._questions[this._currentQuestion]
+
+    // Broadcast the question
+    this._room.broadcast(
+      'question',
+      this._currentQuestion,
+      question.question,
+      question.shuffledAnswers(),
+      question.image,
+    )
+
+    // Set the state to in-question
+    setTimeout(() => {
+      this._room.broadcast('question-allow-answers')
+      this._state = 'in-question'
+
+      this._questionTimeoutId = setTimeout(() => {
+        this.finishQuestion()
+      }, 10 * 1000)
+    }, 5 * 1000)
+  }
+
+  async handleAnswer(client: GameClient, answer: string) {
+    if (this._state !== 'in-question') {
+      client.client.socket.emit(
+        'game-error',
+        'question-not-allowed',
+        'The game is not allowing questions right now, skill issue!',
+      )
+      return
+    }
+
+    client.answerQuestion()
+
+    const question = this._questions[this._currentQuestion]
+    if (question.correctAnswer() === answer) {
+      client.addScore(1)
+      this._room.broadcast('question-answered-correct', client.score)
+    } else {
+      this._room.broadcast('question-answered-incorrect', client.score)
+    }
+
+    const allAnswered = this._rankings.every((c) => c.questionAnswered)
+    if (allAnswered) {
+      this.finishQuestion()
+    }
+  }
+
+  async finishQuestion() {
+    if (this._state !== 'in-question') {
+      return
+    }
+
+    if (this._questionTimeoutId) {
+      clearTimeout(this._questionTimeoutId)
+      this._questionTimeoutId = null
+    }
+
+    this._state = 'paused'
+    this._currentQuestion++
+
+    this._room.broadcast('question-finished')
   }
 }
 

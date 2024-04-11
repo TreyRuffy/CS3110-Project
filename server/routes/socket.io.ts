@@ -24,6 +24,7 @@ export default defineEventHandler((event) => {
     while (clients.has(uuid)) {
       uuid = randomUUID()
     }
+
     let client = new Client(socket, socket.id, uuid)
     clients.set(client.uuid, client)
     socket.emit('successful-connection', client.uuid)
@@ -218,6 +219,9 @@ export default defineEventHandler((event) => {
         return
       }
       currentRoom.broadcast('game-starting', timer || currentRoom.settings.startTimer)
+
+      // creaate thread
+      currentRoom.currentGame
     })
 
     socket.on('host-next-question', () => {
@@ -233,18 +237,28 @@ export default defineEventHandler((event) => {
       // TODO: Implement next question
     })
 
-    socket.on('answer-question', (answer: string) => {
+    socket.on('question-answer', (answer: string) => {
       const currentRoom = clientRoom.get(client)
       if (!currentRoom) {
         socket.emit('room-error', 'not-in-room', 'Not in a room')
         return
       }
+
       if (!currentRoom.currentGame) {
         socket.emit('game-error', 'game-not-started', 'Game not started')
         return
       }
+
       console.log(answer)
+
       // TODO: Implement answer question
+      const gameClient = currentRoom.currentGame.getGameClient(client)
+      if (!gameClient) {
+        socket.emit('game-error', 'game-not-started', 'Game not started')
+        return
+      }
+
+      currentRoom.currentGame.handleAnswer(gameClient, answer)
     })
 
     // TODO: Implement questions and leaderboard
@@ -255,7 +269,23 @@ export default defineEventHandler((event) => {
         socket.emit('room-error', 'not-in-room', 'Not in a room')
         return
       }
+
       currentRoom.broadcast('receive-chat-message', client.username, message)
+    })
+
+    socket.on('question-next', () => {
+      const currentRoom = clientRoom.get(client)
+      if (!currentRoom) {
+        socket.emit('room-error', 'not-in-room', 'Not in a room')
+        return
+      }
+
+      if (!currentRoom.currentGame) {
+        socket.emit('game-error', 'game-not-started', 'Game not started')
+        return
+      }
+
+      currentRoom.currentGame.nextQuestion()
     })
 
     socket.on('disconnect', () => {

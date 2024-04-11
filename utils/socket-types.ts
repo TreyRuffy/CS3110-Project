@@ -38,8 +38,14 @@ export interface ServerToClientEvents {
     errorMessage: string,
   ) => void
 
-  question: (questionNumber: number, question: string, answers: string[], image: string) => void
-  'question-answered': () => void
+  question: (
+    questionNumber: number,
+    question: string,
+    answers: string[],
+    image: string | undefined,
+  ) => void
+  'question-allow-answers': () => void
+  'question-finished': () => void
   'question-answered-correct': (score: number) => void
   'question-answered-incorrect': (score: number) => void
 
@@ -65,7 +71,8 @@ export interface ClientToServerEvents {
   'host-start-game': (timer?: number) => void
   'host-next-question': () => void
 
-  'answer-question': (answer: string) => void
+  'question-answer': (answer: string) => void
+  'question-next': () => void
 
   'send-chat-message': (message: string) => void
 }
