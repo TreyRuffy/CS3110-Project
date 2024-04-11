@@ -1,8 +1,10 @@
 import { type codeLength, generateJoinCode } from './room-manager'
 import type { Socket } from 'socket.io'
 import type { Question } from '~/utils/utils'
-import { RoomSettings } from '~/utils/utils'
+import { RoomSettings, getQuiz, GenerativeQuiz } from '~/utils/utils'
 import type { ServerToClientEvents, UUID } from '~/utils/socket-types'
+import { createQuizzes } from '~/utils/countries'
+import type { EventParams } from '@socket.io/component-emitter'
 
 export class Client {
   private _username
@@ -101,7 +103,7 @@ export class GameClient {
   }
 }
 
-export type GameState = 'not-started' | 'in-question' | 'paused' | 'finished'
+export type GameState = 'not-started' | 'starting' | 'in-question' | 'paused' | 'finished'
 
 export class Game {
   private readonly _questions: Question[] = []
@@ -166,7 +168,19 @@ export class Game {
     return this._state === 'finished'
   }
 
-  async startGame() {}
+  async startGame() {
+    if (this._state !== 'not-started') {
+      return
+    }
+
+    this._state = 'paused'
+    this._currentQuestion = 0
+
+    this._rankings = this._room.players.map((p) => new GameClient(p))
+
+    this._room.broadcast('game-started', this._questions.length)
+    await this.nextQuestion()
+  }
 
   async nextQuestion() {
     if (this._currentQuestion >= this._questions.length) {
@@ -175,9 +189,12 @@ export class Game {
       return
     }
 
-    if (this._state === 'in-question' || this._state === 'finished') {
+    if (this._state !== 'paused') {
       return
     }
+
+    this._state = 'starting'
+    this._rankings.forEach((c) => c.resetQuestion())
 
     // Move to the next question
     const question = this._questions[this._currentQuestion]
@@ -217,9 +234,9 @@ export class Game {
     const question = this._questions[this._currentQuestion]
     if (question.correctAnswer() === answer) {
       client.addScore(1)
-      this._room.broadcast('question-answered-correct', client.score)
+      client.client.socket.emit('question-answered-correct', client.score)
     } else {
-      this._room.broadcast('question-answered-incorrect', client.score)
+      client.client.socket.emit('question-answered-incorrect', client.score)
     }
 
     const allAnswered = this._rankings.every((c) => c.questionAnswered)
@@ -235,13 +252,16 @@ export class Game {
 
     if (this._questionTimeoutId) {
       clearTimeout(this._questionTimeoutId)
-      this._questionTimeoutId = null
     }
+    this._questionTimeoutId = null
 
     this._state = 'paused'
     this._currentQuestion++
 
-    this._room.broadcast('question-finished')
+    this._room.broadcast(
+      'question-finished',
+      this._questions[this._currentQuestion - 1].correctAnswer(),
+    )
   }
 }
 
@@ -276,6 +296,12 @@ export class Room {
 
   removePlayer(player: Client) {
     this._players = this._players.filter((p) => p !== player)
+    if (this._currentGame) {
+      const gameClient = this._currentGame.getGameClient(player)
+      if (gameClient) {
+        this._currentGame.removeClient(gameClient)
+      }
+    }
   }
 
   get host() {
@@ -302,12 +328,28 @@ export class Room {
     Object.assign(this._settings, settings)
   }
 
+  // noinspection Annotator
   broadcast<T extends keyof ServerToClientEvents>(
     event: T,
-    ...args: Parameters<ServerToClientEvents[T]>
+    ...args: EventParams<ServerToClientEvents, T>
   ) {
     for (const player of this._players) {
       player.socket.emit(event, ...args)
     }
+  }
+
+  startGame() {
+    createQuizzes().then(() => {
+      const quiz = getQuiz('europe')
+      if (!quiz) {
+        return
+      }
+      if (quiz instanceof GenerativeQuiz) {
+        quiz.generateQuestions(10).then((questions) => {
+          this._currentGame = new Game(this, questions)
+          this._currentGame.startGame()
+        })
+      }
+    })
   }
 }

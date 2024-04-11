@@ -14,11 +14,9 @@ export default defineEventHandler((event) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const httpServer = (event.node.req.socket as any).server as Server
   const io = new SocketServer<ClientToServerEvents, ServerToClientEvents>(httpServer)
-
   createQuizzes().then(() => {
     return
   })
-
   io.on('connection', (socket) => {
     let uuid = randomUUID()
     while (clients.has(uuid)) {
@@ -107,6 +105,10 @@ export default defineEventHandler((event) => {
     })
 
     socket.on('create-room', () => {
+      if (clientRoom.get(client)) {
+        socket.emit('room-error', 'already-in-room', 'Already in a room')
+        return
+      }
       clientRoom.set(client, createRoom(client))
       const currentRoom = clientRoom.get(client)
       if (!currentRoom) {
@@ -220,21 +222,11 @@ export default defineEventHandler((event) => {
       }
       currentRoom.broadcast('game-starting', timer || currentRoom.settings.startTimer)
 
-      // creaate thread
-      currentRoom.currentGame
-    })
-
-    socket.on('host-next-question', () => {
-      const currentRoom = clientRoom.get(client)
-      if (!currentRoom) {
-        socket.emit('room-error', 'not-in-room', 'Not in a room')
-        return
-      }
-      if (currentRoom.host !== client) {
-        socket.emit('invalid-action', 'Only the host can move to the next question')
-        return
-      }
-      // TODO: Implement next question
+      setTimeout(() => {
+        if (!currentRoom.currentGame) {
+          currentRoom.startGame()
+        }
+      }, timer || currentRoom.settings.startTimer)
     })
 
     socket.on('question-answer', (answer: string) => {
@@ -249,9 +241,6 @@ export default defineEventHandler((event) => {
         return
       }
 
-      console.log(answer)
-
-      // TODO: Implement answer question
       const gameClient = currentRoom.currentGame.getGameClient(client)
       if (!gameClient) {
         socket.emit('game-error', 'game-not-started', 'Game not started')
@@ -261,9 +250,19 @@ export default defineEventHandler((event) => {
       currentRoom.currentGame.handleAnswer(gameClient, answer)
     })
 
-    // TODO: Implement questions and leaderboard
-
     socket.on('send-chat-message', (message: string) => {
+      if (message.length < 1) {
+        socket.emit('chat-error', 'message-empty', 'Message cannot be empty')
+        return
+      }
+      if (message.length > 256) {
+        socket.emit(
+          'chat-error',
+          'message-too-long',
+          'Message cannot be longer than 200 characters',
+        )
+        return
+      }
       const currentRoom = clientRoom.get(client)
       if (!currentRoom) {
         socket.emit('room-error', 'not-in-room', 'Not in a room')

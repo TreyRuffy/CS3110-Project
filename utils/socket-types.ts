@@ -14,8 +14,18 @@ export interface ServerToClientEvents {
   ) => void
   'username-accepted': (username: string) => void
 
+  'chat-error': (
+    errorType: 'chat-disabled' | 'message-too-long' | 'message-empty',
+    errorMessage: string,
+  ) => void
+
   'room-error': (
-    errorType: 'room-not-found' | 'room-full' | 'room-code-invalid' | 'not-in-room',
+    errorType:
+      | 'room-not-found'
+      | 'room-full'
+      | 'room-code-invalid'
+      | 'not-in-room'
+      | 'already-in-room',
     errorMessage: string,
   ) => void
   'room-joined': (roomCode: string) => void
@@ -45,7 +55,7 @@ export interface ServerToClientEvents {
     image: string | undefined,
   ) => void
   'question-allow-answers': () => void
-  'question-finished': () => void
+  'question-finished': (correctAnswer: string) => void
   'question-answered-correct': (score: number) => void
   'question-answered-incorrect': (score: number) => void
 
@@ -69,7 +79,6 @@ export interface ClientToServerEvents {
   'host-kick-player': (uuid: UUID) => void
   'host-ban-player': (uuid: UUID) => void
   'host-start-game': (timer?: number) => void
-  'host-next-question': () => void
 
   'question-answer': (answer: string) => void
   'question-next': () => void
