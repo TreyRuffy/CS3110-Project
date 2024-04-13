@@ -11,13 +11,13 @@ const props = defineProps({
 const svg = () => {
   const safeRoomCode = xss(props.roomCode)
   const hostname = useRequestURL().origin
-  return xss(renderSVG(hostname + '/join?roomCode=' + safeRoomCode))
+  return renderSVG(hostname + '/join?roomCode=' + safeRoomCode)
 }
 </script>
 
 <template>
   <!-- eslint-disable-next-line vue/no-v-html -->
-  <div v-html="svg()" />
+  <svg v-html="svg()"></svg>
 </template>
 
 <style scoped></style>

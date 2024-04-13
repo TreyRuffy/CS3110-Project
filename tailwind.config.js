@@ -8,12 +8,12 @@ module.exports = {
       {
         light: {
           ...require('daisyui/src/theming/themes')['light'],
-          primary: '#66cc8a',
-          'primary-content': '#0C271B',
-          secondary: '#377cfb',
-          'secondary-content': 'oklch(100% 0 0)',
-          accent: '#f68067',
-          'accent-content': '#000',
+          primary: '#18E399',
+          'primary-content': '#001208',
+          secondary: '#35ABDE',
+          'secondary-content': '#010b12',
+          accent: '#F371B4',
+          'accent-content': '#130404',
           neutral: '#333c4d',
           'neutral-content': '#f9fafb',
           'base-100': 'oklch(100% 0 0)',
