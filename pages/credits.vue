@@ -5,7 +5,7 @@ import TopNavigation from '~/components/TopNavigation.vue'
 <template>
   <div>
     <TopNavigation />
-    <h1 class="mb-2 mt-4 text-center text-2xl font-semibold">Credits</h1>
+    <h1 class="mb-2 mt-4 text-center text-[32px] font-semibold">Credits</h1>
     <div class="m-auto flex justify-center gap-2">
       <div>
         <h2 class="font-semibold">UI</h2>
@@ -71,7 +71,7 @@ import TopNavigation from '~/components/TopNavigation.vue'
             <NuxtLink href="https://restcountries.com/" target="_blank"> Rest Countries </NuxtLink>
           </li>
           <li>
-            <NuxtLink href="https://flagcdn.com/" target="_blank"> Flags API & CDN </NuxtLink>
+            <NuxtLink href="https://flagpedia.net/" target="_blank"> Flags API & CDN </NuxtLink>
           </li>
         </ul>
       </div>
