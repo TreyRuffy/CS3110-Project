@@ -15,11 +15,13 @@ yarn install
 Start the development server on `http://localhost:3000`:
 
 ```bash
-yarn dev --host -o
+yarn dev --host -o (--tunnel)
 ```
 `--host will allow you to access the server from other devices on the same network`
 
 `-o will open the browser automatically`
+
+`--tunnel will setup a CloudFlare tunnel to access the server from anywhere`
 
 ```bash
 
