@@ -17,15 +17,9 @@ export default defineNuxtConfig({
     '@nuxt/eslint',
     '@nuxt/image',
     '@nuxtjs/tailwindcss',
-    '@nuxtjs/color-mode',
-    'nuxt-viewport',
     '@vueuse/nuxt',
-    'nuxt-simple-robots',
-    '@pinia/nuxt',
   ],
-  experimental: {
-    payloadExtraction: false,
-  },
+
   typescript: {
     strict: true,
     typeCheck: true,
