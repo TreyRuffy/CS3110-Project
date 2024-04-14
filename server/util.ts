@@ -215,7 +215,7 @@ export class Game {
 
       this._questionTimeoutId = setTimeout(() => {
         this.finishQuestion()
-      }, 10 * 1000)
+      }, this._room.settings.questionTimer)
     }, 5 * 1000)
   }
 
