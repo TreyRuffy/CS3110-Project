@@ -12,6 +12,16 @@ const inputError = ref<string | null>(null)
 
 const connected = ref(false)
 const response = ref([''])
+const responseTimeout = ref(0)
+const allowAnswers = ref(false)
+const timeout = ref<unknown | null>(null)
+
+const svgImage = ref('')
+const question = ref('')
+const answerList = ref([''])
+const score = ref(0)
+
+const chatMessage = ref('')
 
 const socketStore = useSocketStore()
 const socket = computed({
@@ -91,10 +101,106 @@ watch(socket, () => {
     response.value.push(errorType + ': ' + errorMessage)
   })
 
+  socket.value.on('receive-chat-message', (username, message) => {
+    response.value.push(username + ': ' + message)
+  })
+
+  socket.value.on('game-starting', (timer) => {
+    response.value.push('Game starting in ' + timer / 1000 + ' seconds')
+  })
+
+  socket.value.on('game-started', (questionCount) => {
+    response.value.push('Game started with ' + questionCount + ' questions')
+  })
+
+  socket.value.on('game-error', (errorType, errorMessage) => {
+    response.value.push(errorType + ': ' + errorMessage)
+  })
+
+  socket.value.on('game-ended', () => {
+    response.value.push('Game ended')
+  })
+
+  socket.value.on('question', (questionNumber, _question, answers, image) => {
+    response.value.push(
+      'Question ' + questionNumber + ': ' + _question + ' with answers ' + answers.join(', '),
+    )
+
+    printDelay(0)
+
+    question.value = _question
+    answerList.value = answers
+
+    if (image) {
+      svgImage.value = image
+    }
+  })
+
+  socket.value.on('question-answered-correct', (answer) => {
+    response.value.push('Correct answer: ' + answer)
+    removeQuestion()
+  })
+
+  socket.value.on('question-answered-incorrect', (answer) => {
+    response.value.push('Incorrect answer: ' + answer)
+    removeQuestion()
+  })
+
+  socket.value.on('question-finished', (correctAnswer) => {
+    response.value.push('Correct answer: ' + correctAnswer)
+    removeQuestion()
+  })
+
+  socket.value.on('question-allow-answers', () => {
+    response.value.push('Allowing answers')
+    allowAnswers.value = true
+    printDelay(10)
+  })
+
+  socket.value.on('room-player-update', (_, players) => {
+    response.value.push('Players: ' + players.join(', '))
+  })
+
+  socket.value.on('room-left', () => {
+    response.value.push('Left room')
+  })
+
   socket.value.on('invalid-action', (message) => {
     response.value.push('Invalid action: ' + message)
   })
 })
+
+function printDelay(seconds: number) {
+  if (seconds === 0) {
+    return
+  }
+
+  if (timeout.value) {
+    clearTimeout(timeout.value as number)
+    timeout.value = null
+  }
+
+  responseTimeout.value = seconds
+  timeout.value = setTimeout(() => {
+    printDelay(seconds - 1)
+  }, 1000)
+}
+
+function removeQuestion() {
+  question.value = ''
+  answerList.value = ['']
+  svgImage.value = ''
+  responseTimeout.value = 0
+  allowAnswers.value = false
+}
+
+function answerQuestion(answer: number) {
+  if (!socket.value) {
+    return
+  }
+
+  socket.value.emit('question-answer', answerList.value[answer - 1])
+}
 </script>
 
 <template>
@@ -166,6 +272,95 @@ watch(socket, () => {
               <input type="submit" class="btn btn-primary w-full px-8 text-[16px]" value="Join" />
             </span>
           </form>
+        </div>
+      </div>
+      <div>
+        <ClientOnly>
+          <span> Connected?: {{ connected }} </span>
+        </ClientOnly>
+        <button v-if="!connected" class="btn btn-secondary m-2" @click="socketStore.connect()">
+          Connect
+        </button>
+        <br />
+        <button
+          v-if="connected"
+          class="btn btn-accent m-2"
+          @click="socket && socket.emit('create-room')"
+        >
+          Create Room
+        </button>
+        <button
+          v-if="connected"
+          class="btn btn-accent m-2"
+          @click="socket && socket.emit('leave-room')"
+        >
+          Leave Room
+        </button>
+        <button
+          v-if="connected"
+          class="btn btn-accent m-2"
+          @click="socket && socket.emit('host-start-game')"
+        >
+          Start Game
+        </button>
+        <button
+          v-if="connected"
+          class="btn btn-accent m-2"
+          @click="socket && socket.emit('question-next')"
+        >
+          Next Question
+        </button>
+        <br />
+        <input
+          v-if="connected"
+          v-model="chatMessage"
+          type="text"
+          placeholder="Send a chat message"
+          class="input input-bordered w-full max-w-xs"
+          :maxlength="256"
+        />
+        <button
+          v-if="connected"
+          class="btn btn-primary m-2"
+          @click="
+            () => {
+              if (socket) {
+                socket.emit('send-chat-message', chatMessage)
+                chatMessage = ''
+              }
+            }
+          "
+        >
+          Send Message
+        </button>
+        <br />
+        <div>
+          <h2>Score: {{ score }}</h2>
+        </div>
+        <br />
+        <div>
+          <h2>Remaining Time: {{ responseTimeout }}</h2>
+        </div>
+        <div v-if="svgImage">
+          <img :src="svgImage" alt="Country Flag" width="200" :draggable="false" />
+        </div>
+        <div v-if="answerList[0] !== '' && answerList.length > 1">
+          <p>{{ question }}</p>
+        </div>
+        <div v-if="answerList[0] !== '' && answerList.length > 1 && allowAnswers">
+          <button
+            v-for="answer in answerList"
+            :key="answer"
+            class="btn btn-success m-1"
+            @click="answerQuestion(answerList.indexOf(answer) + 1)"
+          >
+            {{ answer }}
+          </button>
+        </div>
+        <br />
+        <div class="max-w-[95vw]">
+          Response: <br />
+          <div v-for="resp in response" :key="resp" class="break-all">{{ resp }}</div>
         </div>
       </div>
     </div>
