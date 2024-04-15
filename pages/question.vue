@@ -3,6 +3,7 @@ const score = 12000
 const questionNumber = 1
 const maxQuestions = 10
 </script>
+
 <template>
   <div>
     <RoomTopNavigation

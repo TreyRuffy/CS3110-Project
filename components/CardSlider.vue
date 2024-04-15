@@ -1,11 +1,10 @@
 <script setup lang="ts">
 interface CardItem {
   title: string
-  link: string
+  link?: string
   description: string
   image: string
   alt?: string
-  internalFetch?: boolean
   openLinkFunction?: () => void
   badge?: string
 }
@@ -77,7 +76,6 @@ updateCardCount()
             :image="item.image"
             :description="item.description"
             :badge="item.badge"
-            :internal-fetch="item.internalFetch"
             :open-link-function="item.openLinkFunction"
             :alt="
               item.alt

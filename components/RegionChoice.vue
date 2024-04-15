@@ -8,84 +8,102 @@ const props = defineProps({
 
 interface CardItem {
   title: string
-  link: string
+  link?: string
   description: string
   image: string
   alt?: string
-  internalFetch?: boolean
   openLinkFunction?: () => void
   badge?: string
+}
+
+const router = useRouter()
+
+const generateQuestion = (category: string, region: string) => {
+  if (props.singlePlayer) {
+    router.push(`/question?category=${category}&region=${region}`)
+  } else {
+    router.push(`/api/create-server-room?category=${category}&region=${region}`)
+  }
 }
 
 const world: CardItem[] = [
   {
     title: 'World',
-    link: props.singlePlayer ? '/' : '/api/create-server-room?region=world',
+    openLinkFunction() {
+      generateQuestion('countries', 'world')
+    },
     image: 'images/World.jpg',
     description: 'Countries all over the world.',
-    internalFetch: !props.singlePlayer,
   },
 ]
 
 const continents: CardItem[] = [
   {
     title: 'Africa',
-    link: props.singlePlayer ? '/' : '/api/create-server-room?region=africa',
+    openLinkFunction() {
+      generateQuestion('countries', 'africa')
+    },
     image: 'images/Africa.jpg',
     description: 'Countries specific to Africa.',
-    internalFetch: !props.singlePlayer,
   },
   {
     title: 'Americas',
-    link: props.singlePlayer ? '/' : '/api/create-server-room?region=americas',
+    openLinkFunction() {
+      generateQuestion('countries', 'americas')
+    },
     image: 'images/Central America and the Caribbean.jpg',
     description: 'Countries specific to North and South America.',
-    internalFetch: !props.singlePlayer,
   },
   {
     title: 'Asia',
-    link: props.singlePlayer ? '/' : '/api/create-server-room?region=asia',
+    openLinkFunction() {
+      generateQuestion('countries', 'asia')
+    },
     image: 'images/Asia.jpg',
     description: 'Countries specific to Asia.',
-    internalFetch: !props.singlePlayer,
   },
   {
     title: 'Europe',
-    link: props.singlePlayer ? '/' : '/api/create-server-room?region=europe',
+    openLinkFunction() {
+      generateQuestion('countries', 'europe')
+    },
     image: 'images/Europe.jpg',
     description: 'Countries specific to Europe.',
-    internalFetch: !props.singlePlayer,
   },
   {
     title: 'Oceania',
-    link: props.singlePlayer ? '/' : '/api/create-server-room?region=oceania',
+    openLinkFunction() {
+      generateQuestion('countries', 'oceania')
+    },
     image: 'images/Oceania.jpg',
     description: 'Countries specific to Oceania.',
-    internalFetch: !props.singlePlayer,
   },
 ]
 
 const countries: CardItem[] = [
   {
     title: 'Canada',
-    link: props.singlePlayer ? '/' : '/api/create-server-room?region=canada',
+    openLinkFunction() {
+      generateQuestion('countries', 'canada')
+    },
     image: 'images/Canada Map.jpg',
     description: 'Provinces of Canada.',
-    internalFetch: !props.singlePlayer,
   },
   {
     title: 'Japan',
-    link: props.singlePlayer ? '/' : '/api/create-server-room?region=japan',
+    openLinkFunction() {
+      generateQuestion('countries', 'japan')
+    },
     image: 'images/Japan Map.jpg',
     description: 'Prefectures of Japan.',
-    internalFetch: !props.singlePlayer,
   },
   {
     title: 'United States of America',
-    link: props.singlePlayer ? '/' : '/api/create-server-room?region=usa',
+    openLinkFunction() {
+      generateQuestion('countries', 'usa')
+    },
     image: 'images/USA Map.jpg',
     description: 'The 50 states of the USA.',
-    internalFetch: !props.singlePlayer,
   },
 ]
 </script>

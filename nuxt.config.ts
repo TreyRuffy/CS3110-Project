@@ -16,6 +16,7 @@ export default defineNuxtConfig({
   modules: [
     '@nuxt/eslint',
     '@nuxt/image',
+    '@nuxt/fonts',
     '@nuxtjs/tailwindcss',
     '@nuxtjs/color-mode',
     'nuxt-viewport',
@@ -54,5 +55,13 @@ export default defineNuxtConfig({
   },
   eslint: {
     checker: true,
+  },
+  fonts: {
+    families: [
+      {
+        name: 'Roboto',
+        provider: 'google',
+      },
+    ],
   },
 })

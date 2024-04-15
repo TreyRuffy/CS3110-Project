@@ -3,6 +3,13 @@ module.exports = {
   plugins: [require('@tailwindcss/typography'), require('daisyui')],
   darkMode: 'class',
   content: ['components/**/*.{vue,js,ts}', 'pages/**/*.vue', 'layouts/**/*.vue'],
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ['Roboto'],
+      },
+    },
+  },
   daisyui: {
     themes: [
       {
@@ -19,6 +26,7 @@ module.exports = {
           'base-100': 'oklch(100% 0 0)',
           'base-content': '#333c4d',
         },
+        fontFamily: 'Roboto',
       },
       'dark',
     ],

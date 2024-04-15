@@ -6,7 +6,7 @@ const props = defineProps({
   },
   link: {
     type: String,
-    required: true,
+    default: null,
   },
   description: {
     type: String,
@@ -20,10 +20,6 @@ const props = defineProps({
     type: String,
     required: false,
     default: null,
-  },
-  internalFetch: {
-    type: Boolean,
-    default: false,
   },
   openLinkFunction: {
     type: Function,
@@ -41,14 +37,6 @@ const router = useRouter()
 const openLink = () => {
   if (props.openLinkFunction) {
     props.openLinkFunction()
-  } else if (props.internalFetch) {
-    $fetch(props.link)
-      .then((response) => {
-        console.log(response)
-      })
-      .catch((error) => {
-        console.error(error)
-      })
   } else {
     router.push(props.link)
   }
