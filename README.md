@@ -1,8 +1,13 @@
-# Nuxt 3 Minimal Starter
+# Quizoot
 
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
-
+---
 ## Setup
+
+Install yarn using npm:
+
+```bash
+corepack enable
+```
 
 Make sure to install the dependencies:
 
@@ -23,12 +28,9 @@ yarn dev --host -o (--tunnel)
 
 `--tunnel will setup a CloudFlare tunnel to access the server from anywhere`
 
-```bash
-
-## Production
 
 Build the application for production:
-
+```bash
 yarn build
 ```
 
@@ -37,5 +39,3 @@ Locally preview production build:
 ```bash
 yarn preview
 ```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.

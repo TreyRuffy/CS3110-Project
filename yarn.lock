@@ -1573,6 +1573,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nuxtjs/color-mode@npm:^3.4.0":
+  version: 3.4.0
+  resolution: "@nuxtjs/color-mode@npm:3.4.0"
+  dependencies:
+    "@nuxt/kit": "npm:^3.11.2"
+    pathe: "npm:^1.1.2"
+    pkg-types: "npm:^1.0.3"
+    semver: "npm:^7.6.0"
+  checksum: 10c0/74fc2df7de14d5364e11fa93075e6cf5a7a0e2510be428233e778709021503d5f605b722681d2a7de03bc9c0c4db9dfabdfa11dcd0b139db271d6b7465213c0f
+  languageName: node
+  linkType: hard
+
 "@nuxtjs/tailwindcss@npm:^6.11.4":
   version: 6.11.4
   resolution: "@nuxtjs/tailwindcss@npm:6.11.4"
@@ -2237,6 +2249,16 @@ __metadata:
     "@types/estree": "npm:*"
     "@types/json-schema": "npm:*"
   checksum: 10c0/159bb5ae2f78d905b9263240c75d07b60c26e1bcaecee8c775a7bb0cf7362f5dcdd286259ba6289ab62f989b87048090b2420619f7170a0abbd83cb68b5e0699
+  languageName: node
+  linkType: hard
+
+"@types/eslint@npm:^8.56.9":
+  version: 8.56.9
+  resolution: "@types/eslint@npm:8.56.9"
+  dependencies:
+    "@types/estree": "npm:*"
+    "@types/json-schema": "npm:*"
+  checksum: 10c0/a800e3d10bd12fc837773101c35a65c189528e306bc41eca9f30176f5ede4d35944a0c0e16b668971db3521df2f2bef62ab2471740eadc72aeb39dbaba6c9101
   languageName: node
   linkType: hard
 
@@ -8029,11 +8051,11 @@ __metadata:
   dependencies:
     "@nuxt/eslint": "npm:0.3.6"
     "@nuxt/image": "npm:^1.5.0"
-    "@nuxtjs/color-mode": "npm:^3.3.3"
+    "@nuxtjs/color-mode": "npm:^3.4.0"
     "@nuxtjs/tailwindcss": "npm:^6.11.4"
     "@pinia/nuxt": "npm:^0.5.1"
     "@tailwindcss/typography": "npm:^0.5.12"
-    "@types/eslint": "npm:^8.56.7"
+    "@types/eslint": "npm:^8.56.9"
     "@types/eslint-config-prettier": "npm:^6.11.3"
     "@types/node": "npm:^20.12.7"
     "@vueuse/core": "npm:^10.9.0"
