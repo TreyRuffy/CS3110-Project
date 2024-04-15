@@ -134,7 +134,7 @@ useSwipe(el, {
         <form method="dialog">
           <button class="btn btn-circle btn-ghost btn-md absolute right-2 top-2">✕</button>
         </form>
-        <h3 class="bottom-2 text-lg font-bold">Multiplayer</h3>
+        <h3 class="bottom-2 text-center text-lg font-bold">Multiplayer</h3>
         <span class="mt-4 flex justify-center sm:hidden" @click="closeModal()">
           <NuxtLink href="/create-room" class="btn w-full px-8"> Create Room </NuxtLink>
           <br />

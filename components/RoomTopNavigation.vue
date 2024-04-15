@@ -13,6 +13,20 @@ defineProps({
     required: true,
   },
 })
+
+const openModal = () => {
+  const modal = document.getElementById('exit_modal') as HTMLDialogElement
+  if (modal) {
+    modal.showModal()
+  }
+}
+
+const exitModal = () => {
+  const modal = document.getElementById('exit_modal') as HTMLDialogElement
+  if (modal) {
+    modal.close()
+  }
+}
 </script>
 
 <template>
@@ -27,8 +41,28 @@ defineProps({
         <span v-else></span>
       </div>
       <div class="navbar-end">
-        <a class="btn btn-ghost btn-md text-[16px]"> Exit </a>
+        <a class="btn btn-ghost btn-md text-[16px]" @click="openModal()"> Exit </a>
       </div>
     </div>
+    <dialog id="exit_modal" class="modal modal-middle">
+      <div ref="el" class="modal-box">
+        <form method="dialog">
+          <button class="btn btn-circle btn-ghost btn-md absolute right-2 top-2">✕</button>
+        </form>
+        <h3 class="bottom-2 mb-2 text-center text-lg font-bold">Exit</h3>
+        <p class="my-4 text-center text-lg">Are you sure you want to exit?</p>
+        <form method="dialog">
+          <label class="form-control w-full">
+            <span class="mx-8 mt-4 grid grid-cols-2 justify-center gap-2">
+              <NuxtLink to="/" class="btn btn-primary btn-md px-4">Quit</NuxtLink>
+              <input type="submit" class="btn btn-error px-4" value="Cancel" @click="exitModal()" />
+            </span>
+          </label>
+        </form>
+      </div>
+      <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+      </form>
+    </dialog>
   </div>
 </template>

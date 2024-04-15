@@ -17,7 +17,7 @@ const svg = () => {
 
 <template>
   <!-- eslint-disable-next-line vue/no-v-html -->
-  <svg v-html="svg()"></svg>
+  <div v-html="svg()"></div>
 </template>
 
 <style scoped></style>
