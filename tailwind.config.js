@@ -21,6 +21,8 @@ module.exports = {
           'secondary-content': '#010b12',
           accent: '#F371B4',
           'accent-content': '#130404',
+          custom1: '#FCC93B',
+          'custom1-content': '#001208',
           neutral: '#333c4d',
           'neutral-content': '#f9fafb',
           'base-100': 'oklch(100% 0 0)',

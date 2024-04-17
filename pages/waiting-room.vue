@@ -10,14 +10,14 @@ const roomCode = 'ABCD'
 
 const roomUrl = useRequestURL().origin + '/join'
 
-const host = true
+const host = false
 const score = 12000
 const questionNumber = 0
 const maxQuestions = 10
 </script>
 
 <template>
-  <div>
+  <div class="flex h-screen flex-col">
     <RoomTopNavigation
       :max-question-number="maxQuestions"
       :question-number="questionNumber"
@@ -51,7 +51,9 @@ const maxQuestions = 10
       </div>
     </div>
     <div v-else>
-      <h1 class="mb-2 mt-4 text-center text-2xl">Waiting for host to start the game...</h1>
+      <h1 class="mx-4 mt-44 flex flex-col text-center text-4xl">
+        Waiting for host to start the game...
+      </h1>
     </div>
   </div>
 </template>
