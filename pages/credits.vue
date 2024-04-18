@@ -54,6 +54,9 @@ import TopNavigation from '~/components/TopNavigation.vue'
         class="m-auto flex flex-wrap content-stretch items-center justify-center gap-x-8 gap-y-4 text-center"
       >
         <div>
+          <NuxtLink href="https://github.com/Afif13/" target="_blank"> CSS Loaders </NuxtLink>
+        </div>
+        <div>
           <NuxtLink href="https://daisyui.com/" target="_blank"> daisyUI </NuxtLink>
         </div>
         <div>
