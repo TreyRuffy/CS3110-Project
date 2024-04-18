@@ -51,11 +51,12 @@ const maxQuestions = 10
       </div>
     </div>
     <div v-else>
-      <h1 class="mx-4 mt-44 flex flex-col text-center text-4xl">
-        Waiting for host to start the game...
-      </h1>
+      <div class="mx-4 mt-44">
+        <div class="flex items-center justify-center text-center text-4xl">
+          <span>Waiting for host to start the game</span>
+          <CSSLoader class="ml-1 mt-1" />
+        </div>
+      </div>
     </div>
   </div>
 </template>
-
-<style scoped></style>
