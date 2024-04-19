@@ -1,38 +1,28 @@
 <template>
   <div>
     <RoomTopNavigation :question-number="0" :max-question-number="0" :score="0" />
-    <div class="flex h-[calc(100vh-64px)] columns-1 flex-row items-center sm:flex-row">
-      <div class="relative flex h-[calc(100vh-64px)] w-1/3 justify-center">
-        <div
-          class="absolute bottom-0 h-1/2 w-3/4 rounded-xl bg-primary text-center shadow-lg shadow-black"
-        >
-          <p class="mt-14 p-4 text-2xl font-bold">2nd!</p>
-          <p class="p-4 text-xl font-extrabold">Name</p>
+    <div class="flex h-screen flex-col items-center bg-primary align-text-top text-primary-content">
+      <h1 class="m-4 text-center text-4xl font-bold">Scoreboard</h1>
+      <div class="stats stats-vertical m-4 items-center justify-center shadow lg:stats-horizontal">
+        <div class="stat">
+          <div class="stat-value">1st</div>
+          <div class="stat-title">Name</div>
+          <div class="stat-desc">Score</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">2nd</div>
+          <div class="stat-title">Name</div>
+          <div class="stat-desc">Score</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">3rd</div>
+          <div class="stat-title">Name</div>
+          <div class="stat-desc">Score</div>
         </div>
       </div>
-      <div class="relative flex h-[calc(100vh-64px)] w-1/3 justify-center">
-        <h1 class="p-4 text-6xl font-bold">Scoreboard</h1>
-        <div
-          class="absolute bottom-0 h-3/4 w-3/4 rounded-xl bg-primary text-center shadow-lg shadow-black"
-        >
-          <p class="mt-14 p-4 text-4xl font-extrabold">1st!</p>
-          <p class="p-4 text-2xl font-semibold">Name</p>
-        </div>
-      </div>
-      <div class="relative flex h-[calc(100vh-64px)] w-1/3 justify-center">
-        <button
-          class="btn btn-primary btn-lg btn-wide mt-16 rounded p-4 shadow-md shadow-black sm:btn-sm md:btn-md lg:btn-lg"
-        >
-          <h2 class="m-2">New Game</h2>
-        </button>
-        <div
-          class="absolute bottom-0 h-1/4 w-3/4 rounded-xl bg-primary text-center shadow-lg shadow-black"
-        >
-          <p class="mt-14 p-4 text-2xl font-bold">3rd!</p>
-          <p class="p-4 text-xl font-extrabold">Name</p>
-        </div>
-      </div>
+      <button class="btn btn-primary btn-wide sm:btn-sm md:btn-md lg:btn-lg">New Game</button>
     </div>
   </div>
 </template>
+
 <style scoped></style>
