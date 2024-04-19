@@ -72,6 +72,7 @@ export default defineEventHandler((event) => {
     })
 
     socket.on('join-room', (roomCode: string) => {
+      roomCode = roomCode.toUpperCase()
       if (roomCode.length !== codeLength) {
         socket.emit('room-error', 'room-code-invalid', 'Room code must be 6 characters')
       }
@@ -109,7 +110,7 @@ export default defineEventHandler((event) => {
       )
     })
 
-    socket.on('create-room', () => {
+    socket.on('create-room', (region) => {
       if (clientRoom.get(client)) {
         socket.emit('room-error', 'already-in-room', 'Already in a room')
         return
@@ -121,6 +122,7 @@ export default defineEventHandler((event) => {
         return
       }
       socket.emit('room-created', currentRoom.joinCode)
+      currentRoom.settings.quiz = region
     })
 
     socket.on('leave-room', () => {

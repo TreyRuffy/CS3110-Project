@@ -73,7 +73,7 @@ export interface ClientToServerEvents {
   'select-username': (username: string) => void
 
   'join-room': (roomCode: string) => void
-  'create-room': () => void
+  'create-room': (region: string) => void
   'leave-room': () => void
 
   'host-update-room-settings': (settings: Partial<RoomSettings>) => void

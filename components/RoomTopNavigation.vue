@@ -14,6 +14,8 @@ defineProps({
   },
 })
 
+const socketStore = useSocketStore()
+
 const openModal = () => {
   const modal = document.getElementById('exit_modal') as HTMLDialogElement
   if (modal) {
@@ -26,6 +28,13 @@ const exitModal = () => {
   if (modal) {
     modal.close()
   }
+}
+
+const router = useRouter()
+
+const leaveRoom = () => {
+  socketStore.disconnect()
+  router.push('/')
 }
 </script>
 
@@ -54,7 +63,7 @@ const exitModal = () => {
         <form method="dialog">
           <label class="form-control w-full">
             <span class="mt-4 grid grid-cols-2 justify-center gap-2">
-              <NuxtLink to="/" class="btn btn-primary btn-md px-4">Quit</NuxtLink>
+              <a class="btn btn-primary btn-md px-4" @click="leaveRoom()">Quit</a>
               <input type="submit" class="btn btn-error px-4" value="Cancel" @click="exitModal()" />
             </span>
           </label>

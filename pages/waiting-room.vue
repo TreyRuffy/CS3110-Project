@@ -6,14 +6,39 @@ const beforeUnloadHandler = (event: BeforeUnloadEvent) => {
 
 useEventListener('beforeunload', beforeUnloadHandler)
 
-const roomCode = 'ABCD'
+const route = useRoute()
 
+const socketStore = useSocketStore()
+const socket = computed({
+  get: () => socketStore.socket,
+  set: (value) => {
+    socketStore.socket = value
+  },
+})
+
+const roomCode = route.query.roomCode as string
 const roomUrl = useRequestURL().origin + '/join'
 
-const host = false
+const host = route.query.host
 const score = 12000
 const questionNumber = 0
 const maxQuestions = 10
+
+watch(socket, () => {
+  if (socket.value === null) {
+    return
+  }
+
+  socket.value.on('successful-connection', () => {
+    console.log('successful-connection')
+  })
+
+  socket.value?.on('game-starting', (timer) => {
+    console.log('game-starting', timer)
+  })
+})
+
+socketStore.connect()
 </script>
 
 <template>
@@ -41,13 +66,39 @@ const maxQuestions = 10
               Room code: <b>{{ roomCode }}</b>
             </h1>
             <div class="mt-4 flex justify-center">
-              <div class="btn btn-primary btn-wide">Start</div>
+              <button
+                class="btn btn-primary btn-wide"
+                @click="
+                  () => {
+                    if (socket) {
+                      socket.emit('host-start-game')
+                    } else {
+                      console.log('Socket not connected')
+                    }
+                  }
+                "
+              >
+                Start
+              </button>
             </div>
           </div>
         </div>
       </div>
       <div class="mt-8 flex justify-center">
-        <div class="btn btn-primary btn-lg btn-wide fixed bottom-8 shadow-md md:hidden">Start</div>
+        <div
+          class="btn btn-primary btn-lg btn-wide fixed bottom-8 shadow-md md:hidden"
+          @click="
+            () => {
+              if (socket) {
+                socket.emit('host-start-game')
+              } else {
+                console.log('Socket not connected')
+              }
+            }
+          "
+        >
+          Start
+        </div>
       </div>
     </div>
     <div v-else>

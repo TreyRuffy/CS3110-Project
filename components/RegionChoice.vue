@@ -16,13 +16,40 @@ interface CardItem {
   badge?: string
 }
 
+const socketStore = useSocketStore()
+const socket = computed({
+  get: () => socketStore.socket,
+  set: (value) => {
+    socketStore.socket = value
+  },
+})
+
 const router = useRouter()
+
+watch(socket, () => {
+  if (socket.value === null) {
+    return
+  }
+
+  socket.value.on('room-created', (roomCode: string) => {
+    router.push({
+      path: '/waiting-room',
+      query: {
+        roomCode,
+        uuid: socket.value?.id,
+        username: 'Host',
+        host: 'true',
+      },
+    })
+  })
+})
 
 const generateQuestion = (category: string, region: string) => {
   if (props.singlePlayer) {
     router.push(`/question?category=${category}&region=${region}`)
   } else {
-    router.push(`/api/create-server-room?category=${category}&region=${region}`)
+    socketStore.connect()
+    socket.value?.emit('create-room', region)
   }
 }
 
