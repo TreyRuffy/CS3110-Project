@@ -1,3 +1,5 @@
+waiting-room.vue
+
 <script setup lang="ts">
 const beforeUnloadHandler = (event: BeforeUnloadEvent) => {
   event.preventDefault()
@@ -6,43 +8,18 @@ const beforeUnloadHandler = (event: BeforeUnloadEvent) => {
 
 useEventListener('beforeunload', beforeUnloadHandler)
 
-const route = useRoute()
+const roomCode = 'ABCD'
 
-const socketStore = useSocketStore()
-const socket = computed({
-  get: () => socketStore.socket,
-  set: (value) => {
-    socketStore.socket = value
-  },
-})
-
-const roomCode = route.query.roomCode as string
 const roomUrl = useRequestURL().origin + '/join'
 
-const host = route.query.host
+const host = true
 const score = 12000
 const questionNumber = 0
 const maxQuestions = 10
-
-watch(socket, () => {
-  if (socket.value === null) {
-    return
-  }
-
-  socket.value.on('successful-connection', () => {
-    console.log('successful-connection')
-  })
-
-  socket.value?.on('game-starting', (timer) => {
-    console.log('game-starting', timer)
-  })
-})
-
-socketStore.connect()
 </script>
 
 <template>
-  <div class="flex h-screen flex-col">
+  <div class="flex h-dvh flex-col">
     <RoomTopNavigation
       :max-question-number="maxQuestions"
       :question-number="questionNumber"
@@ -66,43 +43,17 @@ socketStore.connect()
               Room code: <b>{{ roomCode }}</b>
             </h1>
             <div class="mt-4 flex justify-center">
-              <button
-                class="btn btn-primary btn-wide"
-                @click="
-                  () => {
-                    if (socket) {
-                      socket.emit('host-start-game')
-                    } else {
-                      console.log('Socket not connected')
-                    }
-                  }
-                "
-              >
-                Start
-              </button>
+              <UiButton>Start</UiButton>
             </div>
           </div>
         </div>
       </div>
       <div class="mt-8 flex justify-center">
-        <div
-          class="btn btn-primary btn-lg btn-wide fixed bottom-8 shadow-md md:hidden"
-          @click="
-            () => {
-              if (socket) {
-                socket.emit('host-start-game')
-              } else {
-                console.log('Socket not connected')
-              }
-            }
-          "
-        >
-          Start
-        </div>
+        <UiButtonBottom>Start</UiButtonBottom>
       </div>
     </div>
-    <div v-else>
-      <div class="mx-4 mt-44">
+    <div v-else class="flex h-1/2 items-center justify-center">
+      <div class="mx-4">
         <!-- Waiting for host... on small + screens -->
         <div class="hidden items-center justify-center text-center text-4xl sm:flex">
           <span>Waiting for host to start the game</span>
