@@ -45,7 +45,7 @@ const exitModal = () => {
       </div>
     </div>
     <dialog id="exit_modal" class="modal modal-middle">
-      <div ref="el" class="modal-box">
+      <div ref="el" class="modal-box w-80 md:w-96">
         <form method="dialog">
           <button class="btn btn-circle btn-ghost btn-md absolute right-2 top-2">✕</button>
         </form>
@@ -53,7 +53,7 @@ const exitModal = () => {
         <p class="my-4 text-center text-lg">Are you sure you want to exit?</p>
         <form method="dialog">
           <label class="form-control w-full">
-            <span class="mx-8 mt-4 grid grid-cols-2 justify-center gap-2">
+            <span class="mt-4 grid grid-cols-2 justify-center gap-2">
               <NuxtLink to="/" class="btn btn-primary btn-md px-4">Quit</NuxtLink>
               <input type="submit" class="btn btn-error px-4" value="Cancel" @click="exitModal()" />
             </span>
