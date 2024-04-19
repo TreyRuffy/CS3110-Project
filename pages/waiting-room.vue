@@ -47,14 +47,22 @@ const maxQuestions = 10
         </div>
       </div>
       <div class="mt-8 flex justify-center">
-        <div class="btn btn-primary btn-lg btn-wide fixed bottom-8 md:hidden">Start</div>
+        <div class="btn btn-primary btn-lg btn-wide fixed bottom-8 shadow-md md:hidden">Start</div>
       </div>
     </div>
     <div v-else>
       <div class="mx-4 mt-44">
-        <div class="flex items-center justify-center text-center text-4xl">
+        <!-- Waiting for host... on small + screens -->
+        <div class="hidden items-center justify-center text-center text-4xl sm:flex">
           <span>Waiting for host to start the game</span>
           <CSSLoader class="ml-1 mt-1" />
+        </div>
+        <!-- Waiting for host... on very small screens -->
+        <div class="items-center justify-center text-center text-4xl sm:hidden">
+          <div>Waiting for host to</div>
+          <div class="flex justify-center">
+            <span>start the game</span><CSSLoader class="ml-1 mt-1" />
+          </div>
         </div>
       </div>
     </div>
