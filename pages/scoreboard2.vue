@@ -35,4 +35,20 @@
     </div>
   </div>
 </template>
-<style scoped></style>
+
+<style scoped>
+@media (max-width: 600px) {
+  .flex {
+    flex-direction: column;
+  }
+  .relative {
+    width: 100%;
+    height: calc((100vh - 64px) / 3);
+  }
+  .absolute {
+    bottom: auto;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
+</style>
