@@ -1,12 +1,12 @@
 <script setup lang="ts">
+import type { UUID } from '~/utils/socket-types'
+
 const beforeUnloadHandler = (event: BeforeUnloadEvent) => {
   event.preventDefault()
   event.returnValue = true
 }
 
 useEventListener('beforeunload', beforeUnloadHandler)
-
-const route = useRoute()
 
 const socketStore = useSocketStore()
 const socket = computed({
@@ -16,15 +16,20 @@ const socket = computed({
   },
 })
 
-const roomCode = route.query.roomCode as string
+const roomCode = ref('')
 const roomUrl = useRequestURL().origin + '/join'
 
-const host = route.query.host
-const score = 12000
-const questionNumber = 0
-const maxQuestions = 10
+type Player = [uuid: UUID, username: string]
 
-watch(socket, () => {
+const playerList = ref<Player[]>([])
+
+let uuid = ''
+const host = ref(false)
+const score = ref(12000)
+const questionNumber = ref(0)
+const maxQuestions = ref(10)
+
+function setupSocketEvents() {
   if (socket.value === null) {
     return
   }
@@ -36,9 +41,44 @@ watch(socket, () => {
   socket.value?.on('game-starting', (timer) => {
     console.log('game-starting', timer)
   })
+
+  socket.value?.on('user-info', (_username, _uuid, _roomCode, _roomHost, _score) => {
+    uuid = _uuid
+    host.value = _roomHost
+    roomCode.value = _roomCode
+    score.value = _score
+  })
+
+  socket.value?.on('room-player-update', (_, players) => {
+    playerList.value = players
+  })
+
+  socket.value?.on('room-left', () => {
+    router.push('/')
+  })
+}
+
+watch(socket, () => {
+  setupSocketEvents()
 })
 
-socketStore.connect()
+const router = useRouter()
+if (socket.value === null) {
+  router.replace('/')
+} else {
+  setupSocketEvents()
+  socket.value?.emit('request-user-info')
+}
+
+function getPlayerList() {
+  const list = []
+  for (const player of playerList.value) {
+    if (player[0] !== uuid) {
+      list.push(player[1])
+    }
+  }
+  return list
+}
 </script>
 
 <template>
@@ -56,7 +96,7 @@ socketStore.connect()
       <h1 class="mb-2 ml-8 text-xl font-semibold">Players:</h1>
       <div class="grid h-[60vh] max-h-[60vh] md:h-[70vh] md:max-h-[70vh] md:grid-cols-3">
         <div class="md::overflow-y-auto ml-8 overflow-y-auto md:col-span-2">
-          <PlayerList :players="['Mike', 'AJ', 'Ash', 'Peter', 'David', 'AmyJane']" />
+          <PlayerList :players="getPlayerList()" />
         </div>
         <div class="hidden grid-flow-row items-center justify-center md:grid">
           <div class="mb-8">

@@ -44,7 +44,7 @@ export default defineEventHandler((event) => {
      * If the username is already taken, emit a 'username-taken' event.
      * If the username is available, set the client's username and emit a 'username-accepted' event.
      */
-    socket.on('select-username', (username: string) => {
+    socket.on('select-username', (roomCode: string, username: string) => {
       if (username.length < 2) {
         socket.emit('username-error', 'username-length', 'Username must be at least 2 characters')
         return
@@ -62,7 +62,7 @@ export default defineEventHandler((event) => {
         return
       }
       for (const c of clients.values()) {
-        if (c.username === username) {
+        if (c.username === username && clientRoom.get(c)?.joinCode === roomCode) {
           socket.emit('username-error', 'username-taken', 'Username is already taken')
           return
         }
@@ -281,6 +281,22 @@ export default defineEventHandler((event) => {
       }
 
       currentRoom.broadcast('receive-chat-message', client.username, message)
+    })
+
+    socket.on('request-user-info', () => {
+      socket.emit(
+        'user-info',
+        client.username,
+        client.uuid,
+        clientRoom.get(client)?.joinCode ?? '',
+        clientRoom.get(client)?.host === client,
+        clientRoom.get(client)?.currentGame?.getGameClient(client)?.score || 0,
+      )
+      socket.emit(
+        'room-player-update',
+        clientRoom.get(client)?.joinCode ?? '',
+        clientRoom.get(client)?.players.map((p) => [p.uuid, p.username]) ?? [],
+      )
     })
 
     socket.on('question-next', () => {

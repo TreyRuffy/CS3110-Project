@@ -3,7 +3,6 @@
 </template>
 
 <style scoped>
-/* HTML: <div class="loader"></div> */
 .loader {
   --w: 3ch;
   font-weight: bold;
