@@ -29,9 +29,11 @@
         </div>
       </div>
     </div>
-    <button class="btn-sm-screen btn bg-primary">
-      <h2>New Game</h2>
-    </button>
+    <div class="bottom-container">
+      <button class="btn-sm-screen btn bg-primary">
+        <h2>New Game</h2>
+      </button>
+    </div>
   </div>
 </template>
 
@@ -39,26 +41,46 @@
 * {
   box-sizing: border-box;
 }
+body,
+html {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+.top-container {
+  flex: 1;
+  text-align: center;
+  margin: 2vh;
+  margin-bottom: 0;
+  font-size: 6vh;
+  flex-shrink: 0;
+}
+.bottom-container {
+  text-align: center;
+  position: fixed;
+  width: 100%;
+}
 .flex-space {
-  position: relative;
-  bottom: 0;
-  height: calc(100vh - (20vh + (5rem + 3rem)));
+  height: calc(100vh - 6rem - 30vh);
   display: flex;
   justify-content: space-around;
   flex-direction: column;
+  overflow: hidden;
 }
 .podium-container {
   display: flex;
   flex: 1;
   align-items: center;
   justify-content: left;
+  height: auto;
 }
 .podium {
   position: relative;
-  height: 75%;
-  width: 30vw;
-  margin-bottom: 1rem;
+  height: 10vh;
   text-align: center;
+  justify-content: center;
   border-radius: 0 1rem 1rem 0;
   box-shadow: 0 0 1rem rgba(0, 0, 0, 0.2);
 }
@@ -71,23 +93,17 @@
 .podium3 {
   width: 60vw;
 }
-.top-container {
-  text-align: center;
-  margin-top: 5vh;
-  margin-bottom: 2vh;
-  font-size: 8vh;
-}
 .btn {
   display: flex;
   justify-content: center;
-  margin: 1vh auto;
+  margin: 8vh auto;
   padding: 1rem;
   border-radius: 1rem;
   box-shadow: 0 0 1rem rgba(0, 0, 0, 0.2);
 }
 .rank,
 .name {
-  font-size: 3vh;
+  font-size: 2vh;
   line-height: 1;
 }
 .rank {
@@ -98,18 +114,19 @@
 .name {
   padding: 0.5vh;
   font-weight: bold;
+  margin-bottom: 2rem;
 }
 .btn-lg-screen {
   display: none;
 }
+.btn-sm-screen {
+  display: flex;
+  margin-top: 2rem;
+}
 @media (min-width: 600px) {
-  .large-screen-container {
-    display: flex;
-    flex-direction: column;
-  }
   .flex-space {
     flex-direction: row;
-    height: calc(100vh - (20vh + 4rem + 2rem));
+    height: calc(100vh - 8rem - 28vh);
   }
   .podium-container:nth-child(1) {
     order: 2;
@@ -120,30 +137,41 @@
   .podium-container:nth-child(3) {
     order: 3;
   }
-  .podium-container {
-    flex: 1;
-    align-items: flex-end;
-    justify-content: center;
+  .podium1 {
+    min-height: 35vh;
+  }
+  .podium2 {
+    min-height: 25vh;
+  }
+  .podium3 {
+    min-height: 17.5vh;
   }
   .podium {
     width: 75%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 1rem;
     border-radius: 1rem 1rem 0 0;
   }
-  .podium1 {
-    height: 60vh;
+  .podium-container {
+    flex: 1;
+    height: auto;
+    align-items: flex-end;
+    justify-content: center;
   }
-  .podium2 {
-    height: 45vh;
-  }
-  .podium3 {
-    height: 40vh;
+  .name {
+    margin-bottom: 1rem;
   }
   .rank,
   .name {
-    font-size: calc(1rem + 0.5vw);
+    font-size: calc(0.75rem + 0.2vw);
+    padding: 2vh;
   }
   .btn-lg-screen {
     display: flex;
+    position: relative;
+    z-index: 1;
   }
   .btn-sm-screen {
     display: none;
