@@ -44,7 +44,7 @@ const openLink = () => {
 </script>
 
 <template>
-  <a
+  <button
     class="min-w-70 card card-compact w-96 cursor-pointer rounded-2xl bg-base-100 shadow-xl"
     @click="openLink()"
   >
@@ -56,14 +56,14 @@ const openLink = () => {
       :height="350"
       format="webp"
     />
-    <div class="card-body">
-      <div class="card-title">
+    <span class="card-body">
+      <span class="card-title">
         {{ title }}
-        <div v-if="badge" class="badge badge-secondary badge-sm">{{ badge }}</div>
-      </div>
-      <p v-if="description" class="text-left">{{ description }}</p>
-    </div>
-  </a>
+        <span v-if="badge" class="badge badge-secondary badge-sm">{{ badge }}</span>
+      </span>
+      <span v-if="description" class="text-left">{{ description }}</span>
+    </span>
+  </button>
 </template>
 
 <style scoped></style>

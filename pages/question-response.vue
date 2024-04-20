@@ -14,7 +14,7 @@ defineProps({
 
 <template>
   <div
-    class="flex h-screen flex-col justify-center"
+    class="flex h-dvh flex-col justify-center"
     :class="[
       responseState === 'correct'
         ? 'bg-green-300'

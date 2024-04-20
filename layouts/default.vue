@@ -21,6 +21,14 @@ useHead({
     lang: 'en',
   },
 })
+
+const socketStore = useSocketStore()
+computed({
+  get: () => socketStore.socket,
+  set: (value) => {
+    socketStore.socket = value
+  },
+})
 </script>
 
 <template>
