@@ -5,8 +5,8 @@ const maxQuestions = 10
 </script>
 
 <template>
-  <div class="flex h-screen w-full">
-    <div class="custom-grid grid w-full">
+  <div class="flex h-dvh w-full">
+    <div class="custom-grid grid w-full items-center">
       <!-- Navbar -->
       <div>
         <RoomTopNavigation
@@ -20,6 +20,8 @@ const maxQuestions = 10
         <h1 class="mx-3 mb-2 mt-4 text-center text-2xl font-semibold">
           What country does this flag belong to?
         </h1>
+      </div>
+      <div class="flex justify-center">
         <div class="grid w-fit lg:grid-cols-3">
           <div class="flex items-center justify-center">
             <!-- Timer for bigger screens -->
@@ -57,10 +59,10 @@ const maxQuestions = 10
       <!-- Bottom content -->
       <div class="h-full">
         <div class="mx-2 grid h-full grid-cols-2 grid-rows-2 gap-2">
-          <div class="btn btn-primary btn-lg h-full">answer1</div>
-          <div class="btn btn-secondary btn-lg h-full">answer2</div>
-          <div class="btn btn-accent btn-lg h-full">answer3</div>
-          <div class="btn btn-lg h-full bg-[#FCC93B]">answer4</div>
+          <button class="btn btn-primary btn-lg h-full">answer1</button>
+          <button class="btn btn-secondary btn-lg h-full">answer2</button>
+          <button class="btn btn-accent btn-lg h-full">answer3</button>
+          <button class="btn btn-lg h-full bg-[#FCC93B] hover:bg-[#dcb133]">answer4</button>
         </div>
       </div>
       <!-- Added space -->
@@ -71,6 +73,6 @@ const maxQuestions = 10
 
 <style scoped>
 .custom-grid {
-  grid-template-rows: 64px 1fr 1fr 10px;
+  grid-template-rows: 64px auto 1fr 1fr 10px;
 }
 </style>

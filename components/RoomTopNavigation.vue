@@ -50,7 +50,7 @@ const leaveRoom = () => {
         <span v-else></span>
       </div>
       <div class="navbar-end">
-        <a class="btn btn-ghost btn-md text-[16px]" @click="openModal()"> Exit </a>
+        <button class="btn btn-ghost btn-md text-[16px]" @click="openModal()">Exit</button>
       </div>
     </div>
     <dialog id="exit_modal" class="modal modal-middle">
@@ -63,7 +63,7 @@ const leaveRoom = () => {
         <form method="dialog">
           <label class="form-control w-full">
             <span class="mt-4 grid grid-cols-2 justify-center gap-2">
-              <a class="btn btn-primary btn-md px-4" @click="leaveRoom()">Quit</a>
+              <button class="btn btn-primary btn-md px-4" @click="leaveRoom()">Quit</button>
               <input type="submit" class="btn btn-error px-4" value="Cancel" @click="exitModal()" />
             </span>
           </label>

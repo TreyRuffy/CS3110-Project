@@ -82,7 +82,7 @@ function getPlayerList() {
 </script>
 
 <template>
-  <div class="flex h-screen flex-col">
+  <div class="flex h-dvh flex-col">
     <RoomTopNavigation
       :max-question-number="maxQuestions"
       :question-number="questionNumber"
@@ -106,8 +106,7 @@ function getPlayerList() {
               Room code: <b>{{ roomCode }}</b>
             </h1>
             <div class="mt-4 flex justify-center">
-              <button
-                class="btn btn-primary btn-wide"
+              <UiButton
                 @click="
                   () => {
                     if (socket) {
@@ -119,14 +118,13 @@ function getPlayerList() {
                 "
               >
                 Start
-              </button>
+              </UiButton>
             </div>
           </div>
         </div>
       </div>
       <div class="mt-8 flex justify-center">
-        <div
-          class="btn btn-primary btn-lg btn-wide fixed bottom-8 shadow-md md:hidden"
+        <UiButton
           @click="
             () => {
               if (socket) {
@@ -138,11 +136,11 @@ function getPlayerList() {
           "
         >
           Start
-        </div>
+        </UiButton>
       </div>
     </div>
-    <div v-else>
-      <div class="mx-4 mt-44">
+    <div v-else class="flex h-1/2 items-center justify-center">
+      <div class="mx-4">
         <!-- Waiting for host... on small + screens -->
         <div class="hidden items-center justify-center text-center text-4xl sm:flex">
           <span>Waiting for host to start the game</span>
