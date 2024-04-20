@@ -31,15 +31,9 @@ watch(socket, () => {
     return
   }
 
-  socket.value.on('room-created', (roomCode: string) => {
+  socket.value.on('room-created', () => {
     router.push({
       path: '/waiting-room',
-      query: {
-        roomCode,
-        uuid: socket.value?.id,
-        username: 'Host',
-        host: 'true',
-      },
     })
   })
 })

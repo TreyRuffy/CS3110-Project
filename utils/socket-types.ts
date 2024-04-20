@@ -65,12 +65,20 @@ export interface ServerToClientEvents {
   'invalid-action': (message: string) => void
 
   'receive-chat-message': (username: string, message: string) => void
+
+  'user-info': (
+    username: string,
+    uuid: UUID,
+    roomCode: string,
+    roomHost: boolean,
+    score: number,
+  ) => void
 }
 
 export interface ClientToServerEvents {
   reauthenticate: (uuid: UUID) => void
 
-  'select-username': (username: string) => void
+  'select-username': (roomCode: string, username: string) => void
 
   'join-room': (roomCode: string) => void
   'create-room': (region: string) => void
@@ -85,4 +93,6 @@ export interface ClientToServerEvents {
   'question-next': () => void
 
   'send-chat-message': (message: string) => void
+
+  'request-user-info': () => void
 }

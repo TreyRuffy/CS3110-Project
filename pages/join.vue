@@ -23,7 +23,6 @@ const socket = computed({
 function joinRoom() {
   usernameInput.value?.classList.remove('input-error')
   roomCodeInput.value?.classList.remove('input-error')
-  inputError.value = null
 
   if (!roomCode.value || roomCode.value.length !== 4) {
     roomCodeInput.value?.classList.add('input-error')
@@ -45,8 +44,7 @@ function joinRoom() {
   }
 
   socketStore.connect()
-  socket.value?.emit('select-username', username.value + '')
-  socket.value?.emit('join-room', roomCode.value + '')
+  socket.value?.emit('select-username', roomCode.value, username.value + '')
 }
 
 const router = useRouter()
@@ -60,18 +58,18 @@ watch(socket, () => {
     uuid.value = _uuid
   })
 
-  socket.value.on('username-error', (errorType, errorMessage) => {
-    inputError.value = errorType + ': ' + errorMessage
+  socket.value.on('username-error', (_, errorMessage) => {
+    inputError.value = errorMessage
   })
 
   socket.value.on('username-accepted', (_username) => {
     username.value = _username
+    socket.value?.emit('join-room', roomCode.value + '')
   })
 
-  socket.value.on('room-joined', (roomCode) => {
+  socket.value.on('room-joined', () => {
     router.push({
-      name: 'waiting-room',
-      query: { uuid: uuid.value, roomCode: roomCode, username: username.value },
+      path: '/waiting-room',
     })
   })
 
@@ -82,7 +80,19 @@ watch(socket, () => {
   socket.value.on('invalid-action', (message) => {
     inputError.value = message
   })
+
+  socket.value?.on('user-info', (_username, _uuid, _roomCode, _roomHost, _score) => {
+    if (_roomCode !== '') {
+      router.push({
+        path: '/waiting-room',
+      })
+    }
+  })
 })
+
+if (socket.value !== null) {
+  socket.value.emit('request-user-info')
+}
 </script>
 
 <template>
@@ -118,7 +128,7 @@ watch(socket, () => {
                 placeholder="Room code"
                 class="grow"
                 :maxlength="6"
-                oninput="this.value = this.value.toUpperCase()"
+                oninput="this.value = this.value.replace(' ', '').toUpperCase()"
               />
             </label>
 
