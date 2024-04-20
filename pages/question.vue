@@ -59,10 +59,10 @@ const maxQuestions = 10
       <!-- Bottom content -->
       <div class="h-full">
         <div class="mx-2 grid h-full grid-cols-2 grid-rows-2 gap-2">
-          <div class="btn btn-primary btn-lg h-full">answer1</div>
-          <div class="btn btn-secondary btn-lg h-full">answer2</div>
-          <div class="btn btn-accent btn-lg h-full">answer3</div>
-          <div class="btn btn-lg h-full bg-[#FCC93B] hover:bg-[#dcb133]">answer4</div>
+          <button class="btn btn-primary btn-lg h-full">answer1</button>
+          <button class="btn btn-secondary btn-lg h-full">answer2</button>
+          <button class="btn btn-accent btn-lg h-full">answer3</button>
+          <button class="btn btn-lg h-full bg-[#FCC93B] hover:bg-[#dcb133]">answer4</button>
         </div>
       </div>
       <!-- Added space -->

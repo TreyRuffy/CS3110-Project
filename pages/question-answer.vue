@@ -1,8 +1,4 @@
-question-answer.vue
-
 <script setup lang="ts">
-import ButtonBottom from '~/components/ui/ButtonBottom.vue'
-
 const score = 12000
 const questionNumber = 1
 const maxQuestions = 10
@@ -32,23 +28,23 @@ const maxQuestions = 10
           <!-- Creating 4 different cards in a row -->
           <div class="grid gap-2">
             <div class="card w-auto bg-primary shadow-md">
-              <QuestionAnswerCard :num-answers="11" :country-choice="'Ireland'" />
+              <QuestionAnswerCard :num-answers="11" country-choice="Ireland" />
             </div>
             <div class="card w-auto bg-secondary shadow-md">
-              <QuestionAnswerCard :num-answers="5" :country-choice="'India'" />
+              <QuestionAnswerCard :num-answers="5" country-choice="India" />
             </div>
             <div class="card w-auto bg-accent shadow-md">
-              <QuestionAnswerCard :num-answers="2" :country-choice="'Greenland'" />
+              <QuestionAnswerCard :num-answers="2" country-choice="Greenland" />
             </div>
             <div class="card w-auto bg-[#FCC93B] shadow-md">
-              <QuestionAnswerCard :num-answers="3" :country-choice="'Australia'" />
+              <QuestionAnswerCard :num-answers="3" country-choice="Australia" />
             </div>
           </div>
           <!-- Empty div -->
           <div></div>
           <!-- Next Question Button Smaller Screens -->
           <div class="mt-8 flex justify-center">
-            <ButtonBottom>Next Question</ButtonBottom>
+            <UiButtonBottom>Next Question</UiButtonBottom>
           </div>
         </div>
       </div>

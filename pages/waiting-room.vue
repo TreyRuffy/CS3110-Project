@@ -1,5 +1,3 @@
-waiting-room.vue
-
 <script setup lang="ts">
 const beforeUnloadHandler = (event: BeforeUnloadEvent) => {
   event.preventDefault()

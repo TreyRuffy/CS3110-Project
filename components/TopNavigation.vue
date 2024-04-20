@@ -39,7 +39,7 @@ useSwipe(el, {
     <div class="navbar z-[99] bg-base-200">
       <div class="navbar-start">
         <div class="dropdown">
-          <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
+          <button tabindex="0" role="button" class="btn btn-ghost lg:hidden">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               class="h-5 w-5"
@@ -54,7 +54,7 @@ useSwipe(el, {
                 d="M4 6h16M4 12h8m-8 6h16"
               />
             </svg>
-          </div>
+          </button>
           <ul
             tabindex="0"
             class="menu dropdown-content menu-sm z-[98] mt-3 w-52 rounded-box bg-base-100 p-2 shadow"
@@ -76,7 +76,7 @@ useSwipe(el, {
       </div>
       <div class="navbar-center hidden lg:flex">
         <div class="dropdown dropdown-hover">
-          <div tabindex="0" role="button" class="btn m-1 shadow">
+          <button tabindex="0" role="button" class="btn m-1 shadow">
             Play
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -88,7 +88,7 @@ useSwipe(el, {
             >
               <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
             </svg>
-          </div>
+          </button>
           <ul class="menu dropdown-content z-[101] w-52 rounded-box bg-base-100 p-2 shadow">
             <li>
               <NuxtLink
