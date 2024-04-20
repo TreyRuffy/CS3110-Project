@@ -1,59 +1,152 @@
 <template>
   <div>
     <RoomTopNavigation :question-number="0" :max-question-number="0" :score="0" />
-    <div class="flex h-[calc(100vh-64px)] flex-col sm:flex-row">
-      <div class="relative flex flex-1 items-end justify-center sm:items-center">
-        <div
-          class="absolute bottom-0 h-1/3 w-3/4 rounded-t-xl bg-primary text-center shadow-lg shadow-black sm:bottom-0 sm:top-auto"
-        >
-          <p class="mt-[2vh] p-[1vh] text-[10vh] font-bold sm:text-[5vh]">2nd!</p>
-          <p class="p-[.5vh] text-[8vh] font-extrabold sm:text-[4vh]">Name</p>
+    <div class="top-container">
+      <h1>Scoreboard</h1>
+      <button class="btn-lg-screen btn bg-primary">
+        <h2>New Game</h2>
+      </button>
+    </div>
+    <!--Container for screen under nav bar-->
+    <div class="flex-space h-[calc(100vh-64px)] flex-col sm:flex-row">
+      <!--Begin First Column-->
+      <div class="podium-container">
+        <div class="podium podium1 bg-primary">
+          <p class="rank">1st!</p>
+          <p class="name">Name</p>
         </div>
       </div>
-      <div class="relative flex flex-1 items-end justify-center sm:items-center">
-        <h1 class="p-4 text-6xl font-bold">Scoreboard</h1>
-        <div
-          class="absolute bottom-0 h-1/2 w-3/4 rounded-t-xl bg-primary text-center shadow-lg shadow-black sm:bottom-0 sm:top-auto"
-        >
-          <p class="mt-[2vh] p-[1vh] text-[10vh] font-extrabold sm:text-[5vh]">1st!</p>
-          <p class="p-[.5vh] text-[8vh] font-semibold sm:text-[4vh]">Name</p>
+      <div class="podium-container">
+        <div class="podium podium2 bg-primary">
+          <p class="rank">2nd!</p>
+          <p class="name">Name</p>
         </div>
       </div>
-      <div class="relative flex flex-1 items-end justify-center sm:items-center">
-        <button
-          class="btn btn-primary btn-lg btn-wide mt-16 rounded p-4 shadow-md shadow-black sm:btn-sm md:btn-md lg:btn-lg"
-        >
-          <h2 class="m-2">New Game</h2>
-        </button>
-        <div
-          class="absolute bottom-0 h-1/4 w-3/4 rounded-t-xl bg-primary text-center shadow-lg shadow-black sm:bottom-0 sm:top-auto"
-        >
-          <p class="mt-[2vh] p-[1vh] text-[10vh] font-bold sm:text-[5vh]">3rd!</p>
-          <p class="p-[.5vh] text-[8vh] font-extrabold sm:text-[4vh]">Name</p>
+      <div class="podium-container">
+        <div class="podium podium3 bg-primary">
+          <p class="rank">3rd!</p>
+          <p class="name">Name</p>
         </div>
       </div>
     </div>
+    <button class="btn-sm-screen btn bg-primary">
+      <h2>New Game</h2>
+    </button>
   </div>
 </template>
 
 <style scoped>
-@media (max-width: 600px) {
-  .flex {
+* {
+  box-sizing: border-box;
+}
+.flex-space {
+  position: relative;
+  bottom: 0;
+  height: calc(100vh - (20vh + (5rem + 3rem)));
+  display: flex;
+  justify-content: space-around;
+  flex-direction: column;
+}
+.podium-container {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: left;
+}
+.podium {
+  position: relative;
+  height: 75%;
+  width: 30vw;
+  margin-bottom: 1rem;
+  text-align: center;
+  border-radius: 0 1rem 1rem 0;
+  box-shadow: 0 0 1rem rgba(0, 0, 0, 0.2);
+}
+.podium1 {
+  width: 90vw;
+}
+.podium2 {
+  width: 75vw;
+}
+.podium3 {
+  width: 60vw;
+}
+.top-container {
+  text-align: center;
+  margin-top: 5vh;
+  margin-bottom: 2vh;
+  font-size: 8vh;
+}
+.btn {
+  display: flex;
+  justify-content: center;
+  margin: 1vh auto;
+  padding: 1rem;
+  border-radius: 1rem;
+  box-shadow: 0 0 1rem rgba(0, 0, 0, 0.2);
+}
+.rank,
+.name {
+  font-size: 3vh;
+  line-height: 1;
+}
+.rank {
+  margin-top: 2vh;
+  padding: 1vh;
+  font-weight: bold;
+}
+.name {
+  padding: 0.5vh;
+  font-weight: bold;
+}
+.btn-lg-screen {
+  display: none;
+}
+@media (min-width: 600px) {
+  .large-screen-container {
+    display: flex;
     flex-direction: column;
   }
-  .relative {
-    width: 100%;
-    height: calc((100vh - 64px) / 3);
+  .flex-space {
+    flex-direction: row;
+    height: calc(100vh - (20vh + 4rem + 2rem));
   }
-  .absolute {
-    bottom: auto;
-    top: 50%;
-    transform: translateY(-50%);
+  .podium-container:nth-child(1) {
+    order: 2;
   }
-  .font-bold,
-  .font-extrabold,
-  .font-semibold {
-    font-size: calc(1rem + 1.5vw);
+  .podium-container:nth-child(2) {
+    order: 1;
+  }
+  .podium-container:nth-child(3) {
+    order: 3;
+  }
+  .podium-container {
+    flex: 1;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .podium {
+    width: 75%;
+    border-radius: 1rem 1rem 0 0;
+  }
+  .podium1 {
+    height: 60vh;
+  }
+  .podium2 {
+    height: 45vh;
+  }
+  .podium3 {
+    height: 40vh;
+  }
+  .rank,
+  .name {
+    font-size: calc(1rem + 0.5vw);
+  }
+  .btn-lg-screen {
+    display: flex;
+  }
+  .btn-sm-screen {
+    display: none;
   }
 }
 </style>
