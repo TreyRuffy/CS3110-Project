@@ -10,14 +10,17 @@ export const useToastStore = defineStore('toast', () => {
   const addToast = (_toast: Toast) => {
     toast.value = _toast
     toastTimer.value = setTimeout(() => {
-      toast.value = null
+      if (toastTimer.value) {
+        clearTimeout(toastTimer.value)
+        toast.value = null
+      }
     }, 5000)
   }
   const removeToast = () => {
-    toast.value = null
     if (toastTimer.value) {
       clearTimeout(toastTimer.value)
     }
+    toast.value = null
   }
   const getToast = () => toast.value
   return { getToast, addToast, removeToast }

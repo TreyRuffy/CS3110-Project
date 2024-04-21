@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { UUID } from '~/utils/socket-types'
+import xss from 'xss'
 
 const singlePlayerStore = useSingleplayerStore()
 singlePlayerStore.reset()
@@ -82,6 +83,8 @@ function getPlayerList() {
   }
   return list
 }
+
+const hostname = useRequestURL().origin
 </script>
 
 <template>
@@ -92,22 +95,28 @@ function getPlayerList() {
       :score="score"
     />
     <h1 class="mb-2 mt-4 text-center text-2xl font-semibold">Waiting Room</h1>
-    <h1 class="mb-2 mt-4 text-center text-2xl" :class="[host ? 'md:hidden' : '']">
+    <button
+      class="mb-2 mt-4 text-center text-2xl"
+      :class="[host ? 'md:hidden' : '']"
+      @click="copyRoomCode(hostname, xss(roomCode))"
+    >
       Room Code: <b>{{ roomCode }}</b>
-    </h1>
+    </button>
     <div v-if="host">
-      <h1 class="mb-2 ml-8 text-xl font-semibold">Players:</h1>
+      <h1 class="mb-2 text-center text-xl font-semibold md:ml-8 md:text-left">Players:</h1>
       <div class="grid h-[60vh] max-h-[60vh] md:h-[70vh] md:max-h-[70vh] md:grid-cols-3">
-        <div class="md::overflow-y-auto ml-8 overflow-y-auto md:col-span-2">
+        <div class="ml-8 overflow-y-auto md:col-span-2 md:overflow-y-auto">
           <PlayerList :players="getPlayerList()" />
         </div>
         <div class="hidden grid-flow-row items-center justify-center md:grid">
           <div class="mb-8">
             <RoomCode :room-code="roomCode" class="mx-auto w-[18vw]" />
             <h1 class="text-center text-lg">{{ roomUrl }}</h1>
-            <h1 class="text-center text-lg">
-              Room code: <b>{{ roomCode }}</b>
-            </h1>
+            <div class="text-center text-lg" @click="copyRoomCode(hostname, xss(roomCode))">
+              <button>
+                Room code: <b>{{ roomCode }}</b>
+              </button>
+            </div>
             <div class="mt-4 flex justify-center">
               <UiButton
                 @click="

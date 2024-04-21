@@ -6,7 +6,7 @@ const toast = computed(() => toastStore.getToast())
 <template>
   <div v-if="toast" :key="toast.title" class="toast">
     <div
-      class="alert"
+      class="alert sm:grid-flow-col"
       :class="[
         toast.type === 'warning'
           ? 'alert-warning'
@@ -21,7 +21,7 @@ const toast = computed(() => toastStore.getToast())
     >
       <div>
         <h3 class="font-bold">{{ toast.title }}</h3>
-        <div class="text-sm">{{ toast.message }}</div>
+        <span class="text-sm">{{ toast.message }}</span>
       </div>
       <button class="btn btn-circle btn-ghost btn-sm" @click="toastStore.removeToast()">
         <svg

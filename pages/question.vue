@@ -118,6 +118,7 @@ if (singlePlayer) {
             <NuxtImg
               v-if="questionList[questionNumber - 1]"
               :src="questionList[questionNumber - 1].image"
+              class="border-2 border-gray-950"
               format="webp"
               :height="42"
               alt="United States"

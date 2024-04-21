@@ -7,6 +7,7 @@ type ResponseState = 'waiting' | 'correct' | 'incorrect'
 const singlePlayerStore = useSingleplayerStore()
 const responseState = ref<ResponseState>('waiting')
 const addedScore = ref(0)
+const correctAnswer = ref('')
 
 const router = useRouter()
 
@@ -14,12 +15,14 @@ if (singlePlayerStore.state !== 'not-started' && singlePlayerStore.state !== 'in
   responseState.value = singlePlayerStore.state
   score.value = singlePlayerStore.score
   questionNumber.value = singlePlayerStore.questionNumber
+  correctAnswer.value =
+    singlePlayerStore.questions[singlePlayerStore.questionNumber - 1].correctAnswer()
   maxQuestions.value = singlePlayerStore.maxQuestions
   addedScore.value = singlePlayerStore.addedScore
 
   singlePlayerStore.addedScore = 0
 
-  setTimeout(() => {
+  singlePlayerStore.timer = setTimeout(() => {
     singlePlayerStore.state = 'in-question'
     singlePlayerStore.questionNumber += 1
     router.replace(`/question`)
@@ -52,9 +55,14 @@ if (singlePlayerStore.state !== 'not-started' && singlePlayerStore.state !== 'in
       </div>
       <div v-else-if="responseState === 'correct'" class="text-center text-4xl">
         Correct!
-        <div>+{{ addedScore }}</div>
+        <div class="mt-2 text-3xl">+{{ addedScore }}</div>
       </div>
-      <div v-else-if="responseState === 'incorrect'" class="text-4xl">Incorrect</div>
+      <div v-else-if="responseState === 'incorrect'" class="text-center">
+        <div class="text-4xl">Incorrect</div>
+        <div v-if="correctAnswer" class="mt-2 text-3xl">
+          Correct answer: <b>{{ correctAnswer }}</b>
+        </div>
+      </div>
     </div>
   </div>
 </template>

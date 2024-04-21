@@ -17,7 +17,9 @@ export const useSingleplayerStore = defineStore('singleplayer', () => {
     questionNumber.value = 1
     maxQuestions.value = 100000
     questions.value = []
-    timer.value = null
+    if (timer.value) {
+      clearTimeout(timer.value)
+    }
     state.value = 'not-started'
     addedScore.value = 0
   }

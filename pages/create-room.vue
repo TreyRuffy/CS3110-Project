@@ -7,7 +7,7 @@ register()
 
 <template>
   <div>
-    <div class="h-dvh">
+    <div class="min-h-dvh">
       <TopNavigation />
       <h1 class="mb-2 mt-4 text-center text-2xl font-semibold">Create Multiplayer Room</h1>
       <RegionChoice :single-player="false" />

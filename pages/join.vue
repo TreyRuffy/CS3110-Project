@@ -91,7 +91,7 @@ if (socket.value !== null) {
 
 <template>
   <div>
-    <div class="h-dvh">
+    <div class="min-h-dvh">
       <TopNavigation />
       <div class="mt-8 flex items-center">
         <div class="card mx-auto w-full max-w-2xl lg:shadow-[0_20px_50px_-10px_rgba(0,0,0,0.25)]">
