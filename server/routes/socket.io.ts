@@ -75,6 +75,7 @@ export default defineEventHandler((event) => {
       roomCode = roomCode.toUpperCase()
       if (roomCode.length !== codeLength) {
         socket.emit('room-error', 'room-code-invalid', 'Room code must be 6 characters')
+        return
       }
       const room = getAllRooms().get(<JoinCode>roomCode)
       if (!room) {

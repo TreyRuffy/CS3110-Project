@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import type { UUID } from '~/utils/socket-types'
 
+const singlePlayerStore = useSingleplayerStore()
+singlePlayerStore.reset()
+
 const beforeUnloadHandler = (event: BeforeUnloadEvent) => {
   event.preventDefault()
   event.returnValue = true
@@ -123,7 +126,7 @@ function getPlayerList() {
           </div>
         </div>
       </div>
-      <div class="mt-8 flex justify-center">
+      <div class="mt-8 flex justify-center md:hidden">
         <UiButton
           @click="
             () => {

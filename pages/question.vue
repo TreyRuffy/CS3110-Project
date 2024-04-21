@@ -1,7 +1,68 @@
 <script setup lang="ts">
-const score = 12000
-const questionNumber = 1
-const maxQuestions = 10
+import { GenerativeQuiz, type Question } from '~/utils/utils'
+import { createQuizzes } from '~/utils/countries'
+
+const score = ref(12000)
+const questionNumber = ref(1)
+const maxQuestions = ref(10)
+const questionList = ref<Question[]>([])
+const questions = ref<string[]>([])
+
+const singlePlayerStore = useSingleplayerStore()
+const singlePlayer = singlePlayerStore.state !== 'not-started'
+
+watch(singlePlayerStore.questions, () => {
+  if (singlePlayer && singlePlayerStore.questions) {
+    questionNumber.value = singlePlayerStore.questionNumber
+    questions.value = singlePlayerStore.questions[questionNumber.value - 1].shuffledAnswers()
+    questionList.value = singlePlayerStore.questions
+    score.value = singlePlayerStore.score
+    maxQuestions.value = singlePlayerStore.maxQuestions
+  }
+})
+
+const router = useRouter()
+
+function answerQuestion(question: string) {
+  if (singlePlayer) {
+    // Check answer
+    if (!singlePlayerStore.questions) return
+    if (question === singlePlayerStore.questions[questionNumber.value - 1].correctAnswer()) {
+      singlePlayerStore.score += 1000
+      singlePlayerStore.addedScore = 1000
+      singlePlayerStore.state = 'correct'
+      router.replace(`/question-response`)
+    } else {
+      singlePlayerStore.state = 'incorrect'
+      router.replace(`/question-response`)
+    }
+  } else {
+    // Send answer to server
+  }
+}
+
+const singlePlayerSetup = async () => {
+  const quizzes = await createQuizzes()
+  if (!quizzes) {
+    return
+  }
+  const singlePlayerStore = useSingleplayerStore()
+  const quiz = quizzes.find((quiz) => quiz && quiz.name === singlePlayerStore.region)?.quiz ?? null
+  if (!quiz) {
+    return
+  }
+  if (quiz instanceof GenerativeQuiz) {
+    quiz.generateQuestions(1).then((_questions) => {
+      singlePlayerStore.questions.push(..._questions)
+    })
+  } else {
+    singlePlayerStore.questions.push(...quiz.questions)
+  }
+}
+
+if (singlePlayer) {
+  singlePlayerSetup()
+}
 </script>
 
 <template>
@@ -35,7 +96,8 @@ const maxQuestions = 10
           </div>
           <div class="relative mx-8 flex justify-center">
             <NuxtImg
-              src="https://flagcdn.com/us.svg"
+              v-if="questionList[questionNumber - 1]"
+              :src="questionList[questionNumber - 1].image"
               format="webp"
               :height="42"
               alt="United States"
@@ -59,10 +121,21 @@ const maxQuestions = 10
       <!-- Bottom content -->
       <div class="h-full">
         <div class="mx-2 grid h-full grid-cols-2 grid-rows-2 gap-2">
-          <button class="btn btn-primary btn-lg h-full">answer1</button>
-          <button class="btn btn-secondary btn-lg h-full">answer2</button>
-          <button class="btn btn-accent btn-lg h-full">answer3</button>
-          <button class="btn btn-lg h-full bg-[#FCC93B] hover:bg-[#dcb133]">answer4</button>
+          <button class="btn btn-primary btn-lg h-full" @click="answerQuestion(questions[0])">
+            {{ questions[0] }}
+          </button>
+          <button class="btn btn-secondary btn-lg h-full" @click="answerQuestion(questions[1])">
+            {{ questions[1] }}
+          </button>
+          <button class="btn btn-accent btn-lg h-full" @click="answerQuestion(questions[2])">
+            {{ questions[2] }}
+          </button>
+          <button
+            class="btn btn-lg h-full bg-[#FCC93B] hover:bg-[#DCB133] focus:outline-[#DCB133]"
+            @click="answerQuestion(questions[3])"
+          >
+            {{ questions[3] }}
+          </button>
         </div>
       </div>
       <!-- Added space -->

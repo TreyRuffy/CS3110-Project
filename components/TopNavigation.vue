@@ -2,26 +2,95 @@
 const roomCode = ref<string | null>(null)
 const username = ref<string | null>(null)
 
+const roomCodeInput = ref<HTMLInputElement | null>(null)
+const usernameInput = ref<HTMLInputElement | null>(null)
+const inputError = ref<string | null>(null)
+
+const socketStore = useSocketStore()
+const socket = computed({
+  get: () => socketStore.socket,
+  set: (value) => {
+    socketStore.socket = value
+  },
+})
+
 function joinRoom() {
-  if (!roomCode.value) {
-    alert('Please enter a room code')
+  usernameInput.value?.classList.remove('input-error')
+  roomCodeInput.value?.classList.remove('input-error')
+
+  if (!roomCode.value || roomCode.value.length !== 4) {
+    roomCodeInput.value?.classList.add('input-error')
+    inputError.value = 'Please enter a room code'
+  }
+
+  if (!username.value || username.value.length < 2) {
+    usernameInput.value?.classList.add('input-error')
+
+    if (inputError.value) {
+      inputError.value += ' and a username'
+    } else {
+      inputError.value = 'Please enter a username'
+    }
+  }
+
+  if (!roomCode.value || !username.value) {
     return
   }
-  if (!username.value) {
-    alert('Please enter a username')
-    return
-  }
-  // TODO join room logic
-  console.log('Room code: ' + roomCode.value + '\nUsername: ' + username.value)
-  roomCode.value = null
-  username.value = null
+
+  socketStore.connect()
+  socket.value?.emit('select-username', roomCode.value, username.value + '')
 }
+
+const router = useRouter()
+
+watch(socket, () => {
+  if (socket.value === null) {
+    return
+  }
+
+  socket.value.on('username-error', (_, errorMessage) => {
+    inputError.value = errorMessage
+  })
+
+  socket.value.on('username-accepted', (_username) => {
+    username.value = _username
+    socket.value?.emit('join-room', roomCode.value + '')
+  })
+
+  socket.value.on('room-joined', () => {
+    closeModal()
+    router.push({
+      path: '/waiting-room',
+    })
+  })
+
+  socket.value.on('room-error', (_, errorMessage) => {
+    inputError.value = errorMessage
+  })
+
+  socket.value.on('invalid-action', (message) => {
+    inputError.value = message
+  })
+
+  socket.value?.on('user-info', (_username, _uuid, _roomCode, _roomHost, _score) => {
+    if (_roomCode !== '') {
+      closeModal()
+      router.push({
+        path: '/waiting-room',
+      })
+    }
+  })
+})
 
 const closeModal = () => {
   const modal = document.getElementById('join_room_modal') as HTMLDialogElement
   if (modal) {
     modal.close()
   }
+}
+
+if (socket.value !== null) {
+  socket.value.emit('request-user-info')
 }
 
 const el = ref(null)
@@ -144,7 +213,11 @@ useSwipe(el, {
             <span class="flex justify-center sm:hidden">
               <span>- OR -</span>
             </span>
-            <label for="room-code" class="input input-bordered mt-2 flex items-center gap-2">
+            <label
+              ref="roomCodeInput"
+              for="room-code"
+              class="input input-bordered mt-2 flex items-center gap-2"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 20 20"
@@ -164,13 +237,17 @@ useSwipe(el, {
                 type="text"
                 placeholder="Room code"
                 class="grow"
-                :maxlength="6"
+                :maxlength="4"
                 :required="true"
-                oninput="this.value = this.value.toUpperCase()"
+                oninput="this.value = this.value.replace(' ', '').toUpperCase()"
               />
             </label>
 
-            <label for="username" class="input input-bordered mt-2 flex items-center gap-2">
+            <label
+              ref="usernameInput"
+              for="username"
+              class="input input-bordered mt-2 flex items-center gap-2"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 20 20"
@@ -190,10 +267,15 @@ useSwipe(el, {
                 class="grow"
                 :maxlength="32"
                 :required="true"
+                oninput="this.value = this.value.replace(' ', '')"
               />
             </label>
 
-            <span class="mt-4 flex justify-center">
+            <span v-if="inputError !== null" class="mt-4 justify-center text-center text-red-600">
+              {{ inputError }}
+            </span>
+
+            <span class="flex justify-center" :class="inputError !== null ? 'mt-4' : 'mt-8'">
               <input type="submit" class="btn btn-primary w-full px-8" value="Join Room" /> <br />
             </span>
             <span class="mt-4 hidden justify-center sm:flex">

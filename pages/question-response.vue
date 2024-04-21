@@ -1,15 +1,30 @@
 <script setup lang="ts">
-const score = 12000
-const questionNumber = 1
-const maxQuestions = 10
+const score = ref(12000)
+const questionNumber = ref(1)
+const maxQuestions = ref(10)
 type ResponseState = 'waiting' | 'correct' | 'incorrect'
 
-defineProps({
-  responseState: {
-    type: String as PropType<ResponseState>,
-    default: 'waiting',
-  },
-})
+const singlePlayerStore = useSingleplayerStore()
+const responseState = ref<ResponseState>('waiting')
+const addedScore = ref(0)
+
+const router = useRouter()
+
+if (singlePlayerStore.state !== 'not-started' && singlePlayerStore.state !== 'in-question') {
+  responseState.value = singlePlayerStore.state
+  score.value = singlePlayerStore.score
+  questionNumber.value = singlePlayerStore.questionNumber
+  maxQuestions.value = singlePlayerStore.maxQuestions
+  addedScore.value = singlePlayerStore.addedScore
+
+  singlePlayerStore.addedScore = 0
+
+  setTimeout(() => {
+    singlePlayerStore.state = 'in-question'
+    singlePlayerStore.questionNumber += 1
+    router.replace(`/question`)
+  }, 3000)
+}
 </script>
 
 <template>
@@ -37,7 +52,7 @@ defineProps({
       </div>
       <div v-else-if="responseState === 'correct'" class="text-center text-4xl">
         Correct!
-        <div>+98</div>
+        <div>+{{ addedScore }}</div>
       </div>
       <div v-else-if="responseState === 'incorrect'" class="text-4xl">Incorrect</div>
     </div>

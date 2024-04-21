@@ -6,83 +6,14 @@ interface Country {
   name: {
     common: string
     official: string
-    nativeName: {
-      [key: string]: {
-        official: string
-        common: string
-      }
-    }
   }
-  tld: string[]
   cca2: string
-  ccn3: string
-  cca3: string
-  cioc: string
-  independent: boolean
-  status: string
-  unMember: boolean
-  currencies: {
-    [key: string]: {
-      name: string
-      symbol: string
-    }
-  }
-  idd: {
-    root: string
-    suffixes: string[]
-  }
-  capital: string[]
-  altSpellings: string[]
   region: string
   subregion: string
-  languages: {
-    [key: string]: string
-  }
-  translations: {
-    [key: string]: string
-  }
-  latlng: number[]
-  landlocked: boolean
-  borders: string[]
-  area: number
-  demonyms: {
-    [key: string]: {
-      f: string
-      m: string
-    }
-  }
-  flag: string
-  maps: {
-    googleMaps: string
-    openStreetMaps: string
-  }
-  population: number
-  gini: {
-    [key: string]: number
-  }
-  fifa: string
-  car: {
-    signs: string[]
-    side: string
-  }
-  timezones: string[]
-  continents: string[]
   flags: {
     svg: string
     png: string
     alt: string
-  }
-  coatOfArms: {
-    png: string
-    svg: string
-  }
-  startOfWeek: string
-  capitalInfo: {
-    latlng: number[]
-  }
-  postalCode: {
-    format: string
-    regex: string
   }
 }
 
@@ -116,13 +47,16 @@ export const filters = [
 ] as const
 
 export async function createQuizzes() {
-  if (filters.every((f) => getQuiz(f) != undefined)) {
-    return
-  }
   return Promise.all(filters.map((f) => createQuiz(f)))
 }
 
 export async function createQuiz(filter: (typeof filters)[number]) {
+  if (getQuiz(filter) != undefined) {
+    return {
+      name: filter,
+      quiz: getQuiz(filter),
+    }
+  }
   let countryBuilder: CountriesBuilder | null = null
   switch (filter) {
     case 'world':

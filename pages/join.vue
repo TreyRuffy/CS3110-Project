@@ -10,8 +10,6 @@ const roomCodeInput = ref<HTMLInputElement | null>(null)
 const usernameInput = ref<HTMLInputElement | null>(null)
 const inputError = ref<string | null>(null)
 
-const uuid = ref<string | null>(null)
-
 const socketStore = useSocketStore()
 const socket = computed({
   get: () => socketStore.socket,
@@ -53,10 +51,6 @@ watch(socket, () => {
   if (socket.value === null) {
     return
   }
-
-  socket.value.on('successful-connection', (_uuid) => {
-    uuid.value = _uuid
-  })
 
   socket.value.on('username-error', (_, errorMessage) => {
     inputError.value = errorMessage
@@ -127,7 +121,8 @@ if (socket.value !== null) {
                 type="text"
                 placeholder="Room code"
                 class="grow"
-                :maxlength="6"
+                :maxlength="4"
+                :required="true"
                 oninput="this.value = this.value.replace(' ', '').toUpperCase()"
               />
             </label>
@@ -155,6 +150,8 @@ if (socket.value !== null) {
                 placeholder="Username"
                 class="grow"
                 :maxlength="32"
+                :required="true"
+                oninput="this.value = this.value.replace(' ', '')"
               />
             </label>
             <p v-if="inputError !== null" class="mt-4 justify-center text-center text-red-600">

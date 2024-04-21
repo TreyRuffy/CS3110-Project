@@ -1,4 +1,7 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const singlePlayerStore = useSingleplayerStore()
+singlePlayerStore.reset()
+</script>
 
 <template>
   <div>
