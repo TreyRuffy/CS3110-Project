@@ -35,6 +35,7 @@ computed({
   <div>
     <main>
       <slot />
+      <ToastOverlay />
     </main>
   </div>
 </template>

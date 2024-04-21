@@ -12,6 +12,17 @@ singlePlayerStore.reset()
         <UiButtonIndex class="btn-secondary" to="/create-room">Create Room</UiButtonIndex>
         <UiButtonIndex class="btn-accent" to="/join">Join Room</UiButtonIndex>
       </div>
+      <UiButtonBottom
+        @click="
+          useToastStore().addToast({
+            title: 'Welcome to Quizoot!',
+            message: 'Enjoy!',
+            type: 'info',
+          })
+        "
+      >
+        Test
+      </UiButtonBottom>
     </div>
     <TheFooter />
   </div>

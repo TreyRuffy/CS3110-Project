@@ -11,6 +11,19 @@ const questions = ref<string[]>([])
 const singlePlayerStore = useSingleplayerStore()
 const singlePlayer = singlePlayerStore.state !== 'not-started'
 
+const socketStore = useSocketStore()
+const router = useRouter()
+const toastStore = useToastStore()
+
+if (!singlePlayer && socketStore.socket === null) {
+  toastStore.addToast({
+    title: 'Error',
+    message: 'You are not connected to a room.',
+    type: 'error',
+  })
+  router.replace('/')
+}
+
 watch(singlePlayerStore.questions, () => {
   if (singlePlayer && singlePlayerStore.questions) {
     questionNumber.value = singlePlayerStore.questionNumber
@@ -21,12 +34,15 @@ watch(singlePlayerStore.questions, () => {
   }
 })
 
-const router = useRouter()
-
-function answerQuestion(question: string) {
-  if (singlePlayer) {
+function answerQuestion(question?: string) {
+  if (singlePlayerStore.state !== 'not-started') {
     // Check answer
     if (!singlePlayerStore.questions) return
+    if (!question) {
+      singlePlayerStore.state = 'incorrect'
+      router.replace(`/question-response`)
+      return
+    }
     if (question === singlePlayerStore.questions[questionNumber.value - 1].correctAnswer()) {
       singlePlayerStore.score += 1000
       singlePlayerStore.addedScore = 1000
@@ -78,9 +94,13 @@ if (singlePlayer) {
       </div>
       <!-- Top content -->
       <div>
-        <h1 class="mx-3 mb-2 mt-4 text-center text-2xl font-semibold">
-          What country does this flag belong to?
+        <h1
+          v-if="questionList[questionNumber - 1]"
+          class="mx-3 mb-2 mt-4 text-center text-2xl font-semibold"
+        >
+          {{ questionList[questionNumber - 1].question }}
         </h1>
+        <h1 v-else class="mx-3 mb-2 mt-4 text-center text-2xl font-semibold">Loading...</h1>
       </div>
       <div class="flex justify-center">
         <div class="grid w-fit lg:grid-cols-3">
@@ -101,6 +121,7 @@ if (singlePlayer) {
               format="webp"
               :height="42"
               alt="United States"
+              :draggable="false"
             />
             <!-- Timer for smaller screens -->
             <div
@@ -113,7 +134,7 @@ if (singlePlayer) {
           </div>
 
           <!-- Submitted for larger screens -->
-          <div class="mx-8 flex items-center justify-center">
+          <div v-if="!singlePlayer" class="mx-8 flex items-center justify-center">
             <h1 class="text-lg">Submitted 11/20</h1>
           </div>
         </div>

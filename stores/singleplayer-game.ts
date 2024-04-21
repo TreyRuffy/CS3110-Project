@@ -6,7 +6,7 @@ export const useSingleplayerStore = defineStore('singleplayer', () => {
   const questionNumber = ref(1)
   const maxQuestions = ref(100000)
   const questions = ref<Question[]>([])
-  const timer = ref(0)
+  const timer = ref<ReturnType<typeof setTimeout> | null>(null)
 
   const state = ref<'not-started' | 'in-question' | 'correct' | 'incorrect'>('not-started')
   const region = ref('world')
@@ -17,7 +17,7 @@ export const useSingleplayerStore = defineStore('singleplayer', () => {
     questionNumber.value = 1
     maxQuestions.value = 100000
     questions.value = []
-    timer.value = 0
+    timer.value = null
     state.value = 'not-started'
     addedScore.value = 0
   }
