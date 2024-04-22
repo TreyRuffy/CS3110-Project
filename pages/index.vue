@@ -6,7 +6,7 @@ singlePlayerStore.reset()
 <template>
   <div>
     <div class="flex min-h-dvh flex-col justify-center">
-      <h1 class="mt-8 flex justify-center text-[36px] font-semibold">Quizoot</h1>
+      <UiTitle title="Quizoot" class="mt-8" />
       <br />
       <div class="mb-44 flex flex-col items-center gap-2">
         <UiButtonIndex to="/singleplayer">Single Player</UiButtonIndex>
