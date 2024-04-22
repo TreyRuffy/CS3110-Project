@@ -1,15 +1,33 @@
 <script setup lang="ts">
-const score = 12000
-const questionNumber = 1
-const maxQuestions = 10
+const score = ref(12000)
+const questionNumber = ref(1)
+const maxQuestions = ref(10)
 type ResponseState = 'waiting' | 'correct' | 'incorrect'
 
-defineProps({
-  responseState: {
-    type: String as PropType<ResponseState>,
-    default: 'waiting',
-  },
-})
+const singlePlayerStore = useSingleplayerStore()
+const responseState = ref<ResponseState>('waiting')
+const addedScore = ref(0)
+const correctAnswer = ref('')
+
+const router = useRouter()
+
+if (singlePlayerStore.state !== 'not-started' && singlePlayerStore.state !== 'in-question') {
+  responseState.value = singlePlayerStore.state
+  score.value = singlePlayerStore.score
+  questionNumber.value = singlePlayerStore.questionNumber
+  correctAnswer.value =
+    singlePlayerStore.questions[singlePlayerStore.questionNumber - 1].correctAnswer()
+  maxQuestions.value = singlePlayerStore.maxQuestions
+  addedScore.value = singlePlayerStore.addedScore
+
+  singlePlayerStore.addedScore = 0
+
+  singlePlayerStore.timer = setTimeout(() => {
+    singlePlayerStore.state = 'in-question'
+    singlePlayerStore.questionNumber += 1
+    router.replace(`/question`)
+  }, 3000)
+}
 </script>
 
 <template>
@@ -32,14 +50,19 @@ defineProps({
     </div>
     <div class="mb-24 flex flex-grow items-center justify-center">
       <div v-if="responseState === 'waiting'" class="flex text-4xl">
-        <span> Waiting</span>
+        <span>Waiting</span>
         <CSSLoader class="ml-1 mt-1" />
       </div>
       <div v-else-if="responseState === 'correct'" class="text-center text-4xl">
         Correct!
-        <div>+98</div>
+        <div class="mt-2 text-3xl">+{{ addedScore }}</div>
       </div>
-      <div v-else-if="responseState === 'incorrect'" class="text-4xl">Incorrect</div>
+      <div v-else-if="responseState === 'incorrect'" class="text-center">
+        <div class="text-4xl">Incorrect</div>
+        <div v-if="correctAnswer" class="mt-2 text-3xl">
+          Correct answer: <b>{{ correctAnswer }}</b>
+        </div>
+      </div>
     </div>
   </div>
 </template>

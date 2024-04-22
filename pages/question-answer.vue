@@ -44,7 +44,7 @@ const maxQuestions = 10
           <div></div>
           <!-- Next Question Button Smaller Screens -->
           <div class="mt-8 flex justify-center">
-            <UiButtonBottom>Next Question</UiButtonBottom>
+            <UiButtonBottom class="fixed">Next Question</UiButtonBottom>
           </div>
         </div>
       </div>
