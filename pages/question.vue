@@ -1,7 +1,84 @@
 <script setup lang="ts">
-const score = 12000
-const questionNumber = 1
-const maxQuestions = 10
+import { GenerativeQuiz, type Question } from '~/utils/utils'
+import { createQuizzes } from '~/utils/countries'
+
+const score = ref(12000)
+const questionNumber = ref(1)
+const maxQuestions = ref(10)
+const questionList = ref<Question[]>([])
+const questions = ref<string[]>([])
+
+const singlePlayerStore = useSingleplayerStore()
+const singlePlayer = singlePlayerStore.state !== 'not-started'
+
+const socketStore = useSocketStore()
+const router = useRouter()
+const toastStore = useToastStore()
+
+if (!singlePlayer && socketStore.socket === null) {
+  toastStore.addToast({
+    title: 'Error',
+    message: 'You are not connected to a room.',
+    type: 'error',
+  })
+  router.replace('/')
+}
+
+watch(singlePlayerStore.questions, () => {
+  if (singlePlayer && singlePlayerStore.questions) {
+    questionNumber.value = singlePlayerStore.questionNumber
+    questions.value = singlePlayerStore.questions[questionNumber.value - 1].shuffledAnswers()
+    questionList.value = singlePlayerStore.questions
+    score.value = singlePlayerStore.score
+    maxQuestions.value = singlePlayerStore.maxQuestions
+  }
+})
+
+function answerQuestion(question?: string) {
+  if (singlePlayerStore.state !== 'not-started') {
+    // Check answer
+    if (!singlePlayerStore.questions) return
+    if (!question) {
+      singlePlayerStore.state = 'incorrect'
+      router.replace(`/question-response`)
+      return
+    }
+    if (question === singlePlayerStore.questions[questionNumber.value - 1].correctAnswer()) {
+      singlePlayerStore.score += 1000
+      singlePlayerStore.addedScore = 1000
+      singlePlayerStore.state = 'correct'
+      router.replace(`/question-response`)
+    } else {
+      singlePlayerStore.state = 'incorrect'
+      router.replace(`/question-response`)
+    }
+  } else {
+    // Send answer to server
+  }
+}
+
+const singlePlayerSetup = async () => {
+  const quizzes = await createQuizzes()
+  if (!quizzes) {
+    return
+  }
+  const singlePlayerStore = useSingleplayerStore()
+  const quiz = quizzes.find((quiz) => quiz && quiz.name === singlePlayerStore.region)?.quiz ?? null
+  if (!quiz) {
+    return
+  }
+  if (quiz instanceof GenerativeQuiz) {
+    quiz.generateQuestions(1).then((_questions) => {
+      singlePlayerStore.questions.push(..._questions)
+    })
+  } else {
+    singlePlayerStore.questions.push(...quiz.questions)
+  }
+}
+
+if (singlePlayer) {
+  singlePlayerSetup()
+}
 </script>
 
 <template>
@@ -17,9 +94,13 @@ const maxQuestions = 10
       </div>
       <!-- Top content -->
       <div>
-        <h1 class="mx-3 mb-2 mt-4 text-center text-2xl font-semibold">
-          What country does this flag belong to?
+        <h1
+          v-if="questionList[questionNumber - 1]"
+          class="mx-3 mb-2 mt-4 text-center text-2xl font-semibold"
+        >
+          {{ questionList[questionNumber - 1].question }}
         </h1>
+        <h1 v-else class="mx-3 mb-2 mt-4 text-center text-2xl font-semibold">Loading...</h1>
       </div>
       <div class="flex justify-center">
         <div class="grid w-fit lg:grid-cols-3">
@@ -35,10 +116,13 @@ const maxQuestions = 10
           </div>
           <div class="relative mx-8 flex justify-center">
             <NuxtImg
-              src="https://flagcdn.com/us.svg"
+              v-if="questionList[questionNumber - 1]"
+              :src="questionList[questionNumber - 1].image"
+              class="border-2 border-gray-950"
               format="webp"
               :height="42"
-              alt="United States"
+              alt="Image to guess from"
+              :draggable="false"
             />
             <!-- Timer for smaller screens -->
             <div
@@ -51,7 +135,7 @@ const maxQuestions = 10
           </div>
 
           <!-- Submitted for larger screens -->
-          <div class="mx-8 flex items-center justify-center">
+          <div v-if="!singlePlayer" class="mx-8 flex items-center justify-center">
             <h1 class="text-lg">Submitted 11/20</h1>
           </div>
         </div>
@@ -59,10 +143,21 @@ const maxQuestions = 10
       <!-- Bottom content -->
       <div class="h-full">
         <div class="mx-2 grid h-full grid-cols-2 grid-rows-2 gap-2">
-          <button class="btn btn-primary btn-lg h-full">answer1</button>
-          <button class="btn btn-secondary btn-lg h-full">answer2</button>
-          <button class="btn btn-accent btn-lg h-full">answer3</button>
-          <button class="btn btn-lg h-full bg-[#FCC93B] hover:bg-[#dcb133]">answer4</button>
+          <button class="btn btn-primary btn-lg h-full" @click="answerQuestion(questions[0])">
+            {{ questions[0] }}
+          </button>
+          <button class="btn btn-secondary btn-lg h-full" @click="answerQuestion(questions[1])">
+            {{ questions[1] }}
+          </button>
+          <button class="btn btn-accent btn-lg h-full" @click="answerQuestion(questions[2])">
+            {{ questions[2] }}
+          </button>
+          <button
+            class="btn btn-lg h-full bg-[#FCC93B] text-[#160f01] hover:bg-[#DCB133] focus:outline-[#DCB133] dark:bg-[#c99c00] dark:text-[#0f0900] dark:hover:bg-[#a98200] dark:focus:bg-[#a98200]"
+            @click="answerQuestion(questions[3])"
+          >
+            {{ questions[3] }}
+          </button>
         </div>
       </div>
       <!-- Added space -->

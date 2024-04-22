@@ -154,7 +154,10 @@ export function getQuiz(name: string) {
 
 export function addQuiz(name: string, quiz: Quiz) {
   quizzes.set(name, quiz)
-  return quiz
+  return {
+    name: name,
+    quiz: quiz,
+  }
 }
 
 export function removeQuiz(name: string) {
