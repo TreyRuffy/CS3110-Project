@@ -53,13 +53,8 @@ export default defineEventHandler((event) => {
         socket.emit('username-error', 'username-length', 'Username must be at most 20 characters')
         return
       }
-      if (!/^[a-zA-Z0-9_]+$/.test(username)) {
-        socket.emit(
-          'username-error',
-          'username-invalid',
-          'Username must only contain letters, numbers, and underscores',
-        )
-        return
+      if (username.includes(' ')) {
+        username = username.replace(' ', '')
       }
       for (const c of clients.values()) {
         if (c.username === username && clientRoom.get(c)?.joinCode === roomCode) {

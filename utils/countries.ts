@@ -8,6 +8,7 @@ interface Country {
     official: string
   }
   cca2: string
+  independent: boolean
   region: string
   subregion: string
   flags: {
@@ -127,12 +128,15 @@ export class CountriesBuilder {
 
   build(countries: Country[]) {
     return this.allCountries
-      ? countries
+      ? countries.filter((c) => {
+          return c.independent
+        })
       : countries.filter((c) => {
           return (
-            this.filters.region.includes(c.region) ||
-            this.filters.subregion.includes(c.subregion) ||
-            this.filters.country.includes(c.name.common)
+            c.independent &&
+            (this.filters.region.includes(c.region) ||
+              this.filters.subregion.includes(c.subregion) ||
+              this.filters.country.includes(c.name.common))
           )
         })
   }
