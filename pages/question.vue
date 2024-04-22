@@ -118,9 +118,8 @@ if (singlePlayer) {
             <NuxtImg
               v-if="questionList[questionNumber - 1]"
               :src="questionList[questionNumber - 1].image"
-              class="border-2 border-gray-950"
+              class="image-to-guess shadow-[0_20px_50px_-10px_rgba(0,0,0,0.25)]"
               format="webp"
-              :height="42"
               alt="Image to guess from"
               :draggable="false"
             />
@@ -169,5 +168,34 @@ if (singlePlayer) {
 <style scoped>
 .custom-grid {
   grid-template-rows: 64px auto 1fr 1fr 10px;
+}
+.image-to-guess {
+  max-width: 350px;
+  max-height: 200px;
+  min-width: 250px;
+  min-height: 150px;
+}
+
+/* Devices such as iPhone 12 Pro, iPhone SE, Samsung Galaxy S8+, Galaxy Z Fold 5, iPhone X, */
+@media (max-width: 450px) and (max-height: 1000px) {
+  .image-to-guess {
+    max-height: 280px;
+    max-width: 280px;
+  }
+}
+/* Devices such as iPhone 5, iPhone SE */
+@media (max-width: 392px) and (max-height: 668px) {
+  .image-to-guess {
+    max-height: 150px;
+    max-width: 250px;
+  }
+}
+/* Devices such as Surface Pro 7, iPad Mini, iPad Pro, iPad Air */
+@media (min-width: 760px) and (max-width: 1025px) and (min-height: 1000px) {
+  .image-to-guess {
+    max-height: 350px;
+    max-width: 600px;
+    min-width: 400px;
+  }
 }
 </style>
