@@ -15,7 +15,7 @@ const maxQuestions = 10
     </div>
     <!-- Next Question Button Large Screens -->
     <div class="hidden text-right md:block">
-      <UiButtonTopRight class="mr-4">Next Question</UiButtonTopRight>
+      <UiButtonTopRight>Next Question</UiButtonTopRight>
     </div>
     <div class="mb-32 flex flex-grow flex-col justify-center">
       <!-- Correct Answer-->

@@ -2,9 +2,11 @@
   <div>
     <div class="box-border h-dvh">
       <RoomTopNavigation :question-number="0" :max-question-number="0" :score="0" />
-      <div class="m-[2vh] mb-0 text-center text-[6vh]">
-        <h1>Scoreboard</h1>
-        <UiButtonTopRight class="mr-0 hidden sm:inline-flex">New Game</UiButtonTopRight>
+      <div class="m-[2vh] mb-0 text-center">
+        <UiTitle title="Scoreboard" />
+      </div>
+      <div class="hidden text-right sm:block">
+        <UiButtonTopRight>New Game</UiButtonTopRight>
       </div>
       <!--Container for screen under nav bar-->
       <div

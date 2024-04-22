@@ -50,7 +50,7 @@ if (singlePlayerStore.state !== 'not-started' && singlePlayerStore.state !== 'in
     </div>
     <div class="mb-24 flex flex-grow items-center justify-center">
       <div v-if="responseState === 'waiting'" class="flex text-4xl">
-        <span> Waiting</span>
+        <span>Waiting</span>
         <CSSLoader class="ml-1 mt-1" />
       </div>
       <div v-else-if="responseState === 'correct'" class="text-center text-4xl">

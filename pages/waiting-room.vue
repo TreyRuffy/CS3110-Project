@@ -94,7 +94,7 @@ const hostname = useRequestURL().origin
       :question-number="questionNumber"
       :score="score"
     />
-    <h1 class="mb-2 mt-4 text-center text-2xl font-semibold">Waiting Room</h1>
+    <UiTitle title="Waiting Room" />
     <button
       class="mb-2 mt-4 text-center text-2xl"
       :class="[host ? 'md:hidden' : '']"

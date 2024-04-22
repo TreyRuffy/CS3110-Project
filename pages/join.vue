@@ -96,7 +96,7 @@ if (socket.value !== null) {
       <div class="mt-8 flex items-center">
         <div class="card mx-auto w-full max-w-2xl lg:shadow-[0_20px_50px_-10px_rgba(0,0,0,0.25)]">
           <form class="px-10 py-10" method="dialog" @submit="joinRoom()">
-            <h1 class="mb-4 text-center text-2xl font-semibold">Join Room</h1>
+            <h1 class="mb-4 text-center text-3xl font-semibold">Join Room</h1>
             <span ref="roomCodeInput" class="input input-bordered mt-6 flex items-center gap-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
