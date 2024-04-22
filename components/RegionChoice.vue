@@ -40,7 +40,11 @@ watch(socket, () => {
 
 const generateQuestion = (category: string, region: string) => {
   if (props.singlePlayer) {
-    router.push(`/question?category=${category}&region=${region}`)
+    const singlePlayerStore = useSingleplayerStore()
+    singlePlayerStore.reset()
+    singlePlayerStore.region = region
+    singlePlayerStore.state = 'in-question'
+    router.push(`/question`)
   } else {
     socketStore.connect()
     socket.value?.emit('create-room', region)
@@ -101,38 +105,38 @@ const continents: CardItem[] = [
   },
 ]
 
-const countries: CardItem[] = [
-  {
-    title: 'Canada',
-    openLinkFunction() {
-      generateQuestion('countries', 'canada')
-    },
-    image: 'images/Canada Map.jpg',
-    description: 'Provinces of Canada.',
-  },
-  {
-    title: 'Japan',
-    openLinkFunction() {
-      generateQuestion('countries', 'japan')
-    },
-    image: 'images/Japan Map.jpg',
-    description: 'Prefectures of Japan.',
-  },
-  {
-    title: 'United States of America',
-    openLinkFunction() {
-      generateQuestion('countries', 'usa')
-    },
-    image: 'images/USA Map.jpg',
-    description: 'The 50 states of the USA.',
-  },
-]
+// const countries: CardItem[] = [
+//   {
+//     title: 'Canada',
+//     openLinkFunction() {
+//       generateQuestion('countries', 'canada')
+//     },
+//     image: 'images/Canada Map.jpg',
+//     description: 'Provinces of Canada.',
+//   },
+//   {
+//     title: 'Japan',
+//     openLinkFunction() {
+//       generateQuestion('countries', 'japan')
+//     },
+//     image: 'images/Japan Map.jpg',
+//     description: 'Prefectures of Japan.',
+//   },
+//   {
+//     title: 'United States of America',
+//     openLinkFunction() {
+//       generateQuestion('countries', 'usa')
+//     },
+//     image: 'images/USA Map.jpg',
+//     description: 'The 50 states of the USA.',
+//   },
+// ]
 </script>
 
 <template>
   <CardSlider :items="world" title="World" />
   <CardSlider :items="continents" title="Continents" />
-  <CardSlider :items="countries" title="Countries" />
+  <!--  <CardSlider :items="countries" title="Countries" />-->
 </template>
 
 <style scoped></style>

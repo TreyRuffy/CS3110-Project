@@ -10,8 +10,6 @@ const roomCodeInput = ref<HTMLInputElement | null>(null)
 const usernameInput = ref<HTMLInputElement | null>(null)
 const inputError = ref<string | null>(null)
 
-const uuid = ref<string | null>(null)
-
 const socketStore = useSocketStore()
 const socket = computed({
   get: () => socketStore.socket,
@@ -54,10 +52,6 @@ watch(socket, () => {
     return
   }
 
-  socket.value.on('successful-connection', (_uuid) => {
-    uuid.value = _uuid
-  })
-
   socket.value.on('username-error', (_, errorMessage) => {
     inputError.value = errorMessage
   })
@@ -97,22 +91,19 @@ if (socket.value !== null) {
 
 <template>
   <div>
-    <div class="h-dvh">
+    <div class="min-h-dvh">
       <TopNavigation />
       <div class="mt-8 flex items-center">
         <div class="card mx-auto w-full max-w-2xl lg:shadow-[0_20px_50px_-10px_rgba(0,0,0,0.25)]">
           <form class="px-10 py-10" method="dialog" @submit="joinRoom()">
-            <h2 class="mb-4 text-center text-2xl font-semibold">Join Room</h2>
-            <label
-              ref="roomCodeInput"
-              for="room-code"
-              class="input input-bordered mt-6 flex items-center gap-2"
-            >
+            <h1 class="mb-4 text-center text-2xl font-semibold">Join Room</h1>
+            <span ref="roomCodeInput" class="input input-bordered mt-6 flex items-center gap-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 20 20"
                 fill="currentColor"
                 class="h-5 w-5"
+                role="img"
               >
                 <path
                   fill-rule="evenodd"
@@ -121,33 +112,34 @@ if (socket.value !== null) {
                 />
               </svg>
 
+              <label for="room-code" class="hidden">Room code</label>
               <input
                 id="room-code"
                 v-model="roomCode"
                 type="text"
                 placeholder="Room code"
                 class="grow"
-                :maxlength="6"
+                :maxlength="4"
+                :required="true"
+                aria-description="Room code entry field"
                 oninput="this.value = this.value.replace(' ', '').toUpperCase()"
               />
-            </label>
+            </span>
 
-            <label
-              ref="usernameInput"
-              for="username"
-              class="input input-bordered mt-2 flex items-center gap-2"
-            >
+            <span ref="usernameInput" class="input input-bordered mt-2 flex items-center gap-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 20 20"
                 fill="currentColor"
                 class="h-5 w-5"
+                role="img"
               >
                 <path
                   d="M10 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM3.465 14.493a1.23 1.23 0 0 0 .41 1.412A9.957 9.957 0 0 0 10 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.408-1.41a7.002 7.002 0 0 0-13.074.003Z"
                 />
               </svg>
 
+              <label for="username" class="hidden">Username</label>
               <input
                 id="username"
                 v-model="username"
@@ -155,8 +147,11 @@ if (socket.value !== null) {
                 placeholder="Username"
                 class="grow"
                 :maxlength="32"
+                :required="true"
+                aria-description="Username entry field"
+                oninput="this.value = this.value.replace(' ', '')"
               />
-            </label>
+            </span>
             <p v-if="inputError !== null" class="mt-4 justify-center text-center text-red-600">
               {{ inputError }}
             </p>

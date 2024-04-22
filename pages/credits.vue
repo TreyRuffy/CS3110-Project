@@ -96,6 +96,7 @@ import TopNavigation from '~/components/TopNavigation.vue'
         </div>
       </div>
     </div>
+    <TheFooter />
   </div>
 </template>
 

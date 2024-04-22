@@ -8,16 +8,17 @@ const props = defineProps({
   },
 })
 
+const safeRoomCode = xss(props.roomCode)
+const hostname = useRequestURL().origin
+
 const svg = () => {
-  const safeRoomCode = xss(props.roomCode)
-  const hostname = useRequestURL().origin
   return renderSVG(hostname + '/join?roomCode=' + safeRoomCode)
 }
 </script>
 
 <template>
   <!-- eslint-disable-next-line vue/no-v-html -->
-  <div v-html="svg()"></div>
+  <div @click="copyRoomCode(hostname, safeRoomCode)" v-html="svg()"></div>
 </template>
 
 <style scoped></style>
