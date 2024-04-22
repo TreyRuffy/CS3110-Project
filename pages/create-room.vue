@@ -9,7 +9,7 @@ register()
   <div>
     <div class="min-h-dvh">
       <TopNavigation />
-      <h1 class="mb-2 mt-4 text-center text-2xl font-semibold">Create Multiplayer Room</h1>
+      <UiTitle title="Create Multiplayer Room" />
       <RegionChoice :single-player="false" />
     </div>
     <TheFooter />
