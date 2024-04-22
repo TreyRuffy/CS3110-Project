@@ -82,10 +82,17 @@ watch(socket, () => {
   })
 })
 
+const modal = ref<HTMLDialogElement | null>(null)
+
+const showModal = () => {
+  if (modal.value) {
+    modal.value.showModal()
+  }
+}
+
 const closeModal = () => {
-  const modal = document.getElementById('join_room_modal') as HTMLDialogElement
-  if (modal) {
-    modal.close()
+  if (modal.value) {
+    modal.value.close()
   }
 }
 
@@ -132,12 +139,7 @@ useSwipe(el, {
               <NuxtLink to="/singleplayer" onclick="document.activeElement.blur()">
                 Single Player
               </NuxtLink>
-              <a
-                tabindex="0"
-                onclick="join_room_modal.showModal() && document.activeElement.blur()"
-              >
-                Multiplayer
-              </a>
+              <button @click="showModal()">Multiplayer</button>
             </li>
           </ul>
         </div>
@@ -170,13 +172,7 @@ useSwipe(el, {
               </NuxtLink>
             </li>
             <li>
-              <a
-                class="text-nowrap"
-                onclick="join_room_modal.showModal() && document.activeElement.blur()"
-                tabindex="0"
-              >
-                Multiplayer
-              </a>
+              <button class="text-nowrap" tabindex="0" @click="showModal()">Multiplayer</button>
             </li>
           </ul>
         </div>
@@ -188,7 +184,10 @@ useSwipe(el, {
             viewBox="0 0 24 24"
             fill="currentColor"
             class="h-6 w-6"
+            role="img"
+            aria-describedby="profile-page-title"
           >
+            <title id="profile-page-title">Profile Page</title>
             <path
               fill-rule="evenodd"
               d="M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"
@@ -198,7 +197,7 @@ useSwipe(el, {
         </button>
       </div>
     </div>
-    <dialog id="join_room_modal" class="modal modal-bottom sm:modal-middle">
+    <dialog id="join_room_modal" ref="modal" class="modal modal-bottom sm:modal-middle">
       <div ref="el" class="modal-box">
         <form method="dialog">
           <button class="btn btn-circle btn-ghost btn-md absolute right-2 top-2">✕</button>
@@ -209,15 +208,11 @@ useSwipe(el, {
           <br />
         </span>
         <form method="dialog" class="mt-2" @submit="joinRoom()">
-          <label class="form-control w-full">
+          <div class="form-control w-full">
             <span class="flex justify-center sm:hidden">
               <span>- OR -</span>
             </span>
-            <label
-              ref="roomCodeInput"
-              for="room-code"
-              class="input input-bordered mt-2 flex items-center gap-2"
-            >
+            <span ref="roomCodeInput" class="input input-bordered mt-2 flex items-center gap-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 20 20"
@@ -231,23 +226,22 @@ useSwipe(el, {
                 />
               </svg>
 
+              <label for="join-room-code" class="hidden">Room code</label>
+
               <input
-                id="room-code"
+                id="join-room-code"
                 v-model="roomCode"
                 type="text"
                 placeholder="Room code"
                 class="grow"
                 :maxlength="4"
                 :required="true"
+                aria-description="Room code entry field"
                 oninput="this.value = this.value.replace(' ', '').toUpperCase()"
               />
-            </label>
+            </span>
 
-            <label
-              ref="usernameInput"
-              for="username"
-              class="input input-bordered mt-2 flex items-center gap-2"
-            >
+            <span ref="usernameInput" class="input input-bordered mt-2 flex items-center gap-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 20 20"
@@ -259,17 +253,19 @@ useSwipe(el, {
                 />
               </svg>
 
+              <label for="join-username" class="hidden">Username</label>
               <input
-                id="username"
+                id="join-username"
                 v-model="username"
                 type="text"
                 placeholder="Username"
                 class="grow"
                 :maxlength="32"
                 :required="true"
+                aria-description="Username entry field"
                 oninput="this.value = this.value.replace(' ', '')"
               />
-            </label>
+            </span>
 
             <span v-if="inputError !== null" class="mt-4 justify-center text-center text-red-600">
               {{ inputError }}
@@ -281,7 +277,7 @@ useSwipe(el, {
             <span class="mt-4 hidden justify-center sm:flex">
               <span>- OR -</span>
             </span>
-          </label>
+          </div>
         </form>
         <span class="mt-4 hidden justify-center sm:flex" @click="closeModal()">
           <NuxtLink href="/create-room" class="btn w-full px-8"> Create Room </NuxtLink>

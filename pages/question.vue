@@ -121,7 +121,7 @@ if (singlePlayer) {
               class="border-2 border-gray-950"
               format="webp"
               :height="42"
-              alt="United States"
+              alt="Image to guess from"
               :draggable="false"
             />
             <!-- Timer for smaller screens -->
@@ -153,7 +153,7 @@ if (singlePlayer) {
             {{ questions[2] }}
           </button>
           <button
-            class="btn btn-lg h-full bg-[#FCC93B] hover:bg-[#DCB133] focus:outline-[#DCB133]"
+            class="btn btn-lg h-full bg-[#FCC93B] text-[#160f01] hover:bg-[#DCB133] focus:outline-[#DCB133] dark:bg-[#c99c00] dark:text-[#0f0900] dark:hover:bg-[#a98200] dark:focus:bg-[#a98200]"
             @click="answerQuestion(questions[3])"
           >
             {{ questions[3] }}
