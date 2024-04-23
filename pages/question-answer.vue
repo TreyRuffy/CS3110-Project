@@ -23,7 +23,9 @@ if (multiPlayerStore.state === 'not-started') {
     <div class="mb-32 flex flex-grow flex-col justify-center">
       <!-- Correct Answer-->
       <div class="justify-center">
-        <UiHeadingTwo class="mb-2 text-center font-[500]">Correct answer: {{ multiPlayerStore.correctAnswer }} </UiHeadingTwo>
+        <UiHeadingTwo class="mb-2 text-center font-[500]">
+          Correct answer: {{ multiPlayerStore.correctAnswer }}
+        </UiHeadingTwo>
         <!-- Aligning the 3 cards in the middle of the page -->
         <div class="mx-3 grid md:mx-0 md:grid-cols-3">
           <!-- Empty div -->
