@@ -24,7 +24,7 @@ if (!singlePlayer && socketStore.socket === null) {
   router.replace('/')
 }
 
-watch(singlePlayerStore.questions, () => {
+function loadQuestions() {
   if (singlePlayer && singlePlayerStore.questions) {
     questionNumber.value = singlePlayerStore.questionNumber
     questions.value = singlePlayerStore.questions[questionNumber.value - 1].shuffledAnswers()
@@ -32,6 +32,10 @@ watch(singlePlayerStore.questions, () => {
     score.value = singlePlayerStore.score
     maxQuestions.value = singlePlayerStore.maxQuestions
   }
+}
+
+watch(singlePlayerStore.questions, () => {
+  loadQuestions()
 })
 
 function answerQuestion(question?: string) {
@@ -62,22 +66,26 @@ const singlePlayerSetup = async () => {
   if (!quizzes) {
     return
   }
-  const singlePlayerStore = useSingleplayerStore()
   const quiz = quizzes.find((quiz) => quiz && quiz.name === singlePlayerStore.region)?.quiz ?? null
   if (!quiz) {
     return
   }
   if (quiz instanceof GenerativeQuiz) {
-    quiz.generateQuestions(1).then((_questions) => {
+    quiz.generateQuestions(singlePlayerStore.maxQuestions).then((_questions) => {
       singlePlayerStore.questions.push(..._questions)
     })
   } else {
     singlePlayerStore.questions.push(...quiz.questions)
+    singlePlayerStore.maxQuestions = quiz.questions.length
   }
 }
 
 if (singlePlayer) {
-  singlePlayerSetup()
+  if (singlePlayerStore.state === 'generate-question') {
+    singlePlayerSetup()
+  } else {
+    loadQuestions()
+  }
 }
 </script>
 
