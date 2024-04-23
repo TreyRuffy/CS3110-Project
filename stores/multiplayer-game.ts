@@ -2,7 +2,9 @@ import { defineStore } from 'pinia'
 import type { UUID } from '~/utils/socket-types'
 
 export const useMultiplayerStore = defineStore('multiplayer', () => {
-  const state = ref<'not-started' | 'in-question' | 'correct' | 'incorrect'>('not-started')
+  const state = ref<'not-started' | 'in-question' | 'correct' | 'incorrect' | 'finished'>(
+    'not-started',
+  )
 
   const score = ref(0)
   const questionNumber = ref(0)
@@ -30,6 +32,19 @@ export const useMultiplayerStore = defineStore('multiplayer', () => {
   }
 
   const multiPlayerQuestion = ref<MultiPlayerQuestion | null>(null)
+
+  function resetGame() {
+    state.value = 'not-started'
+    score.value = 0
+    questionNumber.value = 0
+    if (timer.value) {
+      clearTimeout(timer.value)
+    }
+    allowAnswers.value = false
+    correctAnswer.value = ''
+    addedScore.value = 0
+    multiPlayerQuestion.value = null
+  }
 
   function reset() {
     state.value = 'not-started'
@@ -65,6 +80,7 @@ export const useMultiplayerStore = defineStore('multiplayer', () => {
     addedScore,
     correctAnswer,
     multiPlayerQuestion,
+    resetGame,
     reset,
   }
 })

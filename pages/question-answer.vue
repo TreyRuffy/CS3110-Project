@@ -5,6 +5,14 @@ const router = useRouter()
 if (multiPlayerStore.state === 'not-started') {
   router.replace('/')
 }
+
+const socketStore = useSocketStore()
+const socket = computed({
+  get: () => socketStore.socket,
+  set: (value) => {
+    socketStore.socket = value
+  },
+})
 </script>
 
 <template>
@@ -18,7 +26,18 @@ if (multiPlayerStore.state === 'not-started') {
     </div>
     <!-- Next Question Button Large Screens -->
     <div class="hidden text-right md:block">
-      <UiButtonTopRight>Next Question</UiButtonTopRight>
+      <UiButtonTopRight
+        @click="
+          () => {
+            if (socket) {
+              socket.emit('question-next')
+            } else {
+              console.log('Socket not connected')
+            }
+          }
+        "
+        >Next Question</UiButtonTopRight
+      >
     </div>
     <div class="mb-32 flex flex-grow flex-col justify-center">
       <!-- Correct Answer-->
@@ -67,7 +86,20 @@ if (multiPlayerStore.state === 'not-started') {
           <div></div>
           <!-- Next Question Button Smaller Screens -->
           <div class="mt-8 flex justify-center">
-            <UiButtonBottom class="fixed">Next Question</UiButtonBottom>
+            <UiButtonBottom
+              class="fixed"
+              @click="
+                () => {
+                  if (socket) {
+                    socket.emit('question-next')
+                  } else {
+                    console.log('Socket not connected')
+                  }
+                }
+              "
+            >
+              Next Question
+            </UiButtonBottom>
           </div>
         </div>
       </div>

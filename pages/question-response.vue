@@ -48,7 +48,11 @@ if (
       router.replace(`/question`)
     }
   }, 3000)
-} else if (multiPlayerStore.state !== 'not-started' && multiPlayerStore.state !== 'in-question') {
+} else if (
+  multiPlayerStore.state !== 'not-started' &&
+  multiPlayerStore.state !== 'in-question' &&
+  multiPlayerStore.state !== 'finished'
+) {
   responseState.value = multiPlayerStore.state
   score.value = multiPlayerStore.score
   questionNumber.value = multiPlayerStore.questionNumber

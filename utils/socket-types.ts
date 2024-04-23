@@ -45,7 +45,7 @@ export interface ServerToClientEvents {
   'game-started': (questionCount: number) => void
   'game-ended': () => void
   'game-error': (
-    errorType: 'game-not-started' | 'game-already-started',
+    errorType: 'game-not-started' | 'game-already-started' | 'game-not-enough-players',
     errorMessage: string,
   ) => void
 

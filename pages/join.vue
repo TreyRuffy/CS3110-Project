@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import TopNavigation from '~/components/TopNavigation.vue'
-
 const route = useRoute()
 const { roomCode: roomCodeParam, username: usernameParam } = route.query
 const roomCode = ref(roomCodeParam as string)

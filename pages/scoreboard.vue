@@ -1,28 +1,27 @@
 <template>
   <div>
-    <RoomTopNavigation :question-number="0" :max-question-number="0" :score="0" />
-    <div class="flex h-screen flex-col items-center bg-primary align-text-top text-primary-content">
-      <h1 class="m-4 text-center text-4xl font-bold">Scoreboard</h1>
-      <div class="stats stats-vertical m-4 items-center justify-center shadow lg:stats-horizontal">
-        <div class="stat">
-          <div class="stat-value">1st</div>
-          <div class="stat-title">Name</div>
-          <div class="stat-desc">Score</div>
-        </div>
-        <div class="stat">
-          <div class="stat-value">2nd</div>
-          <div class="stat-title">Name</div>
-          <div class="stat-desc">Score</div>
-        </div>
-        <div class="stat">
-          <div class="stat-value">3rd</div>
-          <div class="stat-title">Name</div>
-          <div class="stat-desc">Score</div>
-        </div>
+    <div class="box-border h-dvh">
+      <RoomTopNavigation :question-number="0" :max-question-number="0" :score="0" />
+      <div class="m-[2vh] mb-0 text-center">
+        <UiTitle title="Scoreboard" />
       </div>
-      <button class="btn btn-primary btn-wide sm:btn-sm md:btn-md lg:btn-lg">New Game</button>
+      <div class="hidden text-right sm:block">
+        <UiButtonTopRight>New Game</UiButtonTopRight>
+      </div>
+      <!--Container for screen under nav bar-->
+      <div
+        class="flex h-[calc(100vh-6rem-30vh)] flex-col justify-around overflow-hidden sm:h-[calc(100vh-8rem-28vh)] sm:flex-row"
+      >
+        <!--Begin First Column-->
+        <UiPodiumContainer name="Name" :position="1" />
+        <UiPodiumContainer name="Name" :position="2" />
+        <UiPodiumContainer name="Name" :position="3" />
+      </div>
+      <div class="fixed w-full text-center sm:hidden">
+        <UiButtonBottom class="mx-auto mt-8 flex justify-center">New Game</UiButtonBottom>
+      </div>
     </div>
   </div>
 </template>
 
-<style scoped></style>
+<script setup lang="ts"></script>
