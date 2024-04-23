@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import type { UUID } from '~/utils/socket-types'
 import xss from 'xss'
 
 const singlePlayerStore = useSingleplayerStore()
 singlePlayerStore.reset()
+
+const multiplayerStore = useMultiplayerStore()
+multiplayerStore.reset()
 
 const beforeUnloadHandler = (event: BeforeUnloadEvent) => {
   event.preventDefault()
@@ -20,41 +22,70 @@ const socket = computed({
   },
 })
 
-const roomCode = ref('')
 const roomUrl = useRequestURL().origin + '/join'
-
-type Player = [uuid: UUID, username: string]
-
-const playerList = ref<Player[]>([])
-
-let uuid = ''
-const host = ref(false)
-const score = ref(12000)
-const questionNumber = ref(0)
-const maxQuestions = ref(10)
 
 function setupSocketEvents() {
   if (socket.value === null) {
     return
   }
 
-  socket.value.on('successful-connection', () => {
-    console.log('successful-connection')
-  })
-
   socket.value?.on('game-starting', (timer) => {
     console.log('game-starting', timer)
   })
 
+  socket.value?.on('game-started', (questionCount) => {
+    if (multiplayerStore.host) {
+      console.log('game-started', questionCount)
+    }
+    router.push('/question')
+  })
+
   socket.value?.on('user-info', (_username, _uuid, _roomCode, _roomHost, _score) => {
-    uuid = _uuid
-    host.value = _roomHost
-    roomCode.value = _roomCode
-    score.value = _score
+    multiplayerStore.uuid = _uuid
+    multiplayerStore.host = _roomHost
+    multiplayerStore.roomCode = _roomCode
+    multiplayerStore.score = _score
   })
 
   socket.value?.on('room-player-update', (_, players) => {
-    playerList.value = players
+    multiplayerStore.playerList = players
+  })
+
+  socket.value?.on('question', (_questionNumber, question, image) => {
+    multiplayerStore.multiPlayerQuestion = {
+      question,
+      image,
+      answers: null,
+      peopleAnswered: null,
+      answerCount: null,
+    }
+  })
+
+  socket.value?.on('question-allow-answers', (answers) => {
+    if (!multiplayerStore.multiPlayerQuestion) return
+    multiplayerStore.allowAnswers = true
+    multiplayerStore.multiPlayerQuestion!.answers = answers
+  })
+
+  socket.value?.on('question-answered-incorrect', (score, correctAnswer) => {
+    multiplayerStore.score = score
+    multiplayerStore.state = 'incorrect'
+    multiplayerStore.correctAnswer = correctAnswer
+    if (multiplayerStore.host) {
+      router.replace('/question-answer')
+    } else {
+      router.replace('/question-response')
+    }
+  })
+
+  socket.value?.on('question-answered-correct', (score) => {
+    multiplayerStore.score = score
+    multiplayerStore.state = 'correct'
+    if (multiplayerStore.host) {
+      router.replace('/question-answer')
+    } else {
+      router.replace('/question-response')
+    }
   })
 
   socket.value?.on('room-left', () => {
@@ -76,8 +107,8 @@ if (socket.value === null) {
 
 function getPlayerList() {
   const list = []
-  for (const player of playerList.value) {
-    if (player[0] !== uuid) {
+  for (const player of multiplayerStore.playerList) {
+    if (player[0] !== multiplayerStore.uuid) {
       list.push(player[1])
     }
   }
@@ -90,21 +121,21 @@ const hostname = useRequestURL().origin
 <template>
   <div class="flex h-dvh flex-col">
     <RoomTopNavigation
-      :max-question-number="maxQuestions"
-      :question-number="questionNumber"
-      :score="score"
+      :max-question-number="multiplayerStore.maxQuestions"
+      :question-number="multiplayerStore.questionNumber"
+      :score="multiplayerStore.score"
     />
     <UiHeadingOne>Waiting Room</UiHeadingOne>
     <button
       class="mb-2 mt-4 text-center"
-      :class="[host ? 'md:hidden' : '']"
-      @click="copyRoomCode(hostname, xss(roomCode))"
+      :class="[multiplayerStore.host ? 'md:hidden' : '']"
+      @click="copyRoomCode(hostname, xss(multiplayerStore.roomCode))"
     >
       <UiHeadingThree>
-        Room Code: <b>{{ roomCode }}</b>
+        Room Code: <b>{{ multiplayerStore.roomCode }}</b>
       </UiHeadingThree>
     </button>
-    <div v-if="host">
+    <div v-if="multiplayerStore.host">
       <UiHeadingThree class="mb-2 text-center font-[500] md:ml-8 md:text-left">
         Players:
       </UiHeadingThree>
@@ -114,12 +145,15 @@ const hostname = useRequestURL().origin
         </div>
         <div class="hidden grid-flow-row items-center justify-center md:grid">
           <div class="mb-8">
-            <RoomCode :room-code="roomCode" class="mx-auto w-[18vw]" />
+            <RoomCode :room-code="multiplayerStore.roomCode" class="mx-auto w-[18vw]" />
             <UiHeadingFour class="text-center">{{ roomUrl }}</UiHeadingFour>
-            <div class="text-center text-lg" @click="copyRoomCode(hostname, xss(roomCode))">
+            <div
+              class="text-center"
+              @click="copyRoomCode(hostname, xss(multiplayerStore.roomCode))"
+            >
               <button>
-                <UiHeadingFour
-                  >Room code: <b>{{ roomCode }}</b>
+                <UiHeadingFour>
+                  Room code: <b>{{ multiplayerStore.roomCode }}</b>
                 </UiHeadingFour>
               </button>
             </div>

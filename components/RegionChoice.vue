@@ -43,7 +43,7 @@ const generateQuestion = (category: string, region: string) => {
     const singlePlayerStore = useSingleplayerStore()
     singlePlayerStore.reset()
     singlePlayerStore.region = region
-    singlePlayerStore.state = 'in-question'
+    singlePlayerStore.state = 'generate-question'
     router.push(`/question`)
   } else {
     socketStore.connect()

@@ -5,13 +5,23 @@ import { createQuizzes } from '~/utils/countries'
 const score = ref(12000)
 const questionNumber = ref(1)
 const maxQuestions = ref(10)
-const questionList = ref<Question[]>([])
+const singlePlayerQuestionList = ref<Question[]>([])
+
 const questions = ref<string[]>([])
 
 const singlePlayerStore = useSingleplayerStore()
 const singlePlayer = singlePlayerStore.state !== 'not-started'
 
+const multiplayerStore = useMultiplayerStore()
+
 const socketStore = useSocketStore()
+const socket = computed({
+  get: () => socketStore.socket,
+  set: (value) => {
+    socketStore.socket = value
+  },
+})
+
 const router = useRouter()
 const toastStore = useToastStore()
 
@@ -24,18 +34,27 @@ if (!singlePlayer && socketStore.socket === null) {
   router.replace('/')
 }
 
-watch(singlePlayerStore.questions, () => {
+function loadQuestions() {
   if (singlePlayer && singlePlayerStore.questions) {
     questionNumber.value = singlePlayerStore.questionNumber
     questions.value = singlePlayerStore.questions[questionNumber.value - 1].shuffledAnswers()
-    questionList.value = singlePlayerStore.questions
+    singlePlayerQuestionList.value = singlePlayerStore.questions
     score.value = singlePlayerStore.score
     maxQuestions.value = singlePlayerStore.maxQuestions
   }
+}
+
+watch(singlePlayerStore.questions, () => {
+  loadQuestions()
+})
+
+watch(multiplayerStore, () => {
+  if (!multiplayerStore.multiPlayerQuestion) return
+  questions.value = multiplayerStore.multiPlayerQuestion.answers ?? []
 })
 
 function answerQuestion(question?: string) {
-  if (singlePlayerStore.state !== 'not-started') {
+  if (singlePlayer) {
     // Check answer
     if (!singlePlayerStore.questions) return
     if (!question) {
@@ -52,8 +71,10 @@ function answerQuestion(question?: string) {
       singlePlayerStore.state = 'incorrect'
       router.replace(`/question-response`)
     }
-  } else {
-    // Send answer to server
+  } else if (!multiplayerStore.host) {
+    if (!socket.value) return
+    socket.value.emit('question-answer', question ?? '')
+    router.replace(`/question-response`)
   }
 }
 
@@ -62,22 +83,105 @@ const singlePlayerSetup = async () => {
   if (!quizzes) {
     return
   }
-  const singlePlayerStore = useSingleplayerStore()
   const quiz = quizzes.find((quiz) => quiz && quiz.name === singlePlayerStore.region)?.quiz ?? null
   if (!quiz) {
     return
   }
   if (quiz instanceof GenerativeQuiz) {
-    quiz.generateQuestions(1).then((_questions) => {
+    quiz.generateQuestions(singlePlayerStore.maxQuestions).then((_questions) => {
       singlePlayerStore.questions.push(..._questions)
     })
   } else {
     singlePlayerStore.questions.push(...quiz.questions)
+    singlePlayerStore.maxQuestions = quiz.questions.length
   }
 }
 
+function setupSocketEvents() {
+  if (socket.value === null) {
+    return
+  }
+
+  socket.value?.on('user-info', (_username, _uuid, _roomCode, _roomHost, _score) => {
+    multiplayerStore.uuid = _uuid
+    multiplayerStore.host = _roomHost
+    multiplayerStore.roomCode = _roomCode
+    score.value = multiplayerStore.score = _score
+  })
+
+  socket.value?.on('room-player-update', (_, players) => {
+    multiplayerStore.playerList = players
+  })
+
+  socket.value?.on('question', (_questionNumber, question, image) => {
+    questionNumber.value = multiplayerStore.questionNumber = _questionNumber
+    multiplayerStore.multiPlayerQuestion = {
+      question,
+      image,
+      answers: null,
+      peopleAnswered: null,
+      answerCount: null,
+    }
+  })
+
+  socket.value?.on('question-allow-answers', (answers) => {
+    if (!multiplayerStore.multiPlayerQuestion) return
+    multiplayerStore.allowAnswers = true
+    multiplayerStore.multiPlayerQuestion!.answers = answers
+    questions.value = answers
+  })
+
+  socket.value?.on('question-answered-incorrect', (score, correctAnswer) => {
+    multiplayerStore.score = score
+    multiplayerStore.state = 'incorrect'
+    multiplayerStore.correctAnswer = correctAnswer
+    if (multiplayerStore.host) {
+      router.replace('/question-answer')
+    } else {
+      router.replace('/question-response')
+    }
+  })
+
+  socket.value?.on('question-answered-correct', (score) => {
+    multiplayerStore.score = score
+    multiplayerStore.state = 'correct'
+    if (multiplayerStore.host) {
+      router.replace('/question-answer')
+    } else {
+      router.replace('/question-response')
+    }
+  })
+
+  socket.value?.on('question-people-answered', (peopleAnswered) => {
+    if (!multiplayerStore.multiPlayerQuestion) return
+    multiplayerStore.multiPlayerQuestion.peopleAnswered = peopleAnswered
+  })
+
+  socket.value?.on('question-answer-count', (answerCount) => {
+    if (!multiplayerStore.multiPlayerQuestion) return
+    multiplayerStore.multiPlayerQuestion.answerCount = answerCount
+  })
+
+  socket.value?.on('room-left', () => {
+    multiplayerStore.reset()
+    router.replace('/')
+  })
+
+  questions.value = multiplayerStore.multiPlayerQuestion?.answers ?? []
+}
+
+watch(socket, () => {
+  setupSocketEvents()
+})
+
 if (singlePlayer) {
-  singlePlayerSetup()
+  if (singlePlayerStore.state === 'generate-question') {
+    singlePlayerSetup()
+  } else {
+    loadQuestions()
+  }
+} else {
+  setupSocketEvents()
 }
 </script>
 
@@ -95,10 +199,18 @@ if (singlePlayer) {
       <!-- Top content -->
       <div>
         <UiHeadingThree
-          v-if="questionList[questionNumber - 1]"
-          class="mx-3 mb-2 mt-4 text-center text-2xl font-semibold"
+          v-if="
+            singlePlayer
+              ? singlePlayerQuestionList[questionNumber - 1]
+              : multiplayerStore.multiPlayerQuestion
+          "
+          class="mx-3 mb-2 mt-4 text-center font-semibold"
         >
-          {{ questionList[questionNumber - 1].question }}
+          {{
+            singlePlayer
+              ? singlePlayerQuestionList[questionNumber - 1].question
+              : multiplayerStore.multiPlayerQuestion?.question
+          }}
         </UiHeadingThree>
         <h1 v-else class="mx-3 mb-2 mt-4 text-center text-2xl font-semibold">Loading...</h1>
       </div>
@@ -116,8 +228,16 @@ if (singlePlayer) {
           </div>
           <div class="relative mx-8 flex justify-center">
             <NuxtImg
-              v-if="questionList[questionNumber - 1]"
-              :src="questionList[questionNumber - 1].image"
+              v-if="
+                singlePlayer
+                  ? singlePlayerQuestionList[questionNumber - 1]
+                  : multiplayerStore.multiPlayerQuestion
+              "
+              :src="
+                singlePlayer
+                  ? singlePlayerQuestionList[questionNumber - 1].image
+                  : multiplayerStore.multiPlayerQuestion?.image
+              "
               class="image-to-guess shadow-[0_20px_50px_-10px_rgba(0,0,0,0.25)]"
               format="webp"
               alt="Image to guess from"
@@ -134,8 +254,15 @@ if (singlePlayer) {
           </div>
 
           <!-- Submitted for larger screens -->
-          <div v-if="!singlePlayer" class="mx-8 flex items-center justify-center">
-            <h1 class="text-lg">Submitted 11/20</h1>
+          <div
+            v-if="!singlePlayer && multiplayerStore.multiPlayerQuestion"
+            class="mx-8 flex items-center justify-center"
+          >
+            <h1 class="text-lg">
+              Submitted {{ multiplayerStore.multiPlayerQuestion?.peopleAnswered?.length ?? 0 }}/{{
+                multiplayerStore.playerList.length - 1
+              }}
+            </h1>
           </div>
         </div>
       </div>

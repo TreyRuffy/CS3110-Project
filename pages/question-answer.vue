@@ -1,16 +1,19 @@
 <script setup lang="ts">
-const score = 12000
-const questionNumber = 1
-const maxQuestions = 10
+const multiPlayerStore = useMultiplayerStore()
+
+const router = useRouter()
+if (multiPlayerStore.state === 'not-started') {
+  router.replace('/')
+}
 </script>
 
 <template>
   <div class="flex h-dvh flex-col">
     <div class="mb-4">
       <RoomTopNavigation
-        :max-question-number="maxQuestions"
-        :question-number="questionNumber"
-        :score="score"
+        :max-question-number="multiPlayerStore.maxQuestions"
+        :question-number="multiPlayerStore.questionNumber"
+        :score="multiPlayerStore.score"
       />
     </div>
     <!-- Next Question Button Large Screens -->
@@ -20,24 +23,42 @@ const maxQuestions = 10
     <div class="mb-32 flex flex-grow flex-col justify-center">
       <!-- Correct Answer-->
       <div class="justify-center">
-        <UiHeadingTwo class="mb-2 text-center font-[500]">Correct answer: India </UiHeadingTwo>
+        <UiHeadingTwo class="mb-2 text-center font-[500]">Correct answer: {{ multiPlayerStore.correctAnswer }} </UiHeadingTwo>
         <!-- Aligning the 3 cards in the middle of the page -->
         <div class="mx-3 grid md:mx-0 md:grid-cols-3">
           <!-- Empty div -->
           <div></div>
           <!-- Creating 4 different cards in a row -->
-          <div class="grid gap-2">
+          <div
+            v-if="
+              multiPlayerStore.multiPlayerQuestion?.answers &&
+              multiPlayerStore.multiPlayerQuestion?.answerCount
+            "
+            class="grid gap-2"
+          >
             <div class="card w-auto bg-primary shadow-md">
-              <QuestionAnswerCard :num-answers="11" country-choice="Ireland" />
+              <QuestionAnswerCard
+                :num-answers="multiPlayerStore.multiPlayerQuestion?.answerCount[0].count"
+                :country-choice="multiPlayerStore.multiPlayerQuestion?.answers[0]"
+              />
             </div>
             <div class="card w-auto bg-secondary shadow-md">
-              <QuestionAnswerCard :num-answers="5" country-choice="India" />
+              <QuestionAnswerCard
+                :num-answers="multiPlayerStore.multiPlayerQuestion?.answerCount[1].count"
+                :country-choice="multiPlayerStore.multiPlayerQuestion?.answers[1]"
+              />
             </div>
             <div class="card w-auto bg-accent shadow-md">
-              <QuestionAnswerCard :num-answers="2" country-choice="Greenland" />
+              <QuestionAnswerCard
+                :num-answers="multiPlayerStore.multiPlayerQuestion?.answerCount[2].count"
+                :country-choice="multiPlayerStore.multiPlayerQuestion?.answers[2]"
+              />
             </div>
             <div class="card w-auto bg-[#FCC93B] shadow-md">
-              <QuestionAnswerCard :num-answers="3" country-choice="Australia" />
+              <QuestionAnswerCard
+                :num-answers="multiPlayerStore.multiPlayerQuestion?.answerCount[3].count"
+                :country-choice="multiPlayerStore.multiPlayerQuestion?.answers[3]"
+              />
             </div>
           </div>
           <!-- Empty div -->

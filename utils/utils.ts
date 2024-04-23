@@ -6,6 +6,7 @@ export class RoomSettings {
   questionCount = 10
   questionTimer = 30000
   questionPoints = 1000
+  allowAnswerTimer = 1000
 
   questionPointsDecayEnabled = true
   questionPointsDecayDelay = 1000

@@ -5,13 +5,23 @@ const maxQuestions = ref(10)
 type ResponseState = 'waiting' | 'correct' | 'incorrect'
 
 const singlePlayerStore = useSingleplayerStore()
+const multiPlayerStore = useMultiplayerStore()
+
 const responseState = ref<ResponseState>('waiting')
 const addedScore = ref(0)
 const correctAnswer = ref('')
 
 const router = useRouter()
 
-if (singlePlayerStore.state !== 'not-started' && singlePlayerStore.state !== 'in-question') {
+if (singlePlayerStore.state === 'not-started' && multiPlayerStore.state === 'not-started') {
+  router.replace('/')
+}
+
+if (
+  singlePlayerStore.state !== 'not-started' &&
+  singlePlayerStore.state !== 'in-question' &&
+  singlePlayerStore.state !== 'generate-question'
+) {
   responseState.value = singlePlayerStore.state
   score.value = singlePlayerStore.score
   questionNumber.value = singlePlayerStore.questionNumber
@@ -25,8 +35,26 @@ if (singlePlayerStore.state !== 'not-started' && singlePlayerStore.state !== 'in
   singlePlayerStore.timer = setTimeout(() => {
     singlePlayerStore.state = 'in-question'
     singlePlayerStore.questionNumber += 1
-    router.replace(`/question`)
+    if (singlePlayerStore.questionNumber > singlePlayerStore.maxQuestions) {
+      const toastStore = useToastStore()
+      toastStore.addToast({
+        title: 'Game Over',
+        message: `You have completed the quiz - ${singlePlayerStore.score} points!`,
+        type: 'info',
+      })
+      singlePlayerStore.reset()
+      router.replace(`/singleplayer`)
+    } else {
+      router.replace(`/question`)
+    }
   }, 3000)
+} else if (multiPlayerStore.state !== 'not-started' && multiPlayerStore.state !== 'in-question') {
+  responseState.value = multiPlayerStore.state
+  score.value = multiPlayerStore.score
+  questionNumber.value = multiPlayerStore.questionNumber
+  maxQuestions.value = multiPlayerStore.maxQuestions
+  addedScore.value = multiPlayerStore.addedScore
+  correctAnswer.value = multiPlayerStore.correctAnswer
 }
 </script>
 
