@@ -115,6 +115,7 @@ useSwipe(el, {
     <div class="navbar z-[99] bg-base-200">
       <div class="navbar-start">
         <div class="dropdown">
+          <!-- Smaller devices -->
           <button tabindex="0" role="button" class="btn btn-ghost lg:hidden">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -133,22 +134,23 @@ useSwipe(el, {
           </button>
           <ul
             tabindex="0"
-            class="menu dropdown-content menu-sm z-[98] mt-3 w-52 rounded-box bg-base-100 p-2 shadow"
+            class="menu dropdown-content menu-sm z-[98] mt-3 w-40 rounded-box bg-base-100 p-2 shadow"
           >
             <li>
               <NuxtLink to="/singleplayer" onclick="document.activeElement.blur()">
-                Single Player
+                <UiHeadingFive>Single Player</UiHeadingFive>
               </NuxtLink>
-              <button @click="showModal()">Multiplayer</button>
+              <button @click="showModal()"><UiHeadingFive>Multiplayer</UiHeadingFive></button>
             </li>
           </ul>
         </div>
         <NuxtLink href="/" class="btn btn-ghost text-xl">Quizoot</NuxtLink>
       </div>
+      <!-- Large devices -->
       <div class="navbar-center hidden lg:flex">
         <div class="dropdown dropdown-hover">
           <button tabindex="0" role="button" class="btn m-1 shadow">
-            Play
+            <UiHeadingFive class="font-[500]">Play</UiHeadingFive>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -168,11 +170,13 @@ useSwipe(el, {
                 tabindex="0"
                 onclick="document.activeElement.blur()"
               >
-                Single Player
+                <UiHeadingFive>Single Player</UiHeadingFive>
               </NuxtLink>
             </li>
             <li>
-              <button class="text-nowrap" tabindex="0" @click="showModal()">Multiplayer</button>
+              <button class="text-nowrap" tabindex="0" @click="showModal()">
+                <UiHeadingFive>Multiplayer</UiHeadingFive>
+              </button>
             </li>
           </ul>
         </div>

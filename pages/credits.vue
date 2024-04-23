@@ -4,10 +4,10 @@
   <div>
     <div class="min-h-dvh">
       <TopNavigation />
-      <UiTitle title="Credits" />
+      <UiHeadingOne class="font-[600]">Credits</UiHeadingOne>
       <div class="m-8">
         <div>
-          <h2 class="m-auto text-center text-2xl font-semibold">Libraries</h2>
+          <UiHeadingThree class="m-auto text-center font-[500]">Libraries</UiHeadingThree>
         </div>
         <div
           class="m-auto flex flex-wrap content-stretch items-center justify-center gap-x-8 gap-y-2 text-center sm:gap-y-4"
@@ -47,7 +47,7 @@
 
       <div class="m-8">
         <div>
-          <h2 class="m-auto text-center text-2xl font-semibold">UI / UX</h2>
+          <UiHeadingThree class="m-auto text-center font-[500]">UI / UX</UiHeadingThree>
         </div>
         <div
           class="m-auto flex flex-wrap content-stretch items-center justify-center gap-x-8 gap-y-4 text-center"
@@ -69,7 +69,7 @@
 
       <div class="m-8">
         <div>
-          <h2 class="m-auto text-center text-2xl font-semibold">APIs</h2>
+          <UiHeadingThree class="m-auto text-center font-[500]">APIs</UiHeadingThree>
         </div>
         <div
           class="m-auto flex flex-wrap content-stretch items-center justify-center gap-x-8 gap-y-4 text-center"
@@ -85,7 +85,7 @@
 
       <div class="m-8">
         <div>
-          <h2 class="m-auto text-center text-2xl font-semibold">Icons</h2>
+          <UiHeadingThree class="m-auto text-center font-[500]">Icons</UiHeadingThree>
         </div>
         <div
           class="m-auto flex flex-wrap content-stretch items-center justify-center gap-x-8 gap-y-4 text-center"

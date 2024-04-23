@@ -12,12 +12,12 @@ socketStore.disconnect()
 <template>
   <div>
     <div class="flex min-h-dvh flex-col justify-center">
-      <UiTitle title="Quizoot" class="mt-8" />
+      <div class="mt-8 text-center text-5xl font-[500]">Quizoot</div>
       <br />
       <div class="mb-44 flex flex-col items-center gap-2">
-        <UiButtonIndex to="/singleplayer">Single Player</UiButtonIndex>
-        <UiButtonIndex class="btn-secondary" to="/create-room">Create Room</UiButtonIndex>
-        <UiButtonIndex class="btn-accent" to="/join">Join Room</UiButtonIndex>
+        <UiButtonHome class="btn-primary" to="/singleplayer">Single Player</UiButtonHome>
+        <UiButtonHome class="btn-secondary" to="/create-room">Create Room</UiButtonHome>
+        <UiButtonHome class="btn-accent" to="/join">Join Room</UiButtonHome>
       </div>
     </div>
     <TheFooter />

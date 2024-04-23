@@ -7,7 +7,7 @@ register()
   <div>
     <div class="min-h-dvh">
       <TopNavigation />
-      <UiTitle title="Create Multiplayer Room" />
+      <UiHeadingOne class="font-[600]">Create Multiplayer Room</UiHeadingOne>
       <RegionChoice :single-player="false" />
     </div>
     <TheFooter />

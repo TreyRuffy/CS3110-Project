@@ -43,8 +43,8 @@ switch (props.position) {
             : 'w-[60vw] sm:min-h-[17.5vh]',
       ]"
     >
-      <p class="rank mt-[2vh] font-bold sm:p-[2vh]">{{ rank }}</p>
-      <p class="name font-bold sm:mb-4 sm:p-[2vh]">Name</p>
+      <UiHeadingFour class="rank mt-[2vh] font-[600] sm:p-[2vh]">{{ rank }}</UiHeadingFour>
+      <UiParagraph class="name font-[500] sm:mb-4 sm:p-[2vh]">Name</UiParagraph>
     </div>
   </div>
 </template>

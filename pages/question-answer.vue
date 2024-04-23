@@ -42,9 +42,9 @@ const socket = computed({
     <div class="mb-32 flex flex-grow flex-col justify-center">
       <!-- Correct Answer-->
       <div class="justify-center">
-        <h1 class="mb-2 text-center text-2xl font-semibold">
+        <UiHeadingTwo class="mb-2 text-center font-[500]">
           Correct answer: {{ multiPlayerStore.correctAnswer }}
-        </h1>
+        </UiHeadingTwo>
         <!-- Aligning the 3 cards in the middle of the page -->
         <div class="mx-3 grid md:mx-0 md:grid-cols-3">
           <!-- Empty div -->

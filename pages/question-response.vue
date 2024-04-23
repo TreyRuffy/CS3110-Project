@@ -80,20 +80,23 @@ if (
         :score="score"
       />
     </div>
+    <!-- User Waiting -->
     <div class="mb-24 flex flex-grow items-center justify-center">
       <div v-if="responseState === 'waiting'" class="flex text-4xl">
         <span>Waiting</span>
         <CSSLoader class="ml-1 mt-1" />
       </div>
-      <div v-else-if="responseState === 'correct'" class="text-center text-4xl">
+      <!-- User Correct -->
+      <UiHeadingOne v-else-if="responseState === 'correct'" class="text-center">
         Correct!
-        <div class="mt-2 text-3xl">+{{ addedScore }}</div>
-      </div>
+        <UiHeadingTwo class="mx-4 mt-2">+{{ addedScore }}</UiHeadingTwo>
+      </UiHeadingOne>
+      <!-- User Incorrect -->
       <div v-else-if="responseState === 'incorrect'" class="text-center">
-        <div class="text-4xl">Incorrect</div>
-        <div v-if="correctAnswer" class="mt-2 text-3xl">
+        <UiHeadingOne>Incorrect</UiHeadingOne>
+        <UiHeadingTwo v-if="correctAnswer" class="mx-4 mt-2">
           Correct answer: <b>{{ correctAnswer }}</b>
-        </div>
+        </UiHeadingTwo>
       </div>
     </div>
   </div>
