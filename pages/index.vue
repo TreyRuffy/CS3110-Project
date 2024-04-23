@@ -4,6 +4,9 @@ singlePlayerStore.reset()
 
 const multiplayerStore = useMultiplayerStore()
 multiplayerStore.reset()
+
+const socketStore = useSocketStore()
+socketStore.disconnect()
 </script>
 
 <template>

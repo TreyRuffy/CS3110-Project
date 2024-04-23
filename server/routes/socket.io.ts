@@ -138,6 +138,15 @@ export default defineEventHandler((event) => {
       clientRoom.delete(client)
       currentRoom.removePlayer(client)
       socket.emit('room-left')
+      if (currentRoom.players.length === 1) {
+        currentRoom.broadcast(
+          'game-error',
+          'game-not-enough-players',
+          'All players have left the room',
+        )
+        currentRoom.currentGame = null
+      }
+
       currentRoom.broadcast(
         'room-player-update',
         currentRoom.joinCode,
