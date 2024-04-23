@@ -9,10 +9,10 @@ defineProps({
 </script>
 
 <template>
-  <NuxtLink
-    :to="to"
-    class="btn btn-primary btn-md w-[90vw] text-[17px] font-medium shadow-sm md:btn-lg sm:mx-auto sm:max-w-md"
-  >
-    <slot></slot>
+  <NuxtLink :to="to"
+    ><UiButtonRegular
+      class="btn btn-md w-[90vw] text-[17px] font-medium shadow-sm md:btn-lg sm:mx-auto sm:max-w-md"
+      ><slot></slot
+    ></UiButtonRegular>
   </NuxtLink>
 </template>

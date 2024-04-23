@@ -125,16 +125,20 @@ const hostname = useRequestURL().origin
       :question-number="multiplayerStore.questionNumber"
       :score="multiplayerStore.score"
     />
-    <UiTitle title="Waiting Room" />
+    <UiHeadingOne>Waiting Room</UiHeadingOne>
     <button
-      class="mb-2 mt-4 text-center text-2xl"
+      class="mb-2 mt-4 text-center"
       :class="[multiplayerStore.host ? 'md:hidden' : '']"
       @click="copyRoomCode(hostname, xss(multiplayerStore.roomCode))"
     >
-      Room Code: <b>{{ multiplayerStore.roomCode }}</b>
+      <UiHeadingThree>
+        Room Code: <b>{{ multiplayerStore.roomCode }}</b>
+      </UiHeadingThree>
     </button>
     <div v-if="multiplayerStore.host">
-      <h1 class="mb-2 text-center text-xl font-semibold md:ml-8 md:text-left">Players:</h1>
+      <UiHeadingThree class="mb-2 text-center font-[500] md:ml-8 md:text-left">
+        Players:
+      </UiHeadingThree>
       <div class="grid h-[60vh] max-h-[60vh] md:h-[70vh] md:max-h-[70vh] md:grid-cols-3">
         <div class="ml-8 overflow-y-auto md:col-span-2 md:overflow-y-auto">
           <PlayerList :players="getPlayerList()" />
@@ -142,17 +146,21 @@ const hostname = useRequestURL().origin
         <div class="hidden grid-flow-row items-center justify-center md:grid">
           <div class="mb-8">
             <RoomCode :room-code="multiplayerStore.roomCode" class="mx-auto w-[18vw]" />
-            <h1 class="text-center text-lg">{{ roomUrl }}</h1>
+            <UiHeadingFour class="text-center">{{ roomUrl }}</UiHeadingFour>
             <div
-              class="text-center text-lg"
+              class="text-center"
               @click="copyRoomCode(hostname, xss(multiplayerStore.roomCode))"
             >
               <button>
-                Room code: <b>{{ multiplayerStore.roomCode }}</b>
+                <UiHeadingFour>
+                  Room code: <b>{{ multiplayerStore.roomCode }}</b>
+                </UiHeadingFour>
               </button>
             </div>
+            <!-- Start button larger screens -->
             <div class="mt-4 flex justify-center">
-              <UiButton
+              <UiButtonRegular
+                class="btn-primary btn-wide"
                 @click="
                   () => {
                     if (socket) {
@@ -164,13 +172,15 @@ const hostname = useRequestURL().origin
                 "
               >
                 Start
-              </UiButton>
+              </UiButtonRegular>
             </div>
           </div>
         </div>
       </div>
+      <!-- Start Button Smaller Screens -->
       <div class="mt-8 flex justify-center md:hidden">
-        <UiButton
+        <UiButtonBottom
+          class="fixed"
           @click="
             () => {
               if (socket) {
@@ -182,23 +192,23 @@ const hostname = useRequestURL().origin
           "
         >
           Start
-        </UiButton>
+        </UiButtonBottom>
       </div>
     </div>
     <div v-else class="flex h-1/2 items-center justify-center">
       <div class="mx-4">
-        <!-- Waiting for host... on small + screens -->
-        <div class="hidden items-center justify-center text-center text-4xl sm:flex">
+        <!-- Waiting for host... on small -> largest screens -->
+        <UiHeadingOne class="hidden items-center justify-center text-center sm:flex">
           <span>Waiting for host to start the game</span>
           <CSSLoader class="ml-1 mt-1" />
-        </div>
+        </UiHeadingOne>
         <!-- Waiting for host... on very small screens -->
-        <div class="items-center justify-center text-center text-4xl sm:hidden">
+        <UiHeadingOne class="items-center justify-center text-center sm:hidden">
           <div>Waiting for host to</div>
           <div class="flex justify-center">
             <span>start the game</span><CSSLoader class="ml-1 mt-1" />
           </div>
-        </div>
+        </UiHeadingOne>
       </div>
     </div>
   </div>

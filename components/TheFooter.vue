@@ -1,9 +1,9 @@
 <template>
   <footer class="footer footer-center bg-zinc-800 p-10 text-white">
     <nav class="grid grid-flow-col gap-4">
-      <NuxtLink to="/" class="link-hover link">Quizoot</NuxtLink>
-      <NuxtLink to="/" class="link-hover link">Contact Us</NuxtLink>
-      <NuxtLink to="/credits" class="link-hover link">Credits</NuxtLink>
+      <UiParagraph><NuxtLink to="/" class="link-hover link">Quizoot</NuxtLink></UiParagraph>
+      <UiParagraph><NuxtLink to="/" class="link-hover link">Contact Us</NuxtLink></UiParagraph>
+      <UiParagraph><NuxtLink to="/credits" class="link-hover link">Credits</NuxtLink></UiParagraph>
     </nav>
     <nav>
       <div class="grid grid-flow-col gap-4">
@@ -42,7 +42,7 @@
       </div>
     </nav>
     <aside>
-      <p>Copyright © 2024 - MIT License</p>
+      <UiParagraph>Copyright © 2024 - MIT License</UiParagraph>
     </aside>
   </footer>
 </template>
