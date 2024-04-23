@@ -5,11 +5,17 @@ const maxQuestions = ref(10)
 type ResponseState = 'waiting' | 'correct' | 'incorrect'
 
 const singlePlayerStore = useSingleplayerStore()
+const multiPlayerStore = useMultiplayerStore()
+
 const responseState = ref<ResponseState>('waiting')
 const addedScore = ref(0)
 const correctAnswer = ref('')
 
 const router = useRouter()
+
+if (singlePlayerStore.state === 'not-started' && multiPlayerStore.state === 'not-started') {
+  router.replace('/')
+}
 
 if (
   singlePlayerStore.state !== 'not-started' &&
@@ -42,6 +48,13 @@ if (
       router.replace(`/question`)
     }
   }, 3000)
+} else if (multiPlayerStore.state !== 'not-started' && multiPlayerStore.state !== 'in-question') {
+  responseState.value = multiPlayerStore.state
+  score.value = multiPlayerStore.score
+  questionNumber.value = multiPlayerStore.questionNumber
+  maxQuestions.value = multiPlayerStore.maxQuestions
+  addedScore.value = multiPlayerStore.addedScore
+  correctAnswer.value = multiPlayerStore.correctAnswer
 }
 </script>
 

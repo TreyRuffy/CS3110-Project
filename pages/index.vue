@@ -1,6 +1,9 @@
 <script setup lang="ts">
 const singlePlayerStore = useSingleplayerStore()
 singlePlayerStore.reset()
+
+const multiplayerStore = useMultiplayerStore()
+multiplayerStore.reset()
 </script>
 
 <template>

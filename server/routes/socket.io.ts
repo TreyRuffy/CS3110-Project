@@ -227,6 +227,10 @@ export default defineEventHandler((event) => {
         socket.emit('invalid-action', 'Only the host can start the game')
         return
       }
+      if (currentRoom.players.length < 2) {
+        socket.emit('invalid-action', 'Not enough players to start the game')
+        return
+      }
       currentRoom.broadcast('game-starting', timer || currentRoom.settings.startTimer)
 
       setTimeout(() => {
