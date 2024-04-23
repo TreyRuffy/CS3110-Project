@@ -3,7 +3,7 @@
     <div class="box-border h-dvh">
       <RoomTopNavigation :question-number="0" :max-question-number="0" :score="0" />
       <div class="m-[2vh] mb-0 text-center">
-        <UiTitle title="Scoreboard" />
+        <UiHeadingOne class="font-[600]">Scoreboard</UiHeadingOne>
       </div>
       <div class="hidden text-right sm:block">
         <UiButtonTopRight>New Game</UiButtonTopRight>

@@ -1,7 +1,7 @@
 <!-- This is the button at the bottom of the screen for smaller devices-->
 
 <template>
-  <button class="btn btn-primary btn-lg btn-wide bottom-8 shadow-md md:hidden">
+  <UiButtonRegular class="btn-primary btn-lg btn-wide bottom-8 md:hidden">
     <slot></slot>
-  </button>
+  </UiButtonRegular>
 </template>

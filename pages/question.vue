@@ -94,12 +94,12 @@ if (singlePlayer) {
       </div>
       <!-- Top content -->
       <div>
-        <h1
+        <UiHeadingThree
           v-if="questionList[questionNumber - 1]"
           class="mx-3 mb-2 mt-4 text-center text-2xl font-semibold"
         >
           {{ questionList[questionNumber - 1].question }}
-        </h1>
+        </UiHeadingThree>
         <h1 v-else class="mx-3 mb-2 mt-4 text-center text-2xl font-semibold">Loading...</h1>
       </div>
       <div class="flex justify-center">
@@ -142,21 +142,21 @@ if (singlePlayer) {
       <!-- Bottom content -->
       <div class="h-full">
         <div class="mx-2 grid h-full grid-cols-2 grid-rows-2 gap-2">
-          <button class="btn btn-primary btn-lg h-full" @click="answerQuestion(questions[0])">
-            {{ questions[0] }}
-          </button>
-          <button class="btn btn-secondary btn-lg h-full" @click="answerQuestion(questions[1])">
-            {{ questions[1] }}
-          </button>
-          <button class="btn btn-accent btn-lg h-full" @click="answerQuestion(questions[2])">
-            {{ questions[2] }}
-          </button>
-          <button
-            class="btn btn-lg h-full bg-[#FCC93B] text-[#160f01] hover:bg-[#DCB133] focus:outline-[#DCB133] dark:bg-[#c99c00] dark:text-[#0f0900] dark:hover:bg-[#a98200] dark:focus:bg-[#a98200]"
+          <UiButtonQuiz class="btn-primary" @click="answerQuestion(questions[0])">
+            {{ questions[0] }}</UiButtonQuiz
+          >
+          <UiButtonQuiz class="btn-secondary" @click="answerQuestion(questions[1])">
+            {{ questions[1] }}</UiButtonQuiz
+          >
+          <UiButtonQuiz class="btn-accent" @click="answerQuestion(questions[2])">
+            {{ questions[2] }}</UiButtonQuiz
+          >
+          <UiButtonQuiz
+            class="bg-[#FCC93B] text-[#160f01] hover:bg-[#DCB133] focus:outline-[#DCB133] dark:bg-[#c99c00] dark:text-[#0f0900] dark:hover:bg-[#a98200] dark:focus:bg-[#a98200]"
             @click="answerQuestion(questions[3])"
           >
-            {{ questions[3] }}
-          </button>
+            {{ questions[3] }}</UiButtonQuiz
+          >
         </div>
       </div>
       <!-- Added space -->

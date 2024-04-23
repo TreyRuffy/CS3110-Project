@@ -12,7 +12,7 @@ definePageMeta({
   <div>
     <div class="min-h-dvh">
       <TopNavigation />
-      <UiTitle title="Single Player" />
+      <UiHeadingOne class="font-[600]">Single Player</UiHeadingOne>
       <RegionChoice :single-player="true" />
     </div>
     <TheFooter />

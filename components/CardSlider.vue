@@ -51,9 +51,9 @@ updateCardCount()
 
 <template>
   <div class="content-wrapper flex flex-col items-center justify-center justify-items-center">
-    <h2 v-if="title" class="m-auto flex w-full justify-center text-xl font-bold">
+    <UiHeadingThree v-if="title" class="m-auto flex w-full justify-center font-[500]">
       {{ title }}
-    </h2>
+    </UiHeadingThree>
     <div class="w-full max-w-full">
       <swiper-container
         v-if="items.length > 0"
