@@ -68,16 +68,10 @@ watch(socket, () => {
     inputError.value = errorMessage
   })
 
-  socket.value.on('invalid-action', (message) => {
-    inputError.value = message
-  })
-
   socket.value?.on('user-info', (_username, _uuid, _roomCode, _roomHost, _score) => {
     if (_roomCode !== '') {
       closeModal()
-      router.push({
-        path: '/waiting-room',
-      })
+      router.push('/waiting-room')
     }
   })
 })

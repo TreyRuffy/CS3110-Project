@@ -8,6 +8,14 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  score: {
+    type: Number,
+    required: true,
+  },
+  hide: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 const rank = ref('')
@@ -34,17 +42,18 @@ switch (props.position) {
     ]"
   >
     <div
-      class="relative grid h-[10vh] grid-rows-2 justify-center rounded-r-2xl bg-primary text-center shadow-[0_0_1rem_rgba(0,0,0,0.2)] sm:flex sm:!w-[75%] sm:flex-col sm:justify-center sm:rounded-b-[0] sm:rounded-t-2xl sm:p-4"
+      class="relative grid h-[12vh] grid-rows-2 justify-center rounded-r-2xl bg-primary text-center shadow-[0_0_1rem_rgba(0,0,0,0.2)] sm:flex sm:!w-[75%] sm:flex-col sm:justify-center sm:rounded-b-[0] sm:rounded-t-2xl sm:p-4"
       :class="[
         props.position === 1
-          ? 'w-[90vw] sm:min-h-[35vh]'
+          ? 'w-[90vw] sm:min-h-[45vh]'
           : props.position === 2
-            ? 'w-[75vw] sm:min-h-[25vh]'
-            : 'w-[60vw] sm:min-h-[17.5vh]',
+            ? 'w-[75vw] sm:min-h-[35vh]'
+            : 'w-[60vw] sm:min-h-[25vh]',
       ]"
     >
-      <UiHeadingFour class="rank mt-[2vh] font-[600] sm:p-[2vh]">{{ rank }}</UiHeadingFour>
-      <UiParagraph class="name font-[500] sm:mb-4 sm:p-[2vh]">Name</UiParagraph>
+      <UiHeadingThree class="font-[600] sm:mt-4 sm:p-[1vh]">{{ rank }}</UiHeadingThree>
+      <UiHeadingFour v-if="!hide" class="font-[500] sm:p-[1vh]">{{ name }}</UiHeadingFour>
+      <UiHeadingFive v-if="!hide" class="font-[500] sm:mb-4 sm:p-[1vh]">{{ score }}</UiHeadingFive>
     </div>
   </div>
 </template>

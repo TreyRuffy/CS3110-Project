@@ -5,6 +5,7 @@ export type UUID = `${string}-${string}-${string}-${string}-${string}`
 export interface ServerToClientEvents {
   'successful-connection': (uuid: UUID) => void
 
+  // TODO: Add reauthentication
   'reauthenticate-error': (errorMessage: string) => void
   'reauthenticate-success': () => void
 
@@ -13,11 +14,6 @@ export interface ServerToClientEvents {
     errorMessage: string,
   ) => void
   'username-accepted': (username: string) => void
-
-  'chat-error': (
-    errorType: 'chat-disabled' | 'message-too-long' | 'message-empty',
-    errorMessage: string,
-  ) => void
 
   'room-error': (
     errorType:
@@ -33,6 +29,8 @@ export interface ServerToClientEvents {
   'room-created': (roomCode: string) => void
   'room-left': () => void
   'room-player-update': (roomCode: string, players: [uuid: UUID, username: string][]) => void
+
+  // TODO: add 'update-room-settings' event
   'update-room-settings': (settings: Record<string, unknown>) => void
 
   'player-kicked': (uuid: UUID) => void
@@ -43,7 +41,8 @@ export interface ServerToClientEvents {
 
   'game-starting': (timer: number) => void
   'game-started': (questionCount: number) => void
-  'game-ended': () => void
+  'game-ended': (rankings: { uuid: UUID; username: string; score: number }[]) => void
+  'game-restarted': () => void
   'game-error': (
     errorType: 'game-not-started' | 'game-already-started' | 'game-not-enough-players',
     errorMessage: string,
@@ -56,11 +55,7 @@ export interface ServerToClientEvents {
   'question-people-answered': (peopleAnswered: UUID[]) => void
   'question-answer-count': (answerCount: { answer: string; count: number }[]) => void
 
-  leaderboard: (leaderboard: [uuid: UUID, username: string, score: number][]) => void
-
   'invalid-action': (message: string) => void
-
-  'receive-chat-message': (username: string, message: string) => void
 
   'user-info': (
     username: string,
@@ -78,17 +73,15 @@ export interface ClientToServerEvents {
 
   'join-room': (roomCode: string) => void
   'create-room': (region: string) => void
-  'leave-room': () => void
 
   'host-update-room-settings': (settings: Partial<RoomSettings>) => void
   'host-kick-player': (uuid: UUID) => void
   'host-ban-player': (uuid: UUID) => void
   'host-start-game': (timer?: number) => void
+  'host-restart-game': () => void
 
   'question-answer': (answer: string) => void
   'question-next': () => void
-
-  'send-chat-message': (message: string) => void
 
   'request-user-info': () => void
 }

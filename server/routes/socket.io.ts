@@ -1,4 +1,5 @@
 import type { Server } from 'http'
+import type { Socket } from 'socket.io'
 import { Server as SocketServer } from 'socket.io'
 import { Client, type Room } from '../util'
 import type { ClientToServerEvents, ServerToClientEvents, UUID } from '~/utils/socket-types'
@@ -83,14 +84,7 @@ export default defineEventHandler((event) => {
       }
       const currentRoom = clientRoom.get(client)
       if (currentRoom) {
-        currentRoom.removePlayer(client)
-        clientRoom.delete(client)
-        socket.emit('room-left')
-        currentRoom.broadcast(
-          'room-player-update',
-          currentRoom.joinCode,
-          currentRoom.players.map((p) => [p.uuid, p.username]),
-        )
+        removePlayer(currentRoom, client, socket)
       }
       // if (room.bannedPlayers.has(client.uuid)) {
       //   socket.emit('room-error', 'banned', 'You are banned from this room')
@@ -119,39 +113,6 @@ export default defineEventHandler((event) => {
       }
       socket.emit('room-created', currentRoom.joinCode)
       currentRoom.settings.quiz = region
-    })
-
-    socket.on('leave-room', () => {
-      const currentRoom = clientRoom.get(client)
-      if (!currentRoom) {
-        socket.emit('room-error', 'not-in-room', 'Not in a room')
-        return
-      }
-      if (currentRoom.host === client) {
-        currentRoom.players.forEach((p) => {
-          p.socket.emit('room-left')
-          clientRoom.delete(p)
-        })
-        removeRoom(currentRoom)
-        return
-      }
-      clientRoom.delete(client)
-      currentRoom.removePlayer(client)
-      socket.emit('room-left')
-      if (currentRoom.players.length === 1) {
-        currentRoom.broadcast(
-          'game-error',
-          'game-not-enough-players',
-          'All players have left the room',
-        )
-        currentRoom.currentGame = null
-      }
-
-      currentRoom.broadcast(
-        'room-player-update',
-        currentRoom.joinCode,
-        currentRoom.players.map((p) => [p.uuid, p.username]),
-      )
     })
 
     socket.on('host-update-room-settings', (settings) => {
@@ -249,6 +210,21 @@ export default defineEventHandler((event) => {
       }, timer || currentRoom.settings.startTimer)
     })
 
+    socket.on('host-restart-game', () => {
+      const currentRoom = clientRoom.get(client)
+      if (!currentRoom) {
+        socket.emit('room-error', 'not-in-room', 'Not in a room')
+        return
+      }
+      if (currentRoom.host !== client) {
+        socket.emit('invalid-action', 'Only the host can restart the game')
+        return
+      }
+
+      currentRoom.currentGame = null
+      currentRoom.broadcast('game-restarted')
+    })
+
     socket.on('question-answer', (answer: string) => {
       const currentRoom = clientRoom.get(client)
       if (!currentRoom) {
@@ -268,28 +244,6 @@ export default defineEventHandler((event) => {
       }
 
       currentRoom.currentGame.handleAnswer(gameClient, answer)
-    })
-
-    socket.on('send-chat-message', (message: string) => {
-      if (message.length < 1) {
-        socket.emit('chat-error', 'message-empty', 'Message cannot be empty')
-        return
-      }
-      if (message.length > 256) {
-        socket.emit(
-          'chat-error',
-          'message-too-long',
-          'Message cannot be longer than 200 characters',
-        )
-        return
-      }
-      const currentRoom = clientRoom.get(client)
-      if (!currentRoom) {
-        socket.emit('room-error', 'not-in-room', 'Not in a room')
-        return
-      }
-
-      currentRoom.broadcast('receive-chat-message', client.username, message)
     })
 
     socket.on('request-user-info', () => {
@@ -339,12 +293,7 @@ export default defineEventHandler((event) => {
           removeRoom(currentRoom)
           return
         }
-        currentRoom.removePlayer(client)
-        currentRoom.broadcast(
-          'room-player-update',
-          currentRoom.joinCode,
-          currentRoom.players.map((p) => [p.uuid, p.username]),
-        )
+        removePlayer(currentRoom, client, socket)
       }
     })
   })
@@ -352,4 +301,23 @@ export default defineEventHandler((event) => {
 
 export function getClientRoom() {
   return clientRoom
+}
+
+function removePlayer(
+  currentRoom: Room,
+  client: Client,
+  socket: Socket<ClientToServerEvents, ServerToClientEvents>,
+) {
+  currentRoom.removePlayer(client)
+  clientRoom.delete(client)
+  socket.emit('room-left')
+  if (currentRoom.players.length === 1 && currentRoom.currentGame) {
+    currentRoom.broadcast('game-error', 'game-not-enough-players', 'All players have left the room')
+    currentRoom.currentGame = null
+  }
+  currentRoom.broadcast(
+    'room-player-update',
+    currentRoom.joinCode,
+    currentRoom.players.map((p) => [p.uuid, p.username]),
+  )
 }

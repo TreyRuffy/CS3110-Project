@@ -40,6 +40,10 @@ watch(socket, () => {
     return
   }
 
+  socket.value.on('successful-connection', (uuid) => {
+    multiplayerStore.uuid = uuid
+  })
+
   socket.value.on('invalid-action', (message) => {
     toast.addToast({
       title: 'Error',
@@ -48,14 +52,48 @@ watch(socket, () => {
     })
   })
 
+  socket.value?.on('player-kicked', (uuid) => {
+    toast.addToast({
+      title: 'User kicked',
+      message: `User with UUID ${uuid} has been kicked from the room.`,
+      type: 'info',
+    })
+  })
+
+  socket.value?.on('self-kicked', () => {
+    toast.addToast({
+      title: 'Kicked',
+      message: 'You have been kicked from the room.',
+      type: 'error',
+    })
+    multiplayerStore.reset()
+    router.push('/')
+  })
+
+  socket.value?.on('player-banned', (uuid) => {
+    toast.addToast({
+      title: 'User banned',
+      message: `User with UUID ${uuid} has been banned from the room.`,
+      type: 'info',
+    })
+  })
+
+  socket.value?.on('self-banned', () => {
+    toast.addToast({
+      title: 'Banned',
+      message: 'You have been banned from the room.',
+      type: 'error',
+    })
+    multiplayerStore.reset()
+    router.push('/')
+  })
+
   socket.value?.on('game-starting', (timer) => {
     console.log('game-starting', timer)
   })
 
   socket.value?.on('game-started', (questionCount) => {
-    if (multiplayerStore.host) {
-      console.log('game-started', questionCount)
-    }
+    multiplayerStore.maxQuestions = questionCount
     router.push('/question')
   })
 
@@ -72,6 +110,7 @@ watch(socket, () => {
 
   socket.value?.on('question', (_questionNumber, question, image) => {
     router.replace('/question')
+    multiplayerStore.allowAnswers = false
     multiplayerStore.multiPlayerQuestion = {
       question,
       image,
@@ -79,6 +118,9 @@ watch(socket, () => {
       peopleAnswered: null,
       answerCount: null,
     }
+    multiplayerStore.state = 'in-question'
+    multiplayerStore.questionNumber = _questionNumber
+    multiplayerStore.correctAnswer = ''
   })
 
   socket.value?.on('question-allow-answers', (answers) => {
@@ -88,9 +130,9 @@ watch(socket, () => {
   })
 
   socket.value?.on('question-answered-incorrect', (score, correctAnswer) => {
-    multiplayerStore.score = score
     multiplayerStore.state = 'incorrect'
     multiplayerStore.correctAnswer = correctAnswer
+    multiplayerStore.score = score
     if (multiplayerStore.host) {
       router.replace('/question-answer')
     } else {
@@ -98,9 +140,11 @@ watch(socket, () => {
     }
   })
 
-  socket.value?.on('question-answered-correct', (score) => {
-    multiplayerStore.score = score
+  socket.value?.on('question-answered-correct', (score, addedScore, correctAnswer) => {
     multiplayerStore.state = 'correct'
+    multiplayerStore.correctAnswer = correctAnswer
+    multiplayerStore.addedScore = addedScore
+    multiplayerStore.score = score
     if (multiplayerStore.host) {
       router.replace('/question-answer')
     } else {
@@ -120,19 +164,25 @@ watch(socket, () => {
 
   socket.value?.on('game-error', (errorType, message) => {
     if (errorType === 'game-not-enough-players') {
-      toast.addToast({
-        title: 'Error',
-        message,
-        type: 'error',
-      })
       multiplayerStore.resetGame()
       router.push('/waiting-room')
     }
+    toast.addToast({
+      title: 'Error',
+      message,
+      type: 'error',
+    })
   })
 
-  socket.value?.on('game-ended', () => {
+  socket.value?.on('game-ended', (rankings) => {
     multiplayerStore.state = 'finished'
+    multiplayerStore.rankings = rankings
     router.push('/scoreboard')
+  })
+
+  socket.value?.on('game-restarted', () => {
+    multiplayerStore.resetGame()
+    router.push('/waiting-room')
   })
 
   socket.value?.on('room-left', () => {

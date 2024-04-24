@@ -2,9 +2,9 @@ import { defineStore } from 'pinia'
 import type { UUID } from '~/utils/socket-types'
 
 export const useMultiplayerStore = defineStore('multiplayer', () => {
-  const state = ref<'not-started' | 'in-question' | 'correct' | 'incorrect' | 'finished'>(
-    'not-started',
-  )
+  const state = ref<
+    'not-started' | 'in-room' | 'in-question' | 'correct' | 'incorrect' | 'finished'
+  >('not-started')
 
   const score = ref(0)
   const questionNumber = ref(0)
@@ -15,6 +15,7 @@ export const useMultiplayerStore = defineStore('multiplayer', () => {
 
   type Player = [uuid: UUID, username: string]
   const playerList = ref<Player[]>([])
+  const rankings = ref<{ uuid: UUID; username: string; score: number }[]>([])
 
   const roomCode = ref('')
   const host = ref(false)
@@ -34,12 +35,13 @@ export const useMultiplayerStore = defineStore('multiplayer', () => {
   const multiPlayerQuestion = ref<MultiPlayerQuestion | null>(null)
 
   function resetGame() {
-    state.value = 'not-started'
+    state.value = 'in-room'
     score.value = 0
     questionNumber.value = 0
     if (timer.value) {
       clearTimeout(timer.value)
     }
+    rankings.value = []
     allowAnswers.value = false
     correctAnswer.value = ''
     addedScore.value = 0
@@ -57,6 +59,7 @@ export const useMultiplayerStore = defineStore('multiplayer', () => {
       clearTimeout(timer.value)
     }
     playerList.value = []
+    rankings.value = []
     roomCode.value = ''
     host.value = false
     allowAnswers.value = false
@@ -74,6 +77,7 @@ export const useMultiplayerStore = defineStore('multiplayer', () => {
     maxQuestions,
     timer,
     playerList,
+    rankings,
     roomCode,
     host,
     allowAnswers,

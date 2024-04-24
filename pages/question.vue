@@ -2,9 +2,9 @@
 import { GenerativeQuiz, type Question } from '~/utils/utils'
 import { createQuizzes } from '~/utils/countries'
 
-const score = ref(12000)
-const questionNumber = ref(1)
-const maxQuestions = ref(10)
+const score = ref(0)
+const questionNumber = ref(0)
+const maxQuestions = ref(0)
 const singlePlayerQuestionList = ref<Question[]>([])
 
 const questions = ref<string[]>([])
@@ -48,9 +48,16 @@ watch(singlePlayerStore.questions, () => {
   loadQuestions()
 })
 
-watch(multiplayerStore, () => {
+function loadMultiplayer() {
   if (!multiplayerStore.multiPlayerQuestion) return
+  score.value = multiplayerStore.score
+  questionNumber.value = multiplayerStore.questionNumber
+  maxQuestions.value = multiplayerStore.maxQuestions
   questions.value = multiplayerStore.multiPlayerQuestion.answers ?? []
+}
+
+watch(multiplayerStore, () => {
+  loadMultiplayer()
 })
 
 function answerQuestion(question?: string) {
@@ -73,6 +80,7 @@ function answerQuestion(question?: string) {
     }
   } else if (!multiplayerStore.host) {
     if (!socket.value) return
+    if (!multiplayerStore.allowAnswers) return
     socket.value.emit('question-answer', question ?? '')
     router.replace(`/question-response`)
   }
@@ -104,7 +112,7 @@ if (singlePlayer) {
     loadQuestions()
   }
 } else {
-  questions.value = multiplayerStore.multiPlayerQuestion?.answers ?? []
+  loadMultiplayer()
 }
 </script>
 
@@ -114,6 +122,7 @@ if (singlePlayer) {
       <!-- Navbar -->
       <div>
         <RoomTopNavigation
+          :host="multiplayerStore.host"
           :max-question-number="maxQuestions"
           :question-number="questionNumber"
           :score="score"
@@ -178,7 +187,7 @@ if (singlePlayer) {
 
           <!-- Submitted for larger screens -->
           <div
-            v-if="!singlePlayer && multiplayerStore.multiPlayerQuestion"
+            v-if="!singlePlayer && multiplayerStore.host && multiplayerStore.multiPlayerQuestion"
             class="mx-8 flex items-center justify-center"
           >
             <h1 class="text-lg">
@@ -192,21 +201,34 @@ if (singlePlayer) {
       <!-- Bottom content -->
       <div class="h-full">
         <div class="mx-2 grid h-full grid-cols-2 grid-rows-2 gap-2">
-          <UiButtonQuiz class="btn-primary" @click="answerQuestion(questions[0])">
-            {{ questions[0] }}</UiButtonQuiz
+          <UiButtonQuiz
+            class="btn-primary"
+            :disabled="singlePlayer || multiplayerStore.allowAnswers"
+            @click="answerQuestion(questions[0])"
           >
-          <UiButtonQuiz class="btn-secondary" @click="answerQuestion(questions[1])">
-            {{ questions[1] }}</UiButtonQuiz
+            {{ questions[0] }}
+          </UiButtonQuiz>
+          <UiButtonQuiz
+            class="btn-secondary"
+            :disabled="singlePlayer || multiplayerStore.allowAnswers"
+            @click="answerQuestion(questions[1])"
           >
-          <UiButtonQuiz class="btn-accent" @click="answerQuestion(questions[2])">
-            {{ questions[2] }}</UiButtonQuiz
+            {{ questions[1] }}
+          </UiButtonQuiz>
+          <UiButtonQuiz
+            class="btn-accent"
+            :disabled="singlePlayer || multiplayerStore.allowAnswers"
+            @click="answerQuestion(questions[2])"
           >
+            {{ questions[2] }}
+          </UiButtonQuiz>
           <UiButtonQuiz
             class="bg-[#FCC93B] text-[#160f01] hover:bg-[#DCB133] focus:outline-[#DCB133] dark:bg-[#c99c00] dark:text-[#0f0900] dark:hover:bg-[#a98200] dark:focus:bg-[#a98200]"
+            :disabled="singlePlayer || multiplayerStore.allowAnswers"
             @click="answerQuestion(questions[3])"
           >
-            {{ questions[3] }}</UiButtonQuiz
-          >
+            {{ questions[3] }}
+          </UiButtonQuiz>
         </div>
       </div>
       <!-- Added space -->

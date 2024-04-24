@@ -65,7 +65,7 @@ export class GameClient {
   private readonly _client: Client
   private _score = 0
   private _questionAnswered = false
-  private _answerList: Map<number, string> = new Map()
+  private _answer: string | null = null
 
   constructor(client: Client) {
     this._client = client
@@ -95,16 +95,17 @@ export class GameClient {
     this._score += score
   }
 
-  answerQuestion(questionNumber: number, answer: string) {
-    this._answerList.set(questionNumber, answer)
+  answerQuestion(answer: string) {
+    this._answer = answer
     this._questionAnswered = true
   }
 
-  getAnswer(questionNumber: number) {
-    return this._answerList.get(questionNumber)
+  getAnswer() {
+    return this._answer
   }
 
   resetQuestion() {
+    this._answer = null
     this._questionAnswered = false
   }
 }
@@ -191,7 +192,14 @@ export class Game {
   async nextQuestion() {
     if (this._currentQuestion >= this._questions.length) {
       this._state = 'finished'
-      this._room.broadcast('game-ended')
+      this._room.broadcast(
+        'game-ended',
+        this._rankings
+          .filter((gc) => gc != this.getGameClient(this._room.host))
+          .map((c) => {
+            return { uuid: c.uuid, username: c.client.username, score: c.score }
+          }),
+      )
       return
     }
 
@@ -206,7 +214,7 @@ export class Game {
     const question = this._questions[this._currentQuestion]
 
     // Broadcast the question
-    this._room.broadcast('question', this._currentQuestion, question.question, question.image)
+    this._room.broadcast('question', this._currentQuestion + 1, question.question, question.image)
 
     // Set the state to in-question
     setTimeout(() => {
@@ -229,7 +237,7 @@ export class Game {
       return
     }
 
-    client.answerQuestion(this._currentQuestion, answer)
+    client.answerQuestion(answer)
 
     const peopleAnswered = this._rankings
       .map((c) => (c.questionAnswered ? c.uuid : null))
@@ -256,24 +264,22 @@ export class Game {
     this._questionTimeoutId = null
 
     this._state = 'paused'
-    this._currentQuestion++
-
     const question = this._questions[this._currentQuestion]
 
     for (const client of this._rankings) {
-      const answer = client.getAnswer(this._currentQuestion)
-      if (!answer || question.correctAnswer() !== answer) {
-        client.client.socket.emit(
-          'question-answered-incorrect',
-          client.score,
-          question.correctAnswer(),
-        )
-      } else {
+      const answer = client.getAnswer()
+      if (question.correctAnswer() === answer) {
         client.addScore(this._room.settings.questionPoints)
         client.client.socket.emit(
           'question-answered-correct',
           client.score,
           this._room.settings.questionPoints,
+          question.correctAnswer(),
+        )
+      } else {
+        client.client.socket.emit(
+          'question-answered-incorrect',
+          client.score,
           question.correctAnswer(),
         )
       }
@@ -282,11 +288,14 @@ export class Game {
     const answerCount = question.shuffledAnswers().map((answer) => {
       return {
         answer: answer,
-        count: this._rankings.filter((c) => c.getAnswer(this._currentQuestion) === answer).length,
+        count: this._rankings.filter((c) => c.getAnswer() === answer).length,
       }
     })
-
     this._room.host.socket.emit('question-answer-count', answerCount)
+
+    this._rankings.sort((a, b) => b.score - a.score)
+
+    this._currentQuestion++
   }
 }
 

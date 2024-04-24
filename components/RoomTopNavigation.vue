@@ -12,6 +12,10 @@ defineProps({
     type: Number,
     required: true,
   },
+  host: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 const socketStore = useSocketStore()
@@ -48,7 +52,7 @@ const leaveRoom = () => {
         <span v-else></span>
       </div>
       <div class="navbar-center">
-        <span v-if="questionNumber !== 0"
+        <span v-if="questionNumber !== 0 && !host"
           ><UiHeadingFive>Score: {{ score }}</UiHeadingFive>
         </span>
         <span v-else></span>

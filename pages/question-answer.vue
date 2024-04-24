@@ -1,8 +1,8 @@
 <script setup lang="ts">
-const multiPlayerStore = useMultiplayerStore()
+const multiplayerStore = useMultiplayerStore()
 
 const router = useRouter()
-if (multiPlayerStore.state === 'not-started') {
+if (multiplayerStore.state === 'not-started') {
   router.replace('/')
 }
 
@@ -13,15 +13,29 @@ const socket = computed({
     socketStore.socket = value
   },
 })
+
+function getCount(answer: string) {
+  if (
+    multiplayerStore.multiPlayerQuestion?.answers &&
+    multiplayerStore.multiPlayerQuestion?.answerCount
+  ) {
+    const index = multiplayerStore.multiPlayerQuestion.answerCount.findIndex(
+      (item) => item.answer === answer,
+    )
+    return multiplayerStore.multiPlayerQuestion.answerCount[index].count
+  }
+  return 0
+}
 </script>
 
 <template>
   <div class="flex h-dvh flex-col">
     <div class="mb-4">
       <RoomTopNavigation
-        :max-question-number="multiPlayerStore.maxQuestions"
-        :question-number="multiPlayerStore.questionNumber"
-        :score="multiPlayerStore.score"
+        :host="multiplayerStore.host"
+        :max-question-number="multiplayerStore.maxQuestions"
+        :question-number="multiplayerStore.questionNumber"
+        :score="multiplayerStore.score"
       />
     </div>
     <!-- Next Question Button Large Screens -->
@@ -43,7 +57,7 @@ const socket = computed({
       <!-- Correct Answer-->
       <div class="justify-center">
         <UiHeadingTwo class="mb-2 text-center font-[500]">
-          Correct answer: {{ multiPlayerStore.correctAnswer }}
+          Correct answer: {{ multiplayerStore.correctAnswer }}
         </UiHeadingTwo>
         <!-- Aligning the 3 cards in the middle of the page -->
         <div class="mx-3 grid md:mx-0 md:grid-cols-3">
@@ -52,33 +66,33 @@ const socket = computed({
           <!-- Creating 4 different cards in a row -->
           <div
             v-if="
-              multiPlayerStore.multiPlayerQuestion?.answers &&
-              multiPlayerStore.multiPlayerQuestion?.answerCount
+              multiplayerStore.multiPlayerQuestion?.answers &&
+              multiplayerStore.multiPlayerQuestion?.answerCount
             "
             class="grid gap-2"
           >
             <div class="card w-auto bg-primary shadow-md">
               <QuestionAnswerCard
-                :num-answers="multiPlayerStore.multiPlayerQuestion?.answerCount[0].count"
-                :country-choice="multiPlayerStore.multiPlayerQuestion?.answers[0]"
+                :num-answers="getCount(multiplayerStore.multiPlayerQuestion?.answers[0])"
+                :country-choice="multiplayerStore.multiPlayerQuestion?.answers[0]"
               />
             </div>
             <div class="card w-auto bg-secondary shadow-md">
               <QuestionAnswerCard
-                :num-answers="multiPlayerStore.multiPlayerQuestion?.answerCount[1].count"
-                :country-choice="multiPlayerStore.multiPlayerQuestion?.answers[1]"
+                :num-answers="getCount(multiplayerStore.multiPlayerQuestion?.answers[1])"
+                :country-choice="multiplayerStore.multiPlayerQuestion?.answers[1]"
               />
             </div>
             <div class="card w-auto bg-accent shadow-md">
               <QuestionAnswerCard
-                :num-answers="multiPlayerStore.multiPlayerQuestion?.answerCount[2].count"
-                :country-choice="multiPlayerStore.multiPlayerQuestion?.answers[2]"
+                :num-answers="getCount(multiplayerStore.multiPlayerQuestion?.answers[2])"
+                :country-choice="multiplayerStore.multiPlayerQuestion?.answers[2]"
               />
             </div>
             <div class="card w-auto bg-[#FCC93B] shadow-md">
               <QuestionAnswerCard
-                :num-answers="multiPlayerStore.multiPlayerQuestion?.answerCount[3].count"
-                :country-choice="multiPlayerStore.multiPlayerQuestion?.answers[3]"
+                :num-answers="getCount(multiplayerStore.multiPlayerQuestion?.answers[3])"
+                :country-choice="multiplayerStore.multiPlayerQuestion?.answers[3]"
               />
             </div>
           </div>

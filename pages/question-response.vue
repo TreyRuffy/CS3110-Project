@@ -1,11 +1,11 @@
 <script setup lang="ts">
-const score = ref(12000)
-const questionNumber = ref(1)
-const maxQuestions = ref(10)
+const score = ref(0)
+const questionNumber = ref(0)
+const maxQuestions = ref(0)
 type ResponseState = 'waiting' | 'correct' | 'incorrect'
 
 const singlePlayerStore = useSingleplayerStore()
-const multiPlayerStore = useMultiplayerStore()
+const multiplayerStore = useMultiplayerStore()
 
 const responseState = ref<ResponseState>('waiting')
 const addedScore = ref(0)
@@ -13,8 +13,24 @@ const correctAnswer = ref('')
 
 const router = useRouter()
 
-if (singlePlayerStore.state === 'not-started' && multiPlayerStore.state === 'not-started') {
+if (singlePlayerStore.state === 'not-started' && multiplayerStore.state === 'not-started') {
   router.replace('/')
+}
+
+function loadMultiplayer() {
+  if (
+    multiplayerStore.state !== 'not-started' &&
+    multiplayerStore.state !== 'in-room' &&
+    multiplayerStore.state !== 'in-question' &&
+    multiplayerStore.state !== 'finished'
+  ) {
+    responseState.value = multiplayerStore.state
+  }
+  score.value = multiplayerStore.score
+  questionNumber.value = multiplayerStore.questionNumber
+  maxQuestions.value = multiplayerStore.maxQuestions
+  addedScore.value = multiplayerStore.addedScore
+  correctAnswer.value = multiplayerStore.correctAnswer
 }
 
 if (
@@ -48,18 +64,13 @@ if (
       router.replace(`/question`)
     }
   }, 3000)
-} else if (
-  multiPlayerStore.state !== 'not-started' &&
-  multiPlayerStore.state !== 'in-question' &&
-  multiPlayerStore.state !== 'finished'
-) {
-  responseState.value = multiPlayerStore.state
-  score.value = multiPlayerStore.score
-  questionNumber.value = multiPlayerStore.questionNumber
-  maxQuestions.value = multiPlayerStore.maxQuestions
-  addedScore.value = multiPlayerStore.addedScore
-  correctAnswer.value = multiPlayerStore.correctAnswer
+} else {
+  loadMultiplayer()
 }
+
+watch(multiplayerStore, () => {
+  loadMultiplayer()
+})
 </script>
 
 <template>
