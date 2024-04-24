@@ -188,7 +188,7 @@ if (singlePlayer) {
               <span class="countdown absolute flex font-mono text-2xl lg:text-4xl">
                 <span
                   v-if="multiplayerStore.timer !== 0"
-                  style="'--value: ' + multiplayerStore.timer"
+                  :style="'--value: ' + multiplayerStore.timer"
                 ></span>
               </span>
             </div>
