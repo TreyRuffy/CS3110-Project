@@ -11,7 +11,8 @@ export const useMultiplayerStore = defineStore('multiplayer', () => {
   const username = ref('')
   const uuid = ref<UUID | null>(null)
   const maxQuestions = ref(0)
-  const timer = ref<ReturnType<typeof setTimeout> | null>(null)
+  const timer = ref<number>(0)
+  const timeOut = ref<ReturnType<typeof setTimeout> | null>(null)
 
   type Player = [uuid: UUID, username: string]
   const playerList = ref<Player[]>([])
@@ -34,13 +35,19 @@ export const useMultiplayerStore = defineStore('multiplayer', () => {
 
   const multiPlayerQuestion = ref<MultiPlayerQuestion | null>(null)
 
+  function resetTimer() {
+    if (timeOut.value) {
+      clearTimeout(timeOut.value)
+    }
+    timer.value = 0
+    timeOut.value = null
+  }
+
   function resetGame() {
     state.value = 'in-room'
     score.value = 0
     questionNumber.value = 0
-    if (timer.value) {
-      clearTimeout(timer.value)
-    }
+    resetTimer()
     rankings.value = []
     allowAnswers.value = false
     correctAnswer.value = ''
@@ -55,9 +62,7 @@ export const useMultiplayerStore = defineStore('multiplayer', () => {
     username.value = ''
     uuid.value = null
     maxQuestions.value = 0
-    if (timer.value) {
-      clearTimeout(timer.value)
-    }
+    resetTimer()
     playerList.value = []
     rankings.value = []
     roomCode.value = ''
@@ -76,6 +81,7 @@ export const useMultiplayerStore = defineStore('multiplayer', () => {
     uuid,
     maxQuestions,
     timer,
+    timeOut,
     playerList,
     rankings,
     roomCode,
@@ -84,6 +90,7 @@ export const useMultiplayerStore = defineStore('multiplayer', () => {
     addedScore,
     correctAnswer,
     multiPlayerQuestion,
+    resetTimer,
     resetGame,
     reset,
   }

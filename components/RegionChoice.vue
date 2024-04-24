@@ -32,9 +32,7 @@ watch(socket, () => {
   }
 
   socket.value.on('room-created', () => {
-    router.push({
-      path: '/waiting-room',
-    })
+    router.push('/waiting-room')
   })
 })
 

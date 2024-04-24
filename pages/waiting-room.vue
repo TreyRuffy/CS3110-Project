@@ -45,7 +45,7 @@ const hostname = useRequestURL().origin
 </script>
 
 <template>
-  <div class="flex h-dvh flex-col">
+  <div class="flex h-dvh max-h-dvh flex-col">
     <RoomTopNavigation
       :max-question-number="multiplayerStore.maxQuestions"
       :question-number="multiplayerStore.questionNumber"

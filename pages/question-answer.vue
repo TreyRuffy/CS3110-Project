@@ -26,10 +26,12 @@ function getCount(answer: string) {
   }
   return 0
 }
+
+multiplayerStore.resetTimer()
 </script>
 
 <template>
-  <div class="flex h-dvh flex-col">
+  <div class="flex h-dvh max-h-dvh flex-col">
     <div class="mb-4">
       <RoomTopNavigation
         :host="multiplayerStore.host"

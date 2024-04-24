@@ -78,6 +78,10 @@ export default defineEventHandler((event) => {
         socket.emit('room-error', 'room-not-found', 'Room not found')
         return
       }
+      if (room.currentGame) {
+        socket.emit('game-error', 'game-already-started', 'Game already started')
+        return
+      }
       if (room.players.length >= room.settings.maxPlayers) {
         socket.emit('room-error', 'room-full', 'Room is full')
         return
@@ -260,6 +264,26 @@ export default defineEventHandler((event) => {
         clientRoom.get(client)?.joinCode ?? '',
         clientRoom.get(client)?.players.map((p) => [p.uuid, p.username]) ?? [],
       )
+    })
+
+    socket.on('host-force-end-question', () => {
+      const currentRoom = clientRoom.get(client)
+      if (!currentRoom) {
+        socket.emit('room-error', 'not-in-room', 'Not in a room')
+        return
+      }
+
+      if (!currentRoom.currentGame) {
+        socket.emit('game-error', 'game-not-started', 'Game not started')
+        return
+      }
+
+      if (currentRoom.host !== client) {
+        socket.emit('invalid-action', 'Only the host can force end the question')
+        return
+      }
+
+      currentRoom.currentGame.finishQuestion()
     })
 
     socket.on('question-next', () => {

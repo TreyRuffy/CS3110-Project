@@ -117,7 +117,7 @@ if (singlePlayer) {
 </script>
 
 <template>
-  <div class="flex h-dvh w-full">
+  <div class="flex h-dvh max-h-dvh w-full">
     <div class="custom-grid grid w-full items-center">
       <!-- Navbar -->
       <div>
@@ -186,7 +186,10 @@ if (singlePlayer) {
               class="hidden h-16 w-16 items-center justify-center rounded-full bg-primary shadow-lg lg:flex lg:h-24 lg:w-24"
             >
               <span class="countdown absolute flex font-mono text-2xl lg:text-4xl">
-                <span style="--value: 41"></span>
+                <span
+                  v-if="multiplayerStore.timer !== 0"
+                  style="'--value: ' + multiplayerStore.timer"
+                ></span>
               </span>
             </div>
           </div>
@@ -212,7 +215,10 @@ if (singlePlayer) {
               class="absolute start-[-25px] top-[35%] flex h-16 w-16 items-center justify-center rounded-full bg-primary shadow-lg lg:hidden"
             >
               <span class="countdown flex font-mono text-2xl md:text-4xl">
-                <span style="--value: 40"></span>
+                <span
+                  v-if="multiplayerStore.timer !== 0"
+                  :style="'--value: ' + multiplayerStore.timer"
+                ></span>
               </span>
             </div>
           </div>

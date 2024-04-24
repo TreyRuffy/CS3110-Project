@@ -60,9 +60,7 @@ watch(socket, () => {
   })
 
   socket.value.on('room-joined', () => {
-    router.push({
-      path: '/waiting-room',
-    })
+    router.push('/waiting-room')
   })
 
   socket.value.on('room-error', (_, errorMessage) => {

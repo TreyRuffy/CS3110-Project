@@ -35,6 +35,16 @@ const router = useRouter()
 const multiplayerStore = useMultiplayerStore()
 const toast = useToastStore()
 
+function countdownTimer(initialTime: number) {
+  multiplayerStore.timer = initialTime
+  multiplayerStore.timeOut = setInterval(() => {
+    if (!multiplayerStore.timeOut || multiplayerStore.timer <= 0) {
+      multiplayerStore.resetTimer()
+    }
+    if (multiplayerStore.timer) multiplayerStore.timer--
+  }, 1000)
+}
+
 watch(socket, () => {
   if (socket.value === null) {
     return
@@ -94,7 +104,7 @@ watch(socket, () => {
 
   socket.value?.on('game-started', (questionCount) => {
     multiplayerStore.maxQuestions = questionCount
-    router.push('/question')
+    router.replace('/question')
   })
 
   socket.value?.on('user-info', (_username, _uuid, _roomCode, _roomHost, _score) => {
@@ -123,10 +133,11 @@ watch(socket, () => {
     multiplayerStore.correctAnswer = ''
   })
 
-  socket.value?.on('question-allow-answers', (answers) => {
+  socket.value?.on('question-allow-answers', (answers, timer) => {
     if (!multiplayerStore.multiPlayerQuestion) return
     multiplayerStore.allowAnswers = true
     multiplayerStore.multiPlayerQuestion!.answers = answers
+    countdownTimer(timer / 1000)
   })
 
   socket.value?.on('question-answered-incorrect', (score, correctAnswer) => {
@@ -177,7 +188,7 @@ watch(socket, () => {
   socket.value?.on('game-ended', (rankings) => {
     multiplayerStore.state = 'finished'
     multiplayerStore.rankings = rankings
-    router.push('/scoreboard')
+    router.replace('/scoreboard')
   })
 
   socket.value?.on('game-restarted', () => {
@@ -187,7 +198,7 @@ watch(socket, () => {
 
   socket.value?.on('room-left', () => {
     multiplayerStore.reset()
-    router.push('/')
+    router.replace('/')
   })
 })
 </script>
