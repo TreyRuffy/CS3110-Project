@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import confetti from 'canvas-confetti'
 const score = ref(0)
 const questionNumber = ref(0)
 const maxQuestions = ref(0)
 
 const multiplayerStore = useMultiplayerStore()
 
+multiplayerStore.host = true
 const router = useRouter()
 
 if (multiplayerStore.state === 'not-started') {
@@ -32,12 +32,21 @@ const socket = computed({
   },
 })
 
-onMounted(() => {
-  if (multiplayerStore.host) {
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 },
+onMounted(async () => {
+  if (
+    import.meta.client &&
+    (multiplayerStore.host ||
+      multiplayerStore.rankings[0].uuid === multiplayerStore.uuid ||
+      multiplayerStore.rankings[1].uuid === multiplayerStore.uuid ||
+      multiplayerStore.rankings[2].uuid === multiplayerStore.uuid)
+  ) {
+    await import('canvas-confetti').then((value) => {
+      if (value)
+        value.default({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 },
+        })
     })
   }
 })
@@ -61,6 +70,7 @@ onMounted(() => {
       <!--Container for screen under nav bar-->
       <div
         class="flex h-[calc(70vh-6rem)] flex-col justify-around overflow-hidden sm:fixed sm:bottom-0 sm:w-full sm:flex-row"
+        :class="[!multiplayerStore.host ? 'mt-[10vh]' : '']"
       >
         <!--Begin First Column-->
         <UiPodiumContainer
