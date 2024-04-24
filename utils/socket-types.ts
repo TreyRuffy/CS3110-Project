@@ -49,7 +49,7 @@ export interface ServerToClientEvents {
   ) => void
 
   question: (questionNumber: number, question: string, image: string | undefined) => void
-  'question-allow-answers': (answers: string[]) => void
+  'question-allow-answers': (answers: string[], timer: number) => void
   'question-answered-correct': (score: number, addedScore: number, correctAnswer: string) => void
   'question-answered-incorrect': (score: number, correctAnswer: string) => void
   'question-people-answered': (peopleAnswered: UUID[]) => void
@@ -78,6 +78,7 @@ export interface ClientToServerEvents {
   'host-kick-player': (uuid: UUID) => void
   'host-ban-player': (uuid: UUID) => void
   'host-start-game': (timer?: number) => void
+  'host-force-end-question': () => void
   'host-restart-game': () => void
 
   'question-answer': (answer: string) => void

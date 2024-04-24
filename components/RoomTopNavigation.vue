@@ -38,7 +38,7 @@ const router = useRouter()
 
 const leaveRoom = () => {
   socketStore.disconnect()
-  router.push('/')
+  router.replace('/')
 }
 </script>
 

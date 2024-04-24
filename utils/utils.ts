@@ -2,17 +2,17 @@ const quizzes = new Map<string, Quiz>()
 
 export class RoomSettings {
   maxPlayers = 100
-  startTimer = 3000
+  startTimer = 0
   questionCount = 10
   questionTimer = 30000
   questionPoints = 1000
-  allowAnswerTimer = 1500
+  allowAnswerTimer = 0
 
   questionPointsDecayEnabled = true
   questionPointsDecayDelay = 1000
   questionPointsDecayMinimumPoints = 500
 
-  quiz = 'europe'
+  quiz = 'world'
 
   constructor(settings?: Partial<RoomSettings>) {
     Object.assign(this, settings)

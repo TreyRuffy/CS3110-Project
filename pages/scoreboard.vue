@@ -5,7 +5,6 @@ const maxQuestions = ref(0)
 
 const multiplayerStore = useMultiplayerStore()
 
-multiplayerStore.host = true
 const router = useRouter()
 
 if (multiplayerStore.state === 'not-started') {
@@ -36,9 +35,11 @@ onMounted(async () => {
   if (
     import.meta.client &&
     (multiplayerStore.host ||
-      multiplayerStore.rankings[0].uuid === multiplayerStore.uuid ||
-      multiplayerStore.rankings[1].uuid === multiplayerStore.uuid ||
-      multiplayerStore.rankings[2].uuid === multiplayerStore.uuid)
+      (multiplayerStore.rankings[0] &&
+        multiplayerStore.rankings[0].uuid === multiplayerStore.uuid) ||
+      (multiplayerStore.rankings[1] &&
+        multiplayerStore.rankings[1].uuid === multiplayerStore.uuid) ||
+      (multiplayerStore.rankings[2] && multiplayerStore.rankings[2].uuid === multiplayerStore.uuid))
   ) {
     await import('canvas-confetti').then((value) => {
       if (value)
@@ -54,7 +55,7 @@ onMounted(async () => {
 
 <template>
   <div>
-    <div class="box-border h-dvh">
+    <div class="box-border h-dvh max-h-dvh">
       <RoomTopNavigation
         :host="multiplayerStore.host"
         :max-question-number="multiplayerStore.maxQuestions"
@@ -93,7 +94,12 @@ onMounted(async () => {
         />
       </div>
       <div v-if="multiplayerStore.host" class="fixed w-full text-center sm:hidden">
-        <UiButtonBottom class="mx-auto mt-8 flex justify-center">New Game</UiButtonBottom>
+        <UiButtonBottom
+          class="mx-auto mt-8 flex justify-center"
+          @click="socket?.emit('host-restart-game')"
+        >
+          New Game
+        </UiButtonBottom>
       </div>
     </div>
   </div>

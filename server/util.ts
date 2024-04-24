@@ -218,7 +218,11 @@ export class Game {
 
     // Set the state to in-question
     setTimeout(() => {
-      this._room.broadcast('question-allow-answers', question.shuffledAnswers())
+      this._room.broadcast(
+        'question-allow-answers',
+        question.shuffledAnswers(),
+        this._room.settings.questionTimer - 1,
+      )
       this._state = 'in-question'
 
       this._questionTimeoutId = setTimeout(() => {

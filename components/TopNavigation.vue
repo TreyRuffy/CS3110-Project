@@ -54,14 +54,12 @@ watch(socket, () => {
 
   socket.value.on('username-accepted', (_username) => {
     username.value = _username
-    socket.value?.emit('join-room', roomCode.value + '')
+    if (roomCode.value) socket.value?.emit('join-room', roomCode.value)
   })
 
   socket.value.on('room-joined', () => {
     closeModal()
-    router.push({
-      path: '/waiting-room',
-    })
+    router.push('/waiting-room')
   })
 
   socket.value.on('room-error', (_, errorMessage) => {

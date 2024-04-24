@@ -26,6 +26,7 @@ function loadMultiplayer() {
   ) {
     responseState.value = multiplayerStore.state
   }
+  multiplayerStore.resetTimer()
   score.value = multiplayerStore.score
   questionNumber.value = multiplayerStore.questionNumber
   maxQuestions.value = multiplayerStore.maxQuestions
@@ -75,7 +76,7 @@ watch(multiplayerStore, () => {
 
 <template>
   <div
-    class="flex h-dvh flex-col justify-center"
+    class="flex h-dvh max-h-dvh flex-col justify-center"
     :class="[
       responseState === 'correct'
         ? 'bg-green-300'
