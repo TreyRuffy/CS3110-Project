@@ -130,21 +130,53 @@ if (singlePlayer) {
       </div>
       <!-- Top content -->
       <div>
-        <UiHeadingThree
-          v-if="
-            singlePlayer
-              ? singlePlayerQuestionList[questionNumber - 1]
-              : multiplayerStore.multiPlayerQuestion
-          "
-          class="mx-3 mb-2 mt-4 text-center font-semibold"
-        >
-          {{
-            singlePlayer
-              ? singlePlayerQuestionList[questionNumber - 1].question
-              : multiplayerStore.multiPlayerQuestion?.question
-          }}
-        </UiHeadingThree>
-        <h1 v-else class="mx-3 mb-2 mt-4 text-center text-2xl font-semibold">Loading...</h1>
+        <!-- Question and "End Question" button for larger screens -->
+        <div class="custom-end-question-grid hidden w-full lg:grid">
+          <div></div>
+          <UiHeadingThree
+            v-if="
+              singlePlayer
+                ? singlePlayerQuestionList[questionNumber - 1]
+                : multiplayerStore.multiPlayerQuestion
+            "
+            class="mx-3 mb-2 mt-4 text-center font-semibold"
+          >
+            {{
+              singlePlayer
+                ? singlePlayerQuestionList[questionNumber - 1].question
+                : multiplayerStore.multiPlayerQuestion?.question
+            }}
+          </UiHeadingThree>
+          <UiHeadingThree v-else class="mx-3 mb-2 mt-4 text-center font-semibold"
+            >Loading...
+          </UiHeadingThree>
+          <div
+            v-if="!singlePlayer && multiplayerStore.host && multiplayerStore.multiPlayerQuestion"
+            class="flex justify-end"
+          >
+            <UiButtonTopRight class="mt-4">End Question</UiButtonTopRight>
+          </div>
+        </div>
+        <!-- Question for smaller screens -->
+        <div class="lg:hidden">
+          <UiHeadingThree
+            v-if="
+              singlePlayer
+                ? singlePlayerQuestionList[questionNumber - 1]
+                : multiplayerStore.multiPlayerQuestion
+            "
+            class="mx-3 mb-2 mt-4 text-center font-semibold"
+          >
+            {{
+              singlePlayer
+                ? singlePlayerQuestionList[questionNumber - 1].question
+                : multiplayerStore.multiPlayerQuestion?.question
+            }}
+          </UiHeadingThree>
+          <UiHeadingThree v-else class="mx-3 mb-2 mt-4 text-center font-semibold"
+            >Loading...
+          </UiHeadingThree>
+        </div>
       </div>
       <div class="flex justify-center">
         <div class="grid w-fit lg:grid-cols-3">
@@ -185,16 +217,18 @@ if (singlePlayer) {
             </div>
           </div>
 
-          <!-- Submitted for larger screens -->
+          <!-- Submitted for all screens -->
           <div
             v-if="!singlePlayer && multiplayerStore.host && multiplayerStore.multiPlayerQuestion"
             class="mx-8 flex items-center justify-center"
           >
-            <h1 class="text-lg">
+            <!-- End Question Button on smaller screens -->
+            <UiButtonRegular class="btn-primary m-2 lg:hidden">End Question</UiButtonRegular>
+            <UiHeadingFive>
               Submitted {{ multiplayerStore.multiPlayerQuestion?.peopleAnswered?.length ?? 0 }}/{{
                 multiplayerStore.playerList.length - 1
               }}
-            </h1>
+            </UiHeadingFive>
           </div>
         </div>
       </div>
@@ -238,9 +272,16 @@ if (singlePlayer) {
 </template>
 
 <style scoped>
+/* Custom grid for the entire page */
 .custom-grid {
   grid-template-rows: 64px auto 1fr 1fr 10px;
 }
+
+/* Custom grid for 'End Question Button' */
+.custom-end-question-grid {
+  grid-template-columns: 1fr 3fr 1fr;
+}
+
 .image-to-guess {
   max-width: 350px;
   max-height: 200px;
