@@ -105,7 +105,19 @@ const singlePlayerSetup = async () => {
   }
 }
 
+function countdownTimer(initialTime: number) {
+  singlePlayerStore.countdownTimer = initialTime
+  singlePlayerStore.countdownTimeOut = setInterval(() => {
+    if (!singlePlayerStore.countdownTimeOut || singlePlayerStore.countdownTimer <= 0) {
+      singlePlayerStore.resetCountdown()
+      answerQuestion()
+    }
+    if (singlePlayerStore.countdownTimer) singlePlayerStore.countdownTimer--
+  }, 1000)
+}
+
 if (singlePlayer) {
+  countdownTimer(30)
   if (singlePlayerStore.state === 'generate-question') {
     singlePlayerSetup()
   } else {
@@ -192,6 +204,10 @@ if (singlePlayer) {
                   v-if="multiplayerStore.timer !== -1"
                   :style="'--value: ' + multiplayerStore.timer"
                 ></span>
+                <span
+                  v-else-if="singlePlayerStore.countdownTimer !== -1"
+                  :style="'--value: ' + singlePlayerStore.countdownTimer"
+                ></span>
               </span>
             </div>
           </div>
@@ -220,6 +236,10 @@ if (singlePlayer) {
                 <span
                   v-if="multiplayerStore.timer !== -1"
                   :style="'--value: ' + multiplayerStore.timer"
+                ></span>
+                <span
+                  v-else-if="singlePlayerStore.countdownTimer !== -1"
+                  :style="'--value: ' + singlePlayerStore.countdownTimer"
                 ></span>
               </span>
             </div>

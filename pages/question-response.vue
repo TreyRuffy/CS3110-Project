@@ -48,6 +48,7 @@ if (
     singlePlayerStore.questions[singlePlayerStore.questionNumber - 1].correctAnswer()
   maxQuestions.value = singlePlayerStore.maxQuestions
   addedScore.value = singlePlayerStore.addedScore
+  singlePlayerStore.resetCountdown()
 
   singlePlayerStore.addedScore = 0
 
