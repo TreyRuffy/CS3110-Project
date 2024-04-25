@@ -17,7 +17,7 @@ defineProps({
 
 <template>
   <div class="custom-grid grid">
-    <div>
+    <div class="grid items-center">
       <UiHeadingFour class="m-6 text-center" :class="[correct ? 'font-[600]' : '']">{{
         numAnswers
       }}</UiHeadingFour>
