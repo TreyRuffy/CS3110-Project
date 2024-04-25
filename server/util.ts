@@ -136,10 +136,11 @@ export class Game {
   private readonly _questions: Question[] = []
   private _creationDate: Date = new Date()
   private _currentQuestion = 0
+  private _currentQuestionStartTime: Date | null = null
   private _rankings: GameClient[] = []
   private _gameEnd: Date = new Date(0)
   private _state: GameState = 'not-started'
-  private _room: Room
+  private readonly _room: Room
   private _questionTimeoutId: NodeJS.Timeout | null = null
 
   constructor(room: Room, questions: Question[]) {
@@ -238,12 +239,13 @@ export class Game {
 
     // Set the state to in-question
     setTimeout(() => {
+      this._currentQuestionStartTime = new Date()
+      this._state = 'in-question'
       this._room.broadcast(
         'question-allow-answers',
         question.shuffledAnswers(),
-        this._room.settings.questionTimer - 1,
+        this._room.settings.questionTimer,
       )
-      this._state = 'in-question'
 
       this._questionTimeoutId = setTimeout(() => {
         this.finishQuestion()
@@ -277,36 +279,51 @@ export class Game {
     }
   }
 
-  generatePoints(currentTime: Date, client: GameClient, currentRoom: Room) {
+  generatePoints(answerStart: Date | null, client: GameClient, currentRoom: Room) {
     const clientAnswerTime = client.getAnswerTime()
-    if (!clientAnswerTime) return 0
+    if (!clientAnswerTime || !answerStart)
+      return { total: currentRoom.settings.questionPoints, streakBonus: 0 }
     let points = currentRoom.settings.questionPointsDecayMinimumPoints
 
     const timeDifference =
-      currentTime.getTime() -
-      clientAnswerTime.getTime() +
+      clientAnswerTime.getTime() -
+      answerStart.getTime() -
       currentRoom.settings.questionPointsDecayDelay
 
     const maxPoints = currentRoom.settings.questionPoints - points
-    const pointsPerMs = maxPoints / currentRoom.settings.questionTimer
+    const pointsPerMs =
+      maxPoints /
+      (currentRoom.settings.questionTimer - currentRoom.settings.questionPointsDecayDelay)
 
-    if (timeDifference < 0) {
+    if (timeDifference < 0 || !currentRoom.settings.questionPointsDecayEnabled) {
       points += maxPoints
     } else {
-      points += pointsPerMs * timeDifference
+      points +=
+        pointsPerMs *
+        (currentRoom.settings.questionTimer -
+          currentRoom.settings.questionPointsDecayDelay -
+          timeDifference)
     }
 
-    points += client.getStreak() * currentRoom.settings.questionPointsStreakBonus
+    let streakBonus = 0
+    if (
+      currentRoom.settings.questionPointsStreakEnabled &&
+      client.getStreak() >= currentRoom.settings.questionPointsStreakMinimum
+    ) {
+      streakBonus =
+        (client.getStreak() - currentRoom.settings.questionPointsStreakMinimum) *
+          currentRoom.settings.questionPointsStreakRecurringBonus +
+        currentRoom.settings.questionPointsStreakInitialBonus
+      points += streakBonus
+    }
 
-    return points
+    return { total: Math.floor(points), streakBonus: Math.floor(streakBonus) }
   }
 
   async finishQuestion() {
     if (this._state !== 'in-question') {
       return
     }
-
-    const currentTime = new Date()
 
     if (this._questionTimeoutId) {
       clearTimeout(this._questionTimeoutId)
@@ -319,9 +336,9 @@ export class Game {
     for (const client of this._rankings) {
       const answer = client.getAnswer()
       if (question.correctAnswer() === answer) {
-        const addedPoints = this.generatePoints(currentTime, client, this._room)
-        client.addScore(addedPoints)
         client.increaseStreak()
+        const addedPoints = this.generatePoints(this._currentQuestionStartTime, client, this._room)
+        client.addScore(addedPoints.total)
         client.client.socket.emit(
           'question-answered-correct',
           client.score,
@@ -337,6 +354,7 @@ export class Game {
         )
       }
     }
+    this._currentQuestionStartTime = null
 
     const answerCount = question.shuffledAnswers().map((answer) => {
       return {

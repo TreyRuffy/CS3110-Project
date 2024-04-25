@@ -9,6 +9,7 @@ const multiplayerStore = useMultiplayerStore()
 
 const responseState = ref<ResponseState>('waiting')
 const addedScore = ref(0)
+const streakBonus = ref(0)
 const correctAnswer = ref('')
 
 const router = useRouter()
@@ -31,6 +32,7 @@ function loadMultiplayer() {
   questionNumber.value = multiplayerStore.questionNumber
   maxQuestions.value = multiplayerStore.maxQuestions
   addedScore.value = multiplayerStore.addedScore
+  streakBonus.value = multiplayerStore.streakBonus
   correctAnswer.value = multiplayerStore.correctAnswer
 }
 
@@ -101,7 +103,12 @@ watch(multiplayerStore, () => {
       <!-- User Correct -->
       <UiHeadingOne v-else-if="responseState === 'correct'" class="text-center">
         Correct!
-        <UiHeadingTwo class="mx-4 mt-2">+{{ addedScore }}</UiHeadingTwo>
+        <UiHeadingTwo class="mx-4 mt-2">
+          +{{ streakBonus ? addedScore - streakBonus : addedScore }}
+        </UiHeadingTwo>
+        <UiHeadingThree v-if="streakBonus" class="mx-4 mt-4">
+          Streak Bonus! +{{ streakBonus }}
+        </UiHeadingThree>
       </UiHeadingOne>
       <!-- User Incorrect -->
       <div v-else-if="responseState === 'incorrect'" class="text-center">

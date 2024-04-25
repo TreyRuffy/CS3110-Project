@@ -12,8 +12,10 @@ export class RoomSettings {
   questionPointsDecayDelay = 1000
   questionPointsDecayMinimumPoints = 500
 
-  questionPointsStreakBegin = 3
-  questionPointsStreakBonus = 100
+  questionPointsStreakEnabled = true
+  questionPointsStreakMinimum = 3
+  questionPointsStreakInitialBonus = 150
+  questionPointsStreakRecurringBonus = 50
 
   quiz = 'world'
 

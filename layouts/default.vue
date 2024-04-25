@@ -154,7 +154,8 @@ watch(socket, () => {
   socket.value?.on('question-answered-correct', (score, addedScore, correctAnswer) => {
     multiplayerStore.state = 'correct'
     multiplayerStore.correctAnswer = correctAnswer
-    multiplayerStore.addedScore = addedScore
+    multiplayerStore.addedScore = addedScore.total
+    multiplayerStore.streakBonus = addedScore.streakBonus
     multiplayerStore.score = score
     if (multiplayerStore.host) {
       router.replace('/question-answer')
