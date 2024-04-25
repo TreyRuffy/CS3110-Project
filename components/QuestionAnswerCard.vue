@@ -13,7 +13,7 @@ defineProps({
 
 <template>
   <div class="custom-grid grid">
-    <div>
+    <div class="grid items-center">
       <UiHeadingFour class="m-6 text-center">{{ numAnswers }}</UiHeadingFour>
     </div>
     <div class="my-2 h-auto justify-center bg-black"></div>
