@@ -77,24 +77,40 @@ multiplayerStore.resetTimer()
               <QuestionAnswerCard
                 :num-answers="getCount(multiplayerStore.multiPlayerQuestion?.answers[0])"
                 :country-choice="multiplayerStore.multiPlayerQuestion?.answers[0]"
+                :correct="
+                  multiplayerStore.multiPlayerQuestion?.answers[0] ===
+                  multiplayerStore.correctAnswer
+                "
               />
             </div>
             <div class="card w-auto bg-secondary shadow-md">
               <QuestionAnswerCard
                 :num-answers="getCount(multiplayerStore.multiPlayerQuestion?.answers[1])"
                 :country-choice="multiplayerStore.multiPlayerQuestion?.answers[1]"
+                :correct="
+                  multiplayerStore.multiPlayerQuestion?.answers[1] ===
+                  multiplayerStore.correctAnswer
+                "
               />
             </div>
             <div class="card w-auto bg-accent shadow-md">
               <QuestionAnswerCard
                 :num-answers="getCount(multiplayerStore.multiPlayerQuestion?.answers[2])"
                 :country-choice="multiplayerStore.multiPlayerQuestion?.answers[2]"
+                :correct="
+                  multiplayerStore.multiPlayerQuestion?.answers[2] ===
+                  multiplayerStore.correctAnswer
+                "
               />
             </div>
             <div class="card w-auto bg-[#FCC93B] shadow-md">
               <QuestionAnswerCard
                 :num-answers="getCount(multiplayerStore.multiPlayerQuestion?.answers[3])"
                 :country-choice="multiplayerStore.multiPlayerQuestion?.answers[3]"
+                :correct="
+                  multiplayerStore.multiPlayerQuestion?.answers[3] ===
+                  multiplayerStore.correctAnswer
+                "
               />
             </div>
           </div>
