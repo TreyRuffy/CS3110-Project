@@ -66,6 +66,8 @@ export class GameClient {
   private _score = 0
   private _questionAnswered = false
   private _answer: string | null = null
+  private _answerTime: Date | null = null
+  private _answerStreak = 0
 
   constructor(client: Client) {
     this._client = client
@@ -98,15 +100,33 @@ export class GameClient {
   answerQuestion(answer: string) {
     this._answer = answer
     this._questionAnswered = true
+    this._answerTime = new Date()
   }
 
   getAnswer() {
     return this._answer
   }
 
+  getAnswerTime() {
+    return this._answerTime
+  }
+
   resetQuestion() {
     this._answer = null
     this._questionAnswered = false
+    this._answerTime = null
+  }
+
+  getStreak() {
+    return this._answerStreak
+  }
+
+  increaseStreak() {
+    this._answerStreak++
+  }
+
+  resetStreak() {
+    this._answerStreak = 0
   }
 }
 
@@ -257,10 +277,36 @@ export class Game {
     }
   }
 
+  generatePoints(currentTime: Date, client: GameClient, currentRoom: Room) {
+    const clientAnswerTime = client.getAnswerTime()
+    if (!clientAnswerTime) return 0
+    let points = currentRoom.settings.questionPointsDecayMinimumPoints
+
+    const timeDifference =
+      currentTime.getTime() -
+      clientAnswerTime.getTime() +
+      currentRoom.settings.questionPointsDecayDelay
+
+    const maxPoints = currentRoom.settings.questionPoints - points
+    const pointsPerMs = maxPoints / currentRoom.settings.questionTimer
+
+    if (timeDifference < 0) {
+      points += maxPoints
+    } else {
+      points += pointsPerMs * timeDifference
+    }
+
+    points += client.getStreak() * currentRoom.settings.questionPointsStreakBonus
+
+    return points
+  }
+
   async finishQuestion() {
     if (this._state !== 'in-question') {
       return
     }
+
+    const currentTime = new Date()
 
     if (this._questionTimeoutId) {
       clearTimeout(this._questionTimeoutId)
@@ -273,14 +319,17 @@ export class Game {
     for (const client of this._rankings) {
       const answer = client.getAnswer()
       if (question.correctAnswer() === answer) {
-        client.addScore(this._room.settings.questionPoints)
+        const addedPoints = this.generatePoints(currentTime, client, this._room)
+        client.addScore(addedPoints)
+        client.increaseStreak()
         client.client.socket.emit(
           'question-answered-correct',
           client.score,
-          this._room.settings.questionPoints,
+          addedPoints,
           question.correctAnswer(),
         )
       } else {
+        client.resetStreak()
         client.client.socket.emit(
           'question-answered-incorrect',
           client.score,

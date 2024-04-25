@@ -154,7 +154,9 @@ if (singlePlayer) {
             v-if="!singlePlayer && multiplayerStore.host && multiplayerStore.multiPlayerQuestion"
             class="flex justify-end"
           >
-            <UiButtonTopRight class="mt-4">End Question</UiButtonTopRight>
+            <UiButtonTopRight class="mt-4" @click="socket?.emit('host-force-end-question')">
+              End Question
+            </UiButtonTopRight>
           </div>
         </div>
         <!-- Question for smaller screens -->
@@ -188,7 +190,7 @@ if (singlePlayer) {
               <span class="countdown absolute flex font-mono text-2xl lg:text-4xl">
                 <span
                   v-if="multiplayerStore.timer !== 0"
-                  style="'--value: ' + multiplayerStore.timer"
+                  :style="'--value: ' + multiplayerStore.timer"
                 ></span>
               </span>
             </div>
@@ -229,7 +231,12 @@ if (singlePlayer) {
             class="mx-8 flex items-center justify-center"
           >
             <!-- End Question Button on smaller screens -->
-            <UiButtonRegular class="btn-primary m-2 lg:hidden">End Question</UiButtonRegular>
+            <UiButtonRegular
+              class="btn-primary m-2 lg:hidden"
+              @click="socket?.emit('host-force-end-question')"
+            >
+              End Question
+            </UiButtonRegular>
             <UiHeadingFive>
               Submitted {{ multiplayerStore.multiPlayerQuestion?.peopleAnswered?.length ?? 0 }}/{{
                 multiplayerStore.playerList.length - 1
