@@ -11,7 +11,7 @@ export const useMultiplayerStore = defineStore('multiplayer', () => {
   const username = ref('')
   const uuid = ref<UUID | null>(null)
   const maxQuestions = ref(0)
-  const timer = ref<number>(0)
+  const timer = ref<number>(-1)
   const timeOut = ref<ReturnType<typeof setTimeout> | null>(null)
 
   type Player = [uuid: UUID, username: string]
@@ -24,6 +24,7 @@ export const useMultiplayerStore = defineStore('multiplayer', () => {
   const allowAnswers = ref(false)
   const correctAnswer = ref('')
   const addedScore = ref(0)
+  const streakBonus = ref(0)
 
   interface MultiPlayerQuestion {
     question: string
@@ -39,7 +40,7 @@ export const useMultiplayerStore = defineStore('multiplayer', () => {
     if (timeOut.value) {
       clearTimeout(timeOut.value)
     }
-    timer.value = 0
+    timer.value = -1
     timeOut.value = null
   }
 
@@ -52,6 +53,7 @@ export const useMultiplayerStore = defineStore('multiplayer', () => {
     allowAnswers.value = false
     correctAnswer.value = ''
     addedScore.value = 0
+    streakBonus.value = 0
     multiPlayerQuestion.value = null
   }
 
@@ -70,6 +72,7 @@ export const useMultiplayerStore = defineStore('multiplayer', () => {
     allowAnswers.value = false
     correctAnswer.value = ''
     addedScore.value = 0
+    streakBonus.value = 0
     multiPlayerQuestion.value = null
   }
 
@@ -88,6 +91,7 @@ export const useMultiplayerStore = defineStore('multiplayer', () => {
     host,
     allowAnswers,
     addedScore,
+    streakBonus,
     correctAnswer,
     multiPlayerQuestion,
     resetTimer,

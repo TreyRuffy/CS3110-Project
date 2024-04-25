@@ -61,7 +61,7 @@ export default defineNuxtConfig({
       {
         name: 'Roboto',
         provider: 'google',
-        weights: ['100', '200', '300', '400', '500', '600', '700', '800'],
+        weights: ['100', '200', '300', '400', '500', '600'],
       },
     ],
   },

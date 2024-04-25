@@ -50,7 +50,11 @@ export interface ServerToClientEvents {
 
   question: (questionNumber: number, question: string, image: string | undefined) => void
   'question-allow-answers': (answers: string[], timer: number) => void
-  'question-answered-correct': (score: number, addedScore: number, correctAnswer: string) => void
+  'question-answered-correct': (
+    score: number,
+    addedScore: { total: number; streakBonus: number },
+    correctAnswer: string,
+  ) => void
   'question-answered-incorrect': (score: number, correctAnswer: string) => void
   'question-people-answered': (peopleAnswered: UUID[]) => void
   'question-answer-count': (answerCount: { answer: string; count: number }[]) => void

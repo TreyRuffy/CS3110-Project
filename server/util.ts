@@ -66,6 +66,8 @@ export class GameClient {
   private _score = 0
   private _questionAnswered = false
   private _answer: string | null = null
+  private _answerTime: Date | null = null
+  private _answerStreak = 0
 
   constructor(client: Client) {
     this._client = client
@@ -98,15 +100,33 @@ export class GameClient {
   answerQuestion(answer: string) {
     this._answer = answer
     this._questionAnswered = true
+    this._answerTime = new Date()
   }
 
   getAnswer() {
     return this._answer
   }
 
+  getAnswerTime() {
+    return this._answerTime
+  }
+
   resetQuestion() {
     this._answer = null
     this._questionAnswered = false
+    this._answerTime = null
+  }
+
+  getStreak() {
+    return this._answerStreak
+  }
+
+  increaseStreak() {
+    this._answerStreak++
+  }
+
+  resetStreak() {
+    this._answerStreak = 0
   }
 }
 
@@ -116,10 +136,11 @@ export class Game {
   private readonly _questions: Question[] = []
   private _creationDate: Date = new Date()
   private _currentQuestion = 0
+  private _currentQuestionStartTime: Date | null = null
   private _rankings: GameClient[] = []
   private _gameEnd: Date = new Date(0)
   private _state: GameState = 'not-started'
-  private _room: Room
+  private readonly _room: Room
   private _questionTimeoutId: NodeJS.Timeout | null = null
 
   constructor(room: Room, questions: Question[]) {
@@ -218,12 +239,13 @@ export class Game {
 
     // Set the state to in-question
     setTimeout(() => {
+      this._currentQuestionStartTime = new Date()
+      this._state = 'in-question'
       this._room.broadcast(
         'question-allow-answers',
         question.shuffledAnswers(),
-        this._room.settings.questionTimer - 1,
+        this._room.settings.questionTimer,
       )
-      this._state = 'in-question'
 
       this._questionTimeoutId = setTimeout(() => {
         this.finishQuestion()
@@ -257,6 +279,47 @@ export class Game {
     }
   }
 
+  generatePoints(answerStart: Date | null, client: GameClient, currentRoom: Room) {
+    const clientAnswerTime = client.getAnswerTime()
+    if (!clientAnswerTime || !answerStart)
+      return { total: currentRoom.settings.questionPoints, streakBonus: 0 }
+    let points = currentRoom.settings.questionPointsDecayMinimumPoints
+
+    const timeDifference =
+      clientAnswerTime.getTime() -
+      answerStart.getTime() -
+      currentRoom.settings.questionPointsDecayDelay
+
+    const maxPoints = currentRoom.settings.questionPoints - points
+    const pointsPerMs =
+      maxPoints /
+      (currentRoom.settings.questionTimer - currentRoom.settings.questionPointsDecayDelay)
+
+    if (timeDifference < 0 || !currentRoom.settings.questionPointsDecayEnabled) {
+      points += maxPoints
+    } else {
+      points +=
+        pointsPerMs *
+        (currentRoom.settings.questionTimer -
+          currentRoom.settings.questionPointsDecayDelay -
+          timeDifference)
+    }
+
+    let streakBonus = 0
+    if (
+      currentRoom.settings.questionPointsStreakEnabled &&
+      client.getStreak() >= currentRoom.settings.questionPointsStreakMinimum
+    ) {
+      streakBonus =
+        (client.getStreak() - currentRoom.settings.questionPointsStreakMinimum) *
+          currentRoom.settings.questionPointsStreakRecurringBonus +
+        currentRoom.settings.questionPointsStreakInitialBonus
+      points += streakBonus
+    }
+
+    return { total: Math.floor(points), streakBonus: Math.floor(streakBonus) }
+  }
+
   async finishQuestion() {
     if (this._state !== 'in-question') {
       return
@@ -273,14 +336,17 @@ export class Game {
     for (const client of this._rankings) {
       const answer = client.getAnswer()
       if (question.correctAnswer() === answer) {
-        client.addScore(this._room.settings.questionPoints)
+        client.increaseStreak()
+        const addedPoints = this.generatePoints(this._currentQuestionStartTime, client, this._room)
+        client.addScore(addedPoints.total)
         client.client.socket.emit(
           'question-answered-correct',
           client.score,
-          this._room.settings.questionPoints,
+          addedPoints,
           question.correctAnswer(),
         )
       } else {
+        client.resetStreak()
         client.client.socket.emit(
           'question-answered-incorrect',
           client.score,
@@ -288,6 +354,7 @@ export class Game {
         )
       }
     }
+    this._currentQuestionStartTime = null
 
     const answerCount = question.shuffledAnswers().map((answer) => {
       return {

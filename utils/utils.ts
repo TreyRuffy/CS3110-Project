@@ -12,6 +12,11 @@ export class RoomSettings {
   questionPointsDecayDelay = 1000
   questionPointsDecayMinimumPoints = 500
 
+  questionPointsStreakEnabled = true
+  questionPointsStreakMinimum = 3
+  questionPointsStreakInitialBonus = 150
+  questionPointsStreakRecurringBonus = 50
+
   quiz = 'world'
 
   constructor(settings?: Partial<RoomSettings>) {

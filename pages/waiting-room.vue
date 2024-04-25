@@ -40,8 +40,6 @@ function getPlayerList() {
   }
   return list
 }
-
-const hostname = useRequestURL().origin
 </script>
 
 <template>
@@ -55,7 +53,7 @@ const hostname = useRequestURL().origin
     <button
       class="mb-2 mt-4 text-center"
       :class="[multiplayerStore.host ? 'md:hidden' : '']"
-      @click="copyRoomCode(hostname, xss(multiplayerStore.roomCode))"
+      @click="copyRoomCode(xss(multiplayerStore.roomCode))"
     >
       <UiHeadingThree>
         Room Code: <b>{{ multiplayerStore.roomCode }}</b>
@@ -73,10 +71,7 @@ const hostname = useRequestURL().origin
           <div class="mb-8">
             <RoomCode :room-code="multiplayerStore.roomCode" class="mx-auto w-[18vw]" />
             <UiHeadingFour class="text-center">{{ roomUrl }}</UiHeadingFour>
-            <div
-              class="text-center"
-              @click="copyRoomCode(hostname, xss(multiplayerStore.roomCode))"
-            >
+            <div class="text-center" @click="copyRoomCode(xss(multiplayerStore.roomCode))">
               <button>
                 <UiHeadingFour>
                   Room code: <b>{{ multiplayerStore.roomCode }}</b>
